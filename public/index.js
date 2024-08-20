@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-database.js";
+import { getDatabase, ref, get, set, remove, push} from "https://www.gstatic.com/firebasejs/10.3.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDu9UYjpqGogqGLNr3OfEBUkR1_JzxDgWs",
@@ -45,54 +45,6 @@ let activeRemove = false;
 let activeEdit = false;
 let activeAdd = false;
 
-const casinos = [
-  "888 Casino",
-  "Bet 25",
-  "Bet 365",
-  "Bwin",
-  "Betson",
-  "Casino 999",
-  "Casino Go",
-  "Casino House",
-  "CasinoLuck",
-  "Come On",
-  "Danske Spil",
-  "Dansk777",
-  "Ekspekt",
-  "Get Lucky",
-  "HeySpin",
-  "Kapow",
-  "Karamba",
-  "Leo Vegas",
-  "Mr Green",
-  "Mr Play",
-  "Next Casino",
-  "Pip DK",
-  "PlayOjo",
-  "MagicRed",
-  "Royal",
-  "Spilleboden",
-  "Spillehallen",
-  "Spilnu DK",
-  "Tivoli Casino",
-  "Unibet",
-  "Vinder Casino",
-];
-
-const campaigns = [
-  "100 % Bonus",
-  "Bonus klub",
-  "Free bet",
-  "Free spins",
-  "Konkurrence",
-  "Mystic Monday",
-  "Oprettelse",
-  "Ram og få",
-  "Spil og få",
-  "Vask",
-  "Vask ASG",
-];
-
 const months = [
   "January",
   "February",
@@ -110,12 +62,20 @@ const months = [
 
 const mons = ["JAN", "FEB", "MAR", "APR", "MAJ", "JUN", "JUL", "AUG", "SEP", "OKT", "NOV", "DEC"];
 
-async function getCasinos() {
-  return casinos;
-}
+async function getMisc(type) {
+  const dataRef = ref(db, type);
 
-async function getCampaigns() {
-  return campaigns;
+  try {
+    const snapshot = await get(dataRef);
+
+    if (snapshot.exists()) {
+      return snapshot.val();
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
 }
 
 currentMonthSpan.onclick = () => {
@@ -298,7 +258,7 @@ function changeMonth(direction) {
 
 document.getElementById("inputsContainerButton").onclick = () => {
   if (bet_input.value) {
-    addWin();
+    addEntry();
   } else {
     resetInputs();
   }
@@ -315,12 +275,13 @@ document.querySelectorAll(".card").forEach((card) => {
   });
 });
 
-function addWin() {
+function addEntry() {
   let getDate = new Date();
   let day = getDate.getDate() < 10 ? "0" + getDate.getDate() : getDate.getDate();
-  let month = getDate.getMonth() < 10 ? "0" + (getDate.getMonth() + 1) : getDate.getMonth();
+  let month = getDate.getMonth() < 10 ? "0" + (getDate.getMonth() + 1) : getDate.getMonth() + 1; // Fixed month + 1
 
-  let win = {
+  // Construct the win data object
+  let entry = {
     date: `${day}/${month}`,
     casino: document.querySelector(".casinos.selects span.active").innerHTML,
     campaign: document.querySelector(".campaigns.selects span.active").innerHTML,
@@ -329,26 +290,30 @@ function addWin() {
     cashed_out: false,
   };
 
-  fetch(`/data?currentMonth=${months[currentMonth]}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(win),
-  }).then((response) => {
-    if (response.ok) {
+  // Create a reference for the new entry using push() to generate a unique key
+  const entriesRef = ref(db, `Entries/${year}/${months[currentMonth]}`);
+  const newEntryRef = push(entriesRef);
+
+  // Write the win data to the new entry
+  set(newEntryRef, entry)
+    .then(() => {
+      // If the data was written successfully, update the UI and perform other actions
       updateList();
       updateDashboard();
       updateMonthCharts();
-    }
-  });
-  inputsContainer.classList.toggle("hidden");
-  document.querySelector(".table.content").classList.toggle("blur");
-  activeAdd = false;
-  openInputs.classList.toggle("active");
 
-  resetInputs();
+      // Toggle UI elements and reset inputs
+      inputsContainer.classList.toggle("hidden");
+      document.querySelector(".table.content").classList.toggle("blur");
+      activeAdd = false;
+      openInputs.classList.toggle("active");
+      resetInputs();
+    })
+    .catch((error) => {
+      console.error("Error writing new entry: ", error);
+    });
 }
+
 
 function resetInputs() {
   bet_input.value = "";
@@ -379,23 +344,19 @@ function resetInputs() {
 }
 
 async function fetchMonthEntries(year, month) {
-  const dataRef = ref(db, `Entries/${year}/${month}`);
+  const entriesRef = ref(db, `Entries/${year}/${month}`);
+  const snapshot = await get(entriesRef);
 
-  try {
-    const snapshot = await get(dataRef);
-
-    if (snapshot.exists()) {
-      return snapshot.val();
-    } else {
-      console.log("No data available");
-      return [];
-    }
-  } catch (error) {
-    console.error("Error fetching data:", error);
+  if (snapshot.exists()) {
+    // Get the data and return an array of entries with their keys
+    const data = snapshot.val();
+    return Object.entries(data).map(([key, value]) => ({ key, ...value }));
+  } else {
+    return [];
   }
 }
 
-function createEntryContainer(entry, index) {
+function createEntryContainer(entry, key) {
   // Calculate profit and determine color based on entry's status
   let bet = parseInt(entry.bet);
   let win = parseInt(entry.win);
@@ -406,6 +367,7 @@ function createEntryContainer(entry, index) {
   // Create the entry container and set its class
   let entryContainer = document.createElement("div");
   entryContainer.setAttribute("class", "entryContainer");
+  entryContainer.setAttribute("data-key", key); // Set the unique key as a data attribute
 
   // Add "pending" class if the entry has not been cashed out
   if (!entry.cashed_out) {
@@ -432,7 +394,7 @@ function createEntryContainer(entry, index) {
   let checkBox = entryContainer.querySelector(".checkBox");
   checkBox.onclick = () => {
     if (entry.win) {
-      checkCash(checkBox, index);
+      checkCash(checkBox, key); // Ensure this function can handle the key if needed
     }
   };
 
@@ -451,6 +413,8 @@ function createEntryContainer(entry, index) {
   return entryContainer;
 }
 
+
+
 async function updateList() {
   entriesList.innerHTML = "";
 
@@ -462,22 +426,21 @@ async function updateList() {
       // Await the result of fetchMonthEntries before using it
       const data = await fetchMonthEntries(year, months[currentMonth]);
       if (data) {
-        // If data is an object, convert it to an array if necessary
-        entries = Object.values(data);
+        entries = data; // Data already includes keys
       }
     } else {
       // Fetch data for all months in the year
       for (let i = 0; i < 12; i++) {
         const data = await fetchMonthEntries(year, months[i]);
         if (data) {
-          entries.push(...Object.values(data)); // Flatten and add data to entries
+          entries.push(...data); // Flatten and add data to entries
         }
       }
     }
 
     // Create and append entry containers for each entry
-    entries.forEach((entry, index) => {
-      let entryContainer = createEntryContainer(entry, index);
+    entries.forEach((entry) => {
+      let entryContainer = createEntryContainer(entry, entry.key); // Pass the key
       entriesList.append(entryContainer);
     });
   } catch (error) {
@@ -485,10 +448,11 @@ async function updateList() {
   }
 
   // Apply the current filter if applicable
-  /* if (currentFilter) {
+  if (currentFilter) {
     filterEntries(document.querySelector(".addList .selected").classList[0].slice(0, -9));
-  } */
+  }
 }
+
 
 function checkCash(checkBox, index) {
   let entryContainer = checkBox.parentNode;
@@ -531,8 +495,8 @@ async function updateDashboard(category) {
   const totalPayouts = { value: 0 };
   const pendings = { value: 0 };
   const totalBarchartList = [];
-  const casinos = await getCasinos();
-  const campaigns = await getCampaigns();
+  const casinos = await getMisc("Casinos");
+  const campaigns = await getMisc("Campaigns");
   const casinoTotalProfits = Object.fromEntries(casinos.map((casino) => [casino, 0]));
   const campaignTotalProfits = Object.fromEntries(campaigns.map((campaign) => [campaign, 0]));
 
@@ -550,13 +514,13 @@ async function updateDashboard(category) {
         const profit = entry.win - entry.bet;
         casinoTotalProfits[entry.casino] = (casinoTotalProfits[entry.casino] || 0) + profit;
         campaignTotalProfits[entry.campaign] = (campaignTotalProfits[entry.campaign] || 0) + profit;
-  
+
         if (entry.cashed_out) {
           totalBets.value += +entry.bet;
           totalProfits.value += +profit;
           totalLosses.value += profit < 0 ? profit : 0;
           totalPayouts.value += +entry.win;
-  
+
           monthProfits += +profit;
           monthWins += profit > 0 ? profit : 0;
           monthLosses += profit < 0 ? profit * -1 : 0;
@@ -564,11 +528,11 @@ async function updateDashboard(category) {
           monthPayouts += +entry.win;
         } else {
           pendings.value += +entry.bet;
-  
+
           monthBets += +entry.bet;
           monthPending += profit;
         }
-  
+
         switch (category) {
           case "totalProfit":
             barData = monthProfits;
@@ -591,7 +555,6 @@ async function updateDashboard(category) {
         }
       });
     }
-    
 
     return barData;
   };
@@ -688,7 +651,6 @@ async function updateMonthCharts(category) {
         }
       });
     } else {
-      console.log("No data");
     }
 
     let winRatio = wins === 0 ? 0 : ((monthTotalProfit / wins) * 100).toFixed(0);
@@ -732,24 +694,35 @@ async function updateMonthCharts(category) {
   }
 }
 
-function removeEntry(event) {
+async function removeEntry(event) {
   if (activeRemove) {
-    let entryContainer = event.target.closest(".entryContainer");
-    let index = Array.from(document.querySelectorAll(".entryContainer")).indexOf(entryContainer);
+    try {
+      // Locate the entry container and get the unique key
+      let entryContainer = event.target.closest(".entryContainer");
+      let entryKey = entryContainer.getAttribute("data-key"); // Assuming each entry container has a 'data-key' attribute
 
-    fetch(`/data?index=${index}&currentMonth=${months[currentMonth]}`, {
-      method: "DELETE",
-    }).then((response) => {
-      if (response.ok) {
-        entryContainer.remove();
-        updateMonthCharts();
-        activeRemove = false;
-        removeBtn.classList.remove("active");
-        document.querySelectorAll(".entryContainer").forEach((element) => {
-          element.classList.remove("deletable");
-        });
+      if (!entryKey) {
+        console.error("No key found for this entry.");
+        return;
       }
-    });
+
+      // Construct the path to the Firebase database reference using the key
+      const entryRef = ref(db, `Entries/${year}/${months[currentMonth]}/${entryKey}`);
+
+      // Remove the entry from Firebase
+      await remove(entryRef);
+
+      // If the entry was removed successfully, update the UI and perform other actions
+      entryContainer.remove();
+      updateMonthCharts();
+      activeRemove = false;
+      removeBtn.classList.remove("active");
+      document.querySelectorAll(".entryContainer").forEach((element) => {
+        element.classList.remove("deletable");
+      });
+    } catch (error) {
+      console.error("Error removing data from Firebase:", error);
+    }
   }
 }
 
@@ -826,12 +799,18 @@ function editEntry(event) {
 }
 
 async function updateAddLists() {
-  /* document.querySelector(".addCasinosList").innerHTML = "";
+  document.querySelector(".addCasinosList").innerHTML = "";
   document.querySelector(".addCampaignsList").innerHTML = "";
-  try {
-    if (!totalView) {
-      entries = await fetchMonthEntries(year, months[currentMonth]);
+  const casinos = await getMisc("Casinos");
+  const campaigns = await getMisc("Campaigns");
 
+  try {
+    let entries = [];
+    if (!totalView) {
+      const data = await fetchMonthEntries(year, months[currentMonth]);
+      if (data) {
+        entries = Object.values(data);
+      }
     } else {
       // Fetch data for all months in the year
       for (let i = 0; i < 12; i++) {
@@ -860,6 +839,7 @@ async function updateAddLists() {
   }
 
   try {
+    let entries = [];
     campaigns.forEach((campaign) => {
       let campaignContainer = document.createElement("div");
       campaignContainer.setAttribute("class", "campaignContainer");
@@ -899,7 +879,7 @@ async function updateAddLists() {
       }
       filterEntries(this.classList[0].slice(0, -9));
     };
-  }); */
+  });
 }
 
 function filterEntries(category) {
