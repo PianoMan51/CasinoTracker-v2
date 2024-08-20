@@ -379,7 +379,7 @@ function resetInputs() {
 }
 
 async function fetchMonthEntries(year, month) {
-  const dataRef = ref(db, `${year}/${month}`);
+  const dataRef = ref(db, `Entries/${year}/${month}`);
 
   try {
     const snapshot = await get(dataRef);
