@@ -1,0 +1,123 @@
+#cards {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  width: 100%;
+}
+
+.card {
+  flex: 1;
+  height: 80px;
+  background-color: white;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  transform: scale(1);
+  transition: 0.2s;
+  user-select: none;
+  cursor: pointer;
+}
+
+.card.active {
+  transform: scale(1.04);
+  box-shadow: 6px 6px 12px #d5d5d5, -6px -6px 12px #ebebeb;
+}
+
+.card:hover {
+  transform: scale(1.04);
+  transition: 0.2s;
+}
+
+.card_icon {
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  background-color: var(--lightgray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0px 10px 0px 10px;
+}
+
+.value {
+  font-size: larger;
+  font-weight: 500;
+}
+
+.card span {
+  font-size: small;
+  color: var(--darkestgray);
+}
+
+.card_icon i {
+  color: var(--darkblue);
+}
+
+.dashboard.matrix {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.dashboard.column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dashboard.section {
+  background-color: white;
+  border-radius: 6px;
+  padding: 8px;
+  height: 50%;
+  max-height: 500px;
+  overflow: hidden;
+}
+
+.listContainer {
+  overflow-y: scroll;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.listedTotals {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.listContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.listContainerElement {
+  display: flex;
+  gap: 10px;
+}
+
+.listContainerElement span {
+  padding: 6px 10px;
+  border-radius: 5px;
+  font-family: "DM Mono", monospace;
+  font-size: 0.9em;
+  user-select: none;
+  transition: ease-in-out 0.15s;
+}
+
+.listContainerElement .label:hover {
+  background-color: var(--gray);
+}
+
+.listContainerElement .label {
+  background-color: var(--lightgray);
+}
+
+.listContainerElement .profits {
+  color: white;
+  width: 50px;
+  text-align: left;
+}

@@ -4,11 +4,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CasinoTracker</title>
-
-  <!-- update the version number as needed -->
-  <script defer src="/__/firebase/10.13.0/firebase-app-compat.js"></script>
-  <!-- include only the Firebase features as you need -->
+  <title>Casino</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/dashboard.css">
+  <link rel="stylesheet" href="styles/table.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet"> 
+  <script src="https://kit.fontawesome.com/d66dd0368f.js" crossorigin="anonymous"></script>
+  <!-- <script defer src="/__/firebase/10.13.0/firebase-app-compat.js"></script>
   <script defer src="/__/firebase/10.13.0/firebase-auth-compat.js"></script>
   <script defer src="/__/firebase/10.13.0/firebase-database-compat.js"></script>
   <script defer src="/__/firebase/10.13.0/firebase-firestore-compat.js"></script>
@@ -18,15 +28,251 @@
   <script defer src="/__/firebase/10.13.0/firebase-analytics-compat.js"></script>
   <script defer src="/__/firebase/10.13.0/firebase-remote-config-compat.js"></script>
   <script defer src="/__/firebase/10.13.0/firebase-performance-compat.js"></script>
-  <script defer src="/__/firebase/init.js?useEmulator=true"></script>
-
-
-
+  <script defer src="/__/firebase/init.js?useEmulator=true"></script> -->
 </head>
 
 <body>
-  <h1>CasinoTracker v2</h1>
+  <div id="app">
+    <div class="banner">
+    </div>
+    <div id="content">
+        <div id="sidebar">
+            <div id="userContainer">
+                <h4 style="margin: 0;">PianoMan51</h4>
+                <span style="font-size: .7em;">nikolajwold@hotmail.com</span>
+                <div class="profile"><img src="images/profile.png"></div>
+            </div>
+            <div id="navigations">
+                <div class="nav" name="dashboard" onclick="updateDashboard('totalProfit')">
+                    <i class="fa-solid fa-chart-line fa-lg"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav" name="table" onclick="updateMonthCharts('Casinos');">
+                    <i class="fa-solid fa-table-columns fa-lg"></i>
+                    <span>Table</span>
+                </div>
+                <div class="nav" name="wash">
+                    <i class="fa-solid fa-bath fa-lg"></i>
+                    <span>Vask</span>
+                </div>
+            </div>
+            <button class="collapse_sidebar_button"><i class="fa-solid fa-angle-right fa-2xl"></i></button>
 
+        </div>
+        <div class="pageContent dashboard">
+            <div id="cards">
+                <div class="card totalProfit active">
+                    <div class="card_icon">
+                        <i class="fa-solid fa-hand-holding-dollar fa-xl"></i>
+                    </div>
+                    <div class="info">
+                        <div class="value"></div>
+                        <span>Total Profits</span>
+                    </div>
+                </div>
+                <div class="card totalWin">
+                    <div class="card_icon">
+                        <i class="fa-solid fa-trophy fa-xl"></i>
+                    </div>
+                    <div class="info">
+                        <div class="value"></div>
+                        <span>Total Wins</span>
+                    </div>
+                </div>
+                <div class="card totalLoss">
+                    <div class="card_icon">
+                        <i class="fa-solid fa-sack-xmark fa-xl"></i>
+                    </div>
+                    <div class="info">
+                        <div class="value"></div>
+                        <span>Total Losses</span>
+                    </div>
+                </div>
+                <div class="card totalBet">
+                    <div class="card_icon">
+                        <i class="fa-solid fa-money-bills fa-xl"></i>
+                    </div>
+                    <div class="info">
+                        <div class="value"></div>
+                        <span>Total Bets</span>
+                    </div>
+                </div>
+                <div class="card totalPayout">
+                    <div class="card_icon">
+                        <i class="fa-solid fa-sack-dollar fa-xl"></i>
+                    </div>
+                    <div class="info">
+                        <div class="value"></div>
+                        <span>Total Payouts</span>
+                    </div>
+                </div>
+                <div class="card totalPending">
+                    <div class="card_icon">
+                        <i class="fa-solid fa-money-bill-transfer fa-xl"></i>
+                    </div>
+                    <div class="info">
+                        <div class="value"></div>
+                        <span>Pending</span>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard matrix">
+                <div class="dashboard column" style="width: 60%;">
+                    <div class="dashboard section">
+                        <canvas id="chart_profits"></canvas>
+                    </div>
+                    <div class="dashboard section">
+                        somthinfg
+                    </div>
+                </div>
+                <div class="dashboard column" style="width: 40%;">
+                    <div class="dashboard section">
+                        <div class="listContainer">
+                            <div class="listedTotals" id="casinoTotals"></div>
+                        </div>
+                    </div>
+                    <div class="dashboard section">
+                        <div class="listContainer">
+                            <div class="listedTotals" id="campaignTotals"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pageContent table">
+            <div id="inputsContainer" class="hidden">
+                <div class="banner" style="height: 26px; background-color: var(--darkgreen);"></div>
+                <div class="inputs">
+                    <div class="selectContainer" id="casinoContainer">
+                        <div class="selectedCasino"></div>
+                        <button class="reopen casino"><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+
+                    <div class="casinos selects open">
+                        <span value="888 Casino">888 Casino</span>
+                        <span value="Bet 25">Bet 25</span>
+                        <span value="Bet 365">Bet 365</span>
+                        <span value="Bwin">Bwin</span>
+                        <span value="Casino 999">Casino 999</span>
+                        <span value="Casino Go">Casino Go</span>
+                        <span value="Casino House">Casino House</span>
+                        <span value="CasinoLuck">CasinoLuck</span>
+                        <span value="Come On">Come On</span>
+                        <span value="Danske Spil">Danske Spil</span>
+                        <span value="Dansk777">Dansk777</span>
+                        <span value="Ekspekt">Ekspekt</span>
+                        <span value="MagicRed">MagicRed</span>
+                        <span value="Get Lucky">Get Lucky</span>
+                        <span value="HeySpin">HeySpin</span>
+                        <span value="Kapow">Kapow</span>
+                        <span value="Karamba">Karamba</span>
+                        <span value="Leo Vegas">Leo Vegas</span>
+                        <span value="Mr Green">Mr Green</span>
+                        <span value="Mr Play">Mr Play</span>
+                        <span value="Next Casino">Next Casino</span>
+                        <span value="Pip DK">Pip DK</span>
+                        <span value="PlayOjo">PlayOjo</span>
+                        <span value="Royal">Royal</span>
+                        <span value="Spilleboden">Spilleboden</span>
+                        <span value="Spillehallen">Spillehallen</span>
+                        <span value="Spilnu DK">Spilnu DK</span>
+                        <span value="Tivoli Casino">Tivoli Casino</span>
+                        <span value="Unibet">Unibet</span>
+                        <span value="Vinder Casino">Vinder Casino</span>
+                    </div>
+
+                    <div class="selectContainer" id="campaignContainer">
+                        <div class="selectedCampaign"></div>
+                        <button class="reopen campaign"><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+
+                    <div class="campaigns selects hidden">
+                        <span value="100 % bonus">100 % bonus</span>
+                        <span value="Bonus klub">Bonus klub</span>
+                        <span value="Free bet">Free bet</span>
+                        <span value="Free spins">Free spins</span>
+                        <span value="Konkurrence">Konkurrence</span>
+                        <span value="Mystic Monday">Mystic Monday</span>
+                        <span value="Oprettelsesbonus">Oprettelsesbonus</span>
+                        <span value="Ram og få">Ram og få</span>
+                        <span value="Spil og få">Spil og få</span>
+                        <span value="Vask">Vask</span>
+                        <span value="Vask ASG">Vask ASG</span>
+                    </div>
+
+                    <div class="amountInputs hidden">
+                        <input type="number" id="bet_input" placeholder="Bet">
+                        <input type="number" id="win_input" placeholder="Win">
+                    </div>
+
+                    <button id="inputsContainerButton" class="actionButtons"><i
+                            class="fa-solid fa-xmark fa-2xl"></i></button>
+                </div>
+            </div>
+            <div id="changeMonths">
+                <button id="prevMonth" class="monthButtons"><i class="fa-solid fa-caret-left fa-xl"></i></button>
+                <span id="currentMonthSpan"></span>
+                <button id="nextMonth" class="monthButtons"><i class="fa-solid fa-caret-right fa-xl"></i></button>
+            </div>
+            <div class="table content">
+                <div class="table section leftTable">
+                    <div class="graphContainer">
+                        <canvas id="monthChart_doughnut_profits"></canvas>
+                        <div>
+                            <span class="doughnut main profits" title="In ddk"></span>
+                            <span class="doughnut sub ratio" title="Win ratio"></span>
+                        </div>
+                    </div>
+                    <button id="toggleBarCategory" class="Casinos">Casinos</button>
+                    <div class="graphContainer monthBarChart">
+                        <canvas id="monthChart_barchart"></canvas>
+                    </div>
+
+                </div>
+                <div class="table section middleTable">
+                    <div class="listHeaders">
+                        <span style="width: 80px">Dato</span>
+                        <span style="flex: 1">Casino</span>
+                        <span style="flex: 1">Kampagne</span>
+                        <span style="width: 80px">Indsats</span>
+                        <span style="width: 90px">Udbetaling</span>
+                        <span style="width: 80px; margin-right: 40px;">Profit</span>
+                    </div>
+                    <div id="entriesList" class="hide-scrollbar"></div>
+                    <div id="actionButtons">
+                        <button class="actionButtons" id="removeEntry"
+                            style="color: var(--red);border: 3px solid var(--red)"><i
+                                class="fa-solid fa-xmark fa-xl"></i></button>
+                        <button class="actionButtons" id="openInput"
+                            style="color: var(--green);border: 3px solid var(--green)"><i
+                                class="fa-solid fa-plus fa-xl"></i></button>
+                        <button class="actionButtons" id="editEntry"
+                            style="color: var(--yellow);border: 3px solid var(--yellow)"><i
+                                class="fa-solid fa-pencil fa-xl"></i></button>
+                        <button class="actionButtons" id="doneEditing"
+                            style="color: var(--blue);border: 3px solid var(--blue); display: none;"><i
+                                class="fa-solid fa-check fa-xl"></i></button>
+                    </div>
+                </div>
+                <div class="table section rightTable" style="display: none;">
+                    <div id="casinoList" class="addContainer">
+                        <span class="header">Casinos</span>
+                        <div class="addList addCasinosList"></div>
+                        <input class="addInput" id="addCasinoInput" placeholder="Add Casino...">
+                    </div>
+                    <div id="campaignList" class="addContainer">
+                        <span class="header">Campaigns</span>
+                        <div class="addList addCampaignsList"></div>
+                        <input class="addInput" id="addCampaignInput" placeholder="Add Campaign...">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pageContent wash">
+            <h1>vask</h1>
+        </div>
+    </div>
+</div>
   <script type="module" src="index.js"></script>
 </body>
 
