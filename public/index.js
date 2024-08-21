@@ -1,5 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
-import { getDatabase, ref, get, set, remove, push} from "https://www.gstatic.com/firebasejs/10.3.0/firebase-database.js";
+import {
+  getDatabase,
+  ref,
+  get,
+  set,
+  remove,
+  push,
+} from "https://www.gstatic.com/firebasejs/10.3.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDu9UYjpqGogqGLNr3OfEBUkR1_JzxDgWs",
@@ -280,7 +287,7 @@ function addEntry() {
   let day = getDate.getDate() < 10 ? "0" + getDate.getDate() : getDate.getDate();
   let month = getDate.getMonth() < 10 ? "0" + (getDate.getMonth() + 1) : getDate.getMonth() + 1; // Fixed month + 1
 
-  // Construct the win data object
+  // Construct the entry data object
   let entry = {
     date: `${day}/${month}`,
     casino: document.querySelector(".casinos.selects span.active").innerHTML,
@@ -294,7 +301,7 @@ function addEntry() {
   const entriesRef = ref(db, `Entries/${year}/${months[currentMonth]}`);
   const newEntryRef = push(entriesRef);
 
-  // Write the win data to the new entry
+  // Write the entry data to the new entry
   set(newEntryRef, entry)
     .then(() => {
       // If the data was written successfully, update the UI and perform other actions
@@ -313,7 +320,6 @@ function addEntry() {
       console.error("Error writing new entry: ", error);
     });
 }
-
 
 function resetInputs() {
   bet_input.value = "";
@@ -394,7 +400,7 @@ function createEntryContainer(entry, key) {
   let checkBox = entryContainer.querySelector(".checkBox");
   checkBox.onclick = () => {
     if (entry.win) {
-      checkCash(checkBox, key); // Ensure this function can handle the key if needed
+      checkCash(checkBox, key);
     }
   };
 
@@ -412,8 +418,6 @@ function createEntryContainer(entry, key) {
 
   return entryContainer;
 }
-
-
 
 async function updateList() {
   entriesList.innerHTML = "";
@@ -453,13 +457,10 @@ async function updateList() {
   }
 }
 
-
-function checkCash(checkBox, index) {
+function checkCash(checkBox, key) {
   let entryContainer = checkBox.parentNode;
   entryContainer.classList.toggle("pending");
   checkBox.classList.toggle("checked");
-  let bet = entryContainer.children[3].value;
-  let win = entryContainer.children[4].value;
   let profit = entryContainer.children[5].value;
 
   entryContainer.children[5].style.backgroundColor = checkBox.classList.contains("checked")
@@ -477,15 +478,19 @@ function checkCash(checkBox, index) {
     cashed_out: checkBox.classList.contains("checked") ? true : false,
   };
 
-  /* fetch(`/data?index=${index}&currentMonth=${months[currentMonth]}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(content),
-  }).then((response) => {
-    if (response.ok) {
+  // Reference the specific entry using its unique key
+  const entryRef = ref(db, `Entries/${year}/${months[currentMonth]}/${key}`);
+
+  // Overwrite the existing entry with the updated content
+  set(entryRef, content)
+    .then(() => {
+      // If the data was written successfully, update the UI and perform other actions
+      updateDashboard();
       updateMonthCharts();
-    }
-  }); */
+    })
+    .catch((error) => {
+      console.error("Error updating entry: ", error);
+    });
 }
 
 async function updateDashboard(category) {
@@ -727,28 +732,29 @@ async function removeEntry(event) {
 }
 
 function editEntry(event) {
-  let entryContainer = event.target.closest(".entryContainer");
-  let checkBox = entryContainer.querySelector(".checkBox");
+  let container = event.target.closest(".entryContainer");
+  let key = container.getAttribute("data-key")
 
-  let spans = entryContainer.querySelectorAll("span");
-  let index = Array.from(document.querySelectorAll(".entryContainer")).indexOf(entryContainer);
   if (activeEdit) {
+    container.removeEventListener("click", editEntry);
+
     document.querySelectorAll(".entryContainer").forEach((container) => {
       container.classList.remove("selected");
       container.classList.add("blur");
     });
+    
+    container.classList.remove("blur");
+    container.classList.add("selected");
 
-    entryContainer.removeEventListener("click", editEntry);
+    let checkBox = container.querySelector(".checkBox");
+    let spans = container.querySelectorAll("span");
 
-    entryContainer.classList.remove("blur");
-    entryContainer.classList.add("selected");
+    container.children[3].innerHTML = container.children[3].value;
 
-    entryContainer.children[3].innerHTML = entryContainer.children[3].value;
-
-    if (entryContainer.children[4].innerHTML == "Pending") {
-      entryContainer.children[4].innerHTML = "Pending";
+    if (container.children[4].innerHTML == "Pending") {
+      container.children[4].innerHTML = "Pending";
     } else {
-      entryContainer.children[4].innerHTML = entryContainer.children[4].value;
+      container.children[4].innerHTML = container.children[4].value;
     }
 
     document.getElementById("actionButtons").children[0].style.display = "none";
@@ -762,20 +768,19 @@ function editEntry(event) {
 
     document.getElementById("doneEditing").onclick = () => {
       let content = {
-        date: entryContainer.children[0].innerHTML,
-        casino: entryContainer.children[1].innerHTML,
-        campaign: entryContainer.children[2].innerHTML,
-        bet: entryContainer.children[3].innerHTML,
-        win: entryContainer.children[4].innerHTML,
+        date: container.children[0].innerHTML,
+        casino: container.children[1].innerHTML,
+        campaign: container.children[2].innerHTML,
+        bet: container.children[3].innerHTML,
+        win: container.children[4].innerHTML,
         cashed_out: checkBox.classList.contains("checked") ? true : false,
       };
 
-      fetch(`/data?index=${index}&currentMonth=${months[currentMonth]}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(content),
-      }).then((response) => {
-        if (response.ok) {
+      // Reference the specific entry using its unique key
+      const entryRef = ref(db, `Entries/${year}/${months[currentMonth]}/${key}`);
+
+      set(entryRef, content)
+        .then(() => {
           document.getElementById("actionButtons").children[0].style.display = "inline";
           document.getElementById("actionButtons").children[1].style.display = "inline";
           document.getElementById("actionButtons").children[2].style.display = "inline";
@@ -792,8 +797,10 @@ function editEntry(event) {
           editBtn.classList.toggle("active");
           updateList();
           updateMonthCharts();
-        }
-      });
+        })
+        .catch((error) => {
+          console.error("Error updating entry: ", error);
+        });
     };
   }
 }
