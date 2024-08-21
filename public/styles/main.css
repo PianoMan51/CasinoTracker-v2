@@ -194,4 +194,12 @@ body {
   pointer-events: none;
 }
 
+.offline_element{
+  background-color: var(--lightgray);
+  border-radius: 5px;
+  height: 30px;
+  margin-bottom: 8px;
+}
+
+
 @media screen and (max-width: 1300px) {}

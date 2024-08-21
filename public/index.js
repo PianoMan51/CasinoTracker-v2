@@ -418,9 +418,11 @@ function createEntryContainer(entry, key) {
 }
 
 async function updateList() {
-  // Save the original HTML content of entriesList
-  const originalContent = entriesList.innerHTML;
-  entriesList.style.filter = "blur(2px)";
+  for (let i = 0; i < 20; i++) {
+    let offline_element = document.createElement("div");
+    offline_element.setAttribute("class", "offline_element");
+    entriesList.appendChild(offline_element);
+  }
 
   try {
     let entries = [];
@@ -451,11 +453,9 @@ async function updateList() {
       entriesList.append(entryContainer);
     });
   } catch (error) {
-    console.error("Error updating list", error);
-    // If an error occurs, restore the original content
-    entriesList.innerHTML = originalContent;
+    console.error("Error updating list", error);  
   } finally {
-    entriesList.style.filter = "";
+    
   }
 
   // Apply the current filter if applicable
@@ -503,13 +503,10 @@ function checkCash(checkBox, key) {
 async function updateDashboard(category) {
   // Get elements you want to blur
   const canvasElement = document.querySelector(".dashboard.section canvas");
-  const dashboardCardAmount = document.querySelectorAll(".totalProfit .value, .totalLoss .value, .totalWin .value, .totalBet .value, .totalPayout .value, .totalPending .value");
+  const cardAmount = document.querySelectorAll(".info .value");
+  const cardSpan = document.querySelectorAll(".info .value_span");
 
-  // Apply blur effect to the canvas and profit elements
-  canvasElement.style.filter = "blur(2px)";
-  dashboardCardAmount.forEach(element => element.style.backgroundColor = "var(--lightgray)");
-  dashboardCardAmount.forEach(element => element.innerHTML = "")
-
+  // Create values for cards and elements
   const totalProfits = { value: 0 };
   const totalBets = { value: 0 };
   const totalLosses = { value: 0 };
@@ -520,6 +517,27 @@ async function updateDashboard(category) {
   const campaigns = await getMisc("Campaigns");
   const casinoTotalProfits = Object.fromEntries(casinos.map((casino) => [casino, 0]));
   const campaignTotalProfits = Object.fromEntries(campaigns.map((campaign) => [campaign, 0]));
+
+  // Apply blur effect to the canvas and profit elements
+  canvasElement.style.filter = "blur(2px)";
+
+  // Apply 'offline'-effect
+  cardAmount.forEach((element) => (element.style.backgroundColor = "var(--lightgray)"));
+  cardAmount.forEach((element) => (element.innerHTML = ""));
+  cardSpan.forEach((element) => (element.style.backgroundColor = "var(--lightgray)"));
+  cardSpan.forEach((element) => (element.style.color = "transparent"));
+
+  for (let i = 0; i < 20; i++) {
+    let offline_element = document.createElement("div");
+    offline_element.setAttribute("class", "offline_element");
+    document.getElementById("campaignTotals").appendChild(offline_element);
+  }
+
+  for (let i = 0; i < 20; i++) {
+    let offline_element = document.createElement("div");
+    offline_element.setAttribute("class", "offline_element");
+    document.getElementById("casinoTotals").appendChild(offline_element);
+  }
 
   const updateProfits = (data) => {
     let monthProfits = 0;
@@ -589,7 +607,7 @@ async function updateDashboard(category) {
       totalBarchartList.push(dataCategory.toFixed(0));
     });
 
-    const createDashboardCard = (entries, containerId) => {
+    const createTotalElement = (entries, containerId) => {
       const container = document.getElementById(containerId);
       container.innerHTML = "";
       entries.forEach(([name, profit]) => {
@@ -607,14 +625,13 @@ async function updateDashboard(category) {
     const sortedCasinoEntries = Object.entries(casinoTotalProfits).sort((a, b) => b[1] - a[1]);
     const sortedCampaignEntries = Object.entries(campaignTotalProfits).sort((a, b) => b[1] - a[1]);
 
-    createDashboardCard(sortedCasinoEntries, "casinoTotals");
-    createDashboardCard(sortedCampaignEntries, "campaignTotals");
+    createTotalElement(sortedCasinoEntries, "casinoTotals");
+    createTotalElement(sortedCampaignEntries, "campaignTotals");
 
     dashBoardTotalBarchart.data.datasets[0].data = totalBarchartList;
     dashBoardTotalBarchart.data.labels = months;
     dashBoardTotalBarchart.data.datasets[0].backgroundColor =
       category === "totalLoss" ? "rgb(231, 76, 60)" : "rgb(46, 204, 113)";
-
     document.querySelector(".totalProfit .value").textContent = "$" + totalProfits.value.toFixed(0);
     document.querySelector(".totalLoss .value").textContent = "$" + totalLosses.value.toFixed(0);
     document.querySelector(".totalWin .value").textContent =
@@ -629,7 +646,9 @@ async function updateDashboard(category) {
   } finally {
     // Remove blur effect from canvas and profit elements
     canvasElement.style.filter = "";
-    dashboardCardAmount.forEach(element => element.style.backgroundColor = "");
+    cardAmount.forEach((element) => (element.style.backgroundColor = ""));
+    cardSpan.forEach((element) => (element.style.backgroundColor = ""));
+    cardSpan.forEach((element) => (element.style.color = "var(--darkestgray)"));
   }
 }
 
