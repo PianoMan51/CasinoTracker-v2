@@ -189,4 +189,9 @@ body {
   gap: 12px;
 }
 
+.blur {
+  filter: blur(8px);
+  pointer-events: none;
+}
+
 @media screen and (max-width: 1300px) {}

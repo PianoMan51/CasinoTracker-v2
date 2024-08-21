@@ -67,8 +67,6 @@ const months = [
   "December",
 ];
 
-const mons = ["JAN", "FEB", "MAR", "APR", "MAJ", "JUN", "JUL", "AUG", "SEP", "OKT", "NOV", "DEC"];
-
 async function getMisc(type) {
   const dataRef = ref(db, type);
 
@@ -420,7 +418,9 @@ function createEntryContainer(entry, key) {
 }
 
 async function updateList() {
-  entriesList.innerHTML = "";
+  // Save the original HTML content of entriesList
+  const originalContent = entriesList.innerHTML;
+  entriesList.style.filter = "blur(2px)";
 
   try {
     let entries = [];
@@ -442,6 +442,9 @@ async function updateList() {
       }
     }
 
+    // Clear the original content once the data is ready
+    entriesList.innerHTML = "";
+
     // Create and append entry containers for each entry
     entries.forEach((entry) => {
       let entryContainer = createEntryContainer(entry, entry.key); // Pass the key
@@ -449,6 +452,10 @@ async function updateList() {
     });
   } catch (error) {
     console.error("Error updating list", error);
+    // If an error occurs, restore the original content
+    entriesList.innerHTML = originalContent;
+  } finally {
+    entriesList.style.filter = "";
   }
 
   // Apply the current filter if applicable
@@ -494,6 +501,15 @@ function checkCash(checkBox, key) {
 }
 
 async function updateDashboard(category) {
+  // Get elements you want to blur
+  const canvasElement = document.querySelector(".dashboard.section canvas");
+  const dashboardCardAmount = document.querySelectorAll(".totalProfit .value, .totalLoss .value, .totalWin .value, .totalBet .value, .totalPayout .value, .totalPending .value");
+
+  // Apply blur effect to the canvas and profit elements
+  canvasElement.style.filter = "blur(2px)";
+  dashboardCardAmount.forEach(element => element.style.backgroundColor = "var(--lightgray)");
+  dashboardCardAmount.forEach(element => element.innerHTML = "")
+
   const totalProfits = { value: 0 };
   const totalBets = { value: 0 };
   const totalLosses = { value: 0 };
@@ -573,7 +589,7 @@ async function updateDashboard(category) {
       totalBarchartList.push(dataCategory.toFixed(0));
     });
 
-    const createListContainer = (entries, containerId) => {
+    const createDashboardCard = (entries, containerId) => {
       const container = document.getElementById(containerId);
       container.innerHTML = "";
       entries.forEach(([name, profit]) => {
@@ -591,13 +607,13 @@ async function updateDashboard(category) {
     const sortedCasinoEntries = Object.entries(casinoTotalProfits).sort((a, b) => b[1] - a[1]);
     const sortedCampaignEntries = Object.entries(campaignTotalProfits).sort((a, b) => b[1] - a[1]);
 
-    createListContainer(sortedCasinoEntries, "casinoTotals");
-    createListContainer(sortedCampaignEntries, "campaignTotals");
+    createDashboardCard(sortedCasinoEntries, "casinoTotals");
+    createDashboardCard(sortedCampaignEntries, "campaignTotals");
 
     dashBoardTotalBarchart.data.datasets[0].data = totalBarchartList;
     dashBoardTotalBarchart.data.labels = months;
     dashBoardTotalBarchart.data.datasets[0].backgroundColor =
-      category == "totalLoss" ? "rgb(231, 76, 60)" : "rgb(46, 204, 113)";
+      category === "totalLoss" ? "rgb(231, 76, 60)" : "rgb(46, 204, 113)";
 
     document.querySelector(".totalProfit .value").textContent = "$" + totalProfits.value.toFixed(0);
     document.querySelector(".totalLoss .value").textContent = "$" + totalLosses.value.toFixed(0);
@@ -610,6 +626,10 @@ async function updateDashboard(category) {
     dashBoardTotalBarchart.update();
   } catch (error) {
     console.error("Error fetching data", error);
+  } finally {
+    // Remove blur effect from canvas and profit elements
+    canvasElement.style.filter = "";
+    dashboardCardAmount.forEach(element => element.style.backgroundColor = "");
   }
 }
 
@@ -620,6 +640,9 @@ async function updateMonthCharts(category) {
   let monthBarCategory = [];
   let monthBarData = {};
   let barColors = [];
+
+  const canvasElement = document.querySelector(".dashboard.section canvas");
+  canvasElement.style.filter = "blur(2px)";
 
   if (category == undefined) {
     category = monthBarChartToggle.className;
@@ -696,6 +719,8 @@ async function updateMonthCharts(category) {
     monthBarProfits.update();
   } catch (error) {
     console.error("Error fetching data", error);
+  } finally {
+    canvasElement.style.filter = "";
   }
 }
 
@@ -733,7 +758,7 @@ async function removeEntry(event) {
 
 function editEntry(event) {
   let container = event.target.closest(".entryContainer");
-  let key = container.getAttribute("data-key")
+  let key = container.getAttribute("data-key");
 
   if (activeEdit) {
     container.removeEventListener("click", editEntry);
@@ -742,7 +767,7 @@ function editEntry(event) {
       container.classList.remove("selected");
       container.classList.add("blur");
     });
-    
+
     container.classList.remove("blur");
     container.classList.add("selected");
 
