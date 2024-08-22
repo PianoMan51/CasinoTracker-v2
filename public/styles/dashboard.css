@@ -112,7 +112,8 @@
 
 .listContainerElement {
   display: flex;
-  gap: 10px;
+  gap: 5px;
+  height: 30px;
 }
 
 .listContainerElement span {

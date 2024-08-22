@@ -485,7 +485,7 @@
   display: none;
 }
 
-.addList div {
+.addListContainer {
   background-color: var(--darkgray);
   color: white;
   border-radius: 5px;
@@ -494,7 +494,7 @@
   cursor: pointer;
 }
 
-.addList div:hover {
+.addListContainer:hover {
   background-color: var(--darkergray);
   transition: 0.15s;
 }
@@ -566,14 +566,14 @@
   }
 }
 
-@media screen and (max-width: 1400px) {
-  .table.section:first-of-type {
+@media screen and (max-width: 1470px) {
+  .table.section:last-of-type {
     display: none;
   }
 }
 
 @media screen and (max-width: 1200px) {
-  .table.section:last-of-type {
+  .table.section:first-of-type {
     display: none;
   }
 }

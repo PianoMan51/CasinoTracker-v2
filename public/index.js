@@ -41,7 +41,6 @@ let sideBar = document.getElementById("sidebar");
 let showSidebar = localStorage.getItem("showSidebar") === "true";
 let sideBarButton = document.querySelector(".collapse_sidebar_button");
 showSidebar ? sideBar.classList.remove("small") : sideBar.classList.add("small");
-document.querySelector(".rightTable").style.display = showSidebar ? "none" : "flex";
 sideBarButton.style.transform = showSidebar ? "rotate(0deg)" : "rotate(180deg)";
 let year = 2024;
 
@@ -85,6 +84,7 @@ async function getMisc(type) {
 
 currentMonthSpan.onclick = () => {
   totalView = !totalView;
+  currentFilter = null;
   document.getElementById("prevMonth").classList.toggle("hidden");
   document.getElementById("nextMonth").classList.toggle("hidden");
 
@@ -104,7 +104,6 @@ sideBarButton.addEventListener("click", () => {
   if (showSidebar) {
     sideBar.classList.remove("small");
     sideBarButton.style.transform = "rotate(0deg)";
-    document.querySelector(".rightTable").style.display = "none";
 
     nav.forEach((nav) => {
       nav.querySelector("span").style.display = "flex";
@@ -112,7 +111,6 @@ sideBarButton.addEventListener("click", () => {
   } else {
     sideBar.classList.add("small");
     sideBarButton.style.transform = "rotate(180deg)";
-    document.querySelector(".rightTable").style.display = "flex";
 
     nav.forEach((nav) => {
       nav.querySelector("span").style.display = "none";
@@ -186,8 +184,8 @@ editBtn.onclick = () => {
 
 monthBarChartToggle.onclick = () => {
   monthBarChartToggle.className = monthBarChartToggle.className == "Casinos" ? "Campaigns" : "Casinos";
-  updateMonthCharts(monthBarChartToggle.className);
   monthBarChartToggle.innerHTML = monthBarChartToggle.className;
+  updateMonthCharts(monthBarChartToggle.className);
 };
 
 reopenCasinoSelects.onclick = () => casinoSelectsContainer.classList.toggle("open");
@@ -258,7 +256,6 @@ function changeMonth(direction) {
   currentMonthSpan.innerHTML = months[currentMonth];
   updateList();
   updateAddLists();
-  updateMonthCharts();
 }
 
 document.getElementById("inputsContainerButton").onclick = () => {
@@ -305,7 +302,6 @@ function addEntry() {
       // If the data was written successfully, update the UI and perform other actions
       updateList();
       updateDashboard();
-      updateMonthCharts();
 
       // Toggle UI elements and reset inputs
       inputsContainer.classList.toggle("hidden");
@@ -421,7 +417,7 @@ async function updateList() {
   for (let i = 0; i < 20; i++) {
     let offline_element = document.createElement("div");
     offline_element.setAttribute("class", "offline_element");
-    entriesList.appendChild(offline_element);
+    //entriesList.appendChild(offline_element);
   }
 
   try {
@@ -453,15 +449,14 @@ async function updateList() {
       entriesList.append(entryContainer);
     });
   } catch (error) {
-    console.error("Error updating list", error);  
-  } finally {
-    
+    console.error("Error updating list", error);
   }
 
   // Apply the current filter if applicable
   if (currentFilter) {
     filterEntries(document.querySelector(".addList .selected").classList[0].slice(0, -9));
   }
+  updateMonthCharts()
 }
 
 function checkCash(checkBox, key) {
@@ -630,12 +625,10 @@ async function updateDashboard(category) {
 
     dashBoardTotalBarchart.data.datasets[0].data = totalBarchartList;
     dashBoardTotalBarchart.data.labels = months;
-    dashBoardTotalBarchart.data.datasets[0].backgroundColor =
-      category === "totalLoss" ? "rgb(231, 76, 60)" : "rgb(46, 204, 113)";
+    dashBoardTotalBarchart.data.datasets[0].backgroundColor = category === "totalLoss" ? "rgb(231, 76, 60)" : "rgb(46, 204, 113)";
     document.querySelector(".totalProfit .value").textContent = "$" + totalProfits.value.toFixed(0);
     document.querySelector(".totalLoss .value").textContent = "$" + totalLosses.value.toFixed(0);
-    document.querySelector(".totalWin .value").textContent =
-      "$" + (totalLosses.value * -1 + totalProfits.value).toFixed(0);
+    document.querySelector(".totalWin .value").textContent = "$" + (totalLosses.value * -1 + totalProfits.value).toFixed(0);
     document.querySelector(".totalBet .value").textContent = "$" + totalBets.value.toFixed(0);
     document.querySelector(".totalPayout .value").textContent = "$" + totalPayouts.value.toFixed(0);
     document.querySelector(".totalPending .value").textContent = "$" + pendings.value.toFixed(0);
@@ -652,7 +645,7 @@ async function updateDashboard(category) {
   }
 }
 
-async function updateMonthCharts(category) {
+function updateMonthCharts(category) {
   let wins = 0;
   let losses = 0;
   let monthTotalProfit = 0;
@@ -667,80 +660,77 @@ async function updateMonthCharts(category) {
     category = monthBarChartToggle.className;
   }
 
-  try {
-    const data = await fetchMonthEntries(year, months[currentMonth]);
-    if (data) {
-      data.forEach((entry) => {
-        let outcome = entry.win - entry.bet;
+  let entries = currentFilter
+    ? document.querySelectorAll(".entryContainer.filter")
+    : document.querySelectorAll(".entryContainer");
+  entries.forEach((entry) => {
+    let casino = entry.children[1].innerHTML;
+    let campaign = entry.children[2].innerHTML;
+    let bet = entry.children[3].value;
+    let win = entry.children[4].value;
+    let outcome = win - bet;
+    let cashed_out = entry.children[6].classList.contains("checked");
 
-        if (category == "Casinos") {
-          if (!monthBarCategory.includes(entry.casino)) {
-            monthBarCategory.push(entry.casino);
-            monthBarData[entry.casino] = 0;
-          }
-        } else {
-          if (!monthBarCategory.includes(entry.campaign)) {
-            monthBarCategory.push(entry.campaign);
-            monthBarData[entry.campaign] = 0;
-          }
-        }
-
-        outcome > 0 ? (wins += +outcome.toFixed(0)) : entry.win ? (losses += +outcome.toFixed(0)) : (losses += 0);
-
-        if (entry.cashed_out) {
-          if (category == "Casinos") {
-            monthTotalProfit += +outcome;
-            monthBarData[entry.casino] += +outcome;
-          } else {
-            monthTotalProfit += +outcome;
-            monthBarData[entry.campaign] += +outcome;
-          }
-        }
-      });
-    } else {
-    }
-
-    let winRatio = wins === 0 ? 0 : ((monthTotalProfit / wins) * 100).toFixed(0);
-
-    document.querySelector(".doughnut.profits").innerHTML = "$" + monthTotalProfit.toFixed(0);
-    document.querySelector(".doughnut.sub.ratio").innerHTML = winRatio + "/" + (100 - winRatio);
-
-    let sortedData = Object.entries(monthBarData).sort((a, b) => b[1] - a[1]);
-
-    let sortedLabels = sortedData.map((entry) => entry[0]);
-    let sortedChartData = sortedData.map((entry) => entry[1]);
-
-    sortedChartData.forEach((val, index, arr) => {
-      if (val < 0) {
-        arr[index] = val * -1;
-        barColors.push("rgb(231, 76, 60)");
-      } else {
-        barColors.push("rgb(46, 204, 113)");
+    if (category == "Casinos") {
+      if (!monthBarCategory.includes(casino)) {
+        monthBarCategory.push(casino);
+        monthBarData[casino] = 0;
       }
-    });
-
-    monthBarProfits.data.labels = sortedLabels;
-    monthBarProfits.data.datasets[0].data = sortedChartData;
-
-    document.querySelector(".monthBarChart").style.height = `${sortedLabels.length * 2.5}vh`;
-
-    monthBarProfits.data.datasets[0].backgroundColor = barColors;
-
-    if (wins == 0 && losses == 0) {
-      monthDoughnutProfit.data.datasets[0].data = [100];
-      monthDoughnutProfit.data.datasets[0].backgroundColor = ["rgb(243, 156, 18)"];
     } else {
-      monthDoughnutProfit.data.datasets[0].data = [wins, losses];
-      monthDoughnutProfit.data.datasets[0].backgroundColor = ["rgb(46, 204, 113)", "rgb(231, 76, 60)"];
+      if (!monthBarCategory.includes(campaign)) {
+        monthBarCategory.push(campaign);
+        monthBarData[campaign] = 0;
+      }
     }
 
-    monthDoughnutProfit.update();
-    monthBarProfits.update();
-  } catch (error) {
-    console.error("Error fetching data", error);
-  } finally {
-    canvasElement.style.filter = "";
+    outcome > 0 ? (wins += +outcome) : win ? (losses += +outcome) : (losses += 0);
+
+    if (cashed_out) {
+      if (category == "Casinos") {
+        monthTotalProfit += +outcome;
+        monthBarData[casino] += +outcome;
+      } else {
+        monthTotalProfit += +outcome;
+        monthBarData[campaign] += +outcome;
+      }
+    }
+  });
+
+  let winRatio = wins === 0 ? 0 : ((monthTotalProfit / wins) * 100).toFixed(0);
+  document.querySelector(".doughnut.profits").innerHTML = "$" + monthTotalProfit.toFixed(0);
+  document.querySelector(".doughnut.sub.ratio").innerHTML = winRatio + "/" + (100 - winRatio);
+
+  let sortedData = Object.entries(monthBarData).sort((a, b) => b[1] - a[1]);
+
+  let sortedLabels = sortedData.map((entry) => entry[0]);
+  let sortedChartData = sortedData.map((entry) => entry[1]);
+
+  sortedChartData.forEach((val, index, arr) => {
+    if (val < 0) {
+      arr[index] = val * -1;
+      barColors.push("rgb(231, 76, 60)");
+    } else {
+      barColors.push("rgb(46, 204, 113)");
+    }
+  });
+
+  monthBarProfits.data.labels = sortedLabels;
+  monthBarProfits.data.datasets[0].data = sortedChartData;
+
+  document.querySelector(".monthBarChart").style.height = `${sortedLabels.length * 2.5}vh`;
+
+  monthBarProfits.data.datasets[0].backgroundColor = barColors;
+
+  if (wins == 0 && losses == 0) {
+    monthDoughnutProfit.data.datasets[0].data = [100];
+    monthDoughnutProfit.data.datasets[0].backgroundColor = ["rgb(243, 156, 18)"];
+  } else {
+    monthDoughnutProfit.data.datasets[0].data = [wins, losses];
+    monthDoughnutProfit.data.datasets[0].backgroundColor = ["rgb(46, 204, 113)", "rgb(231, 76, 60)"];
   }
+
+  monthDoughnutProfit.update();
+  monthBarProfits.update();
 }
 
 async function removeEntry(event) {
@@ -840,7 +830,6 @@ function editEntry(event) {
           activeEdit = false;
           editBtn.classList.toggle("active");
           updateList();
-          updateMonthCharts();
         })
         .catch((error) => {
           console.error("Error updating entry: ", error);
@@ -850,13 +839,26 @@ function editEntry(event) {
 }
 
 async function updateAddLists() {
-  document.querySelector(".addCasinosList").innerHTML = "";
-  document.querySelector(".addCampaignsList").innerHTML = "";
+  let casinoContainerList = document.querySelector(".addCasinosList");
+  let campaignContainerList = document.querySelector(".addCampaignsList");
   const casinos = await getMisc("Casinos");
   const campaigns = await getMisc("Campaigns");
 
+  for (let i = 0; i < 10; i++) {
+    let offline_element = document.createElement("div");
+    offline_element.setAttribute("class", "offline_element");
+    //casinoContainerList.appendChild(offline_element);
+  }
+
+  for (let i = 0; i < 10; i++) {
+    let offline_element = document.createElement("div");
+    offline_element.setAttribute("class", "offline_element");
+    //campaignContainerList.appendChild(offline_element);
+  }
+
   try {
     let entries = [];
+
     if (!totalView) {
       const data = await fetchMonthEntries(year, months[currentMonth]);
       if (data) {
@@ -870,9 +872,11 @@ async function updateAddLists() {
       }
     }
 
+    casinoContainerList.innerHTML = "";
+
     casinos.forEach((casino) => {
       let casinoContainer = document.createElement("div");
-      casinoContainer.setAttribute("class", "casinoContainer");
+      casinoContainer.setAttribute("class", "casinoContainer addListContainer");
 
       let casinoCount = 0;
       entries.forEach((entry) => {
@@ -881,9 +885,9 @@ async function updateAddLists() {
         }
       });
 
-      casinoContainer.innerHTML = `<span>${casino}</span><span>${casinoCount++}</span>`;
+      casinoContainer.innerHTML = `<span>${casino}</span><span>${casinoCount}</span>`;
 
-      document.querySelector(".addCasinosList").append(casinoContainer);
+      casinoContainerList.append(casinoContainer);
     });
   } catch (error) {
     console.error("Error updating list", error);
@@ -891,9 +895,25 @@ async function updateAddLists() {
 
   try {
     let entries = [];
+
+    if (!totalView) {
+      const data = await fetchMonthEntries(year, months[currentMonth]);
+      if (data) {
+        entries = Object.values(data);
+      }
+    } else {
+      // Fetch data for all months in the year
+      for (let i = 0; i < 12; i++) {
+        const data = await fetchMonthEntries(year, months[i]);
+        entries.push(...data);
+      }
+    }
+
+    campaignContainerList.innerHTML = "";
+
     campaigns.forEach((campaign) => {
       let campaignContainer = document.createElement("div");
-      campaignContainer.setAttribute("class", "campaignContainer");
+      campaignContainer.setAttribute("class", "campaignContainer addListContainer");
 
       let campaignCount = 0;
       entries.forEach((entry) => {
@@ -904,7 +924,7 @@ async function updateAddLists() {
 
       campaignContainer.innerHTML = `<span>${campaign}</span><span>${campaignCount}</span>`;
 
-      document.querySelector(".addCampaignsList").append(campaignContainer);
+      campaignContainerList.append(campaignContainer);
     });
   } catch (error) {
     console.error("Error updating list", error);
@@ -927,14 +947,17 @@ async function updateAddLists() {
         });
         this.classList.add("selected");
         currentFilter = this.children[0].innerHTML;
+        
       }
       filterEntries(this.classList[0].slice(0, -9));
+      updateList();
     };
   });
 }
 
 function filterEntries(category) {
   let entries = document.querySelectorAll(".entryContainer");
+  let filteredEntries = [];
 
   entries.forEach((entry) => {
     let filterType = category == "casino" ? entry.children[1].innerHTML : entry.children[2].innerHTML;
@@ -943,6 +966,7 @@ function filterEntries(category) {
         entry.style.display = "none";
       } else {
         entry.classList.toggle("filter");
+        filteredEntries.push(entry);
       }
     }
   });
@@ -1125,6 +1149,5 @@ let monthBarProfits = new Chart("monthChart_barchart", {
   },
 });
 
-updateAddLists();
 updateDashboard("totalProfit");
 changeMonth();
