@@ -22,6 +22,7 @@
   --blue: #3498db;
   --darkblue: #2980b9;
   --paper: #f7f1e3;
+  --sectionBorderRadius: 6px
 }
 
 * {
@@ -34,7 +35,7 @@ body {
 }
 
 #app {
-  min-width: 1000px;
+  min-width: 1575px;
   max-width: 2000px;
   height: 95vh;
   margin: 20px auto auto auto;
@@ -69,7 +70,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 250px;
+  min-width: 190px;
   transition: .2s;
   background-color: white;
   border-radius: 0px 0px 0px 15px;
@@ -81,7 +82,7 @@ body {
 }
 
 #sidebar.small {
-  width: 80px;
+  min-width: 80px;
   transition: .2s;
 }
 
@@ -201,4 +202,8 @@ body {
 }
 
 
-@media screen and (max-width: 1300px) {}
+/* @media screen and (max-width: 412px) {
+  .banner{
+    background-color: var(--red);
+  }
+} */

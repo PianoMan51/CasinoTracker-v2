@@ -43,13 +43,16 @@ let sideBarButton = document.querySelector(".collapse_sidebar_button");
 showSidebar ? sideBar.classList.remove("small") : sideBar.classList.add("small");
 sideBarButton.style.transform = showSidebar ? "rotate(0deg)" : "rotate(180deg)";
 let year = 2024;
-
 let currentFilter = null;
 let isAscending = true;
 let totalView = false;
 let activeRemove = false;
 let activeEdit = false;
 let activeAdd = false;
+
+window.addEventListener("resize", function () {
+  showSidebar && this.window.innerWidth < 1000 ? this.document.getElementById("app").style.minWidth ="1030px" : "" 
+})
 
 const months = [
   "January",
@@ -100,6 +103,8 @@ sideBarButton.addEventListener("click", () => {
   localStorage.setItem("showSidebar", showSidebar);
 
   let nav = document.querySelectorAll(".nav");
+
+  window.innerWidth < 1070 ? (!showSidebar ? document.getElementById("app").style.minWidth = "925px" : "") : "";
 
   if (showSidebar) {
     sideBar.classList.remove("small");
@@ -154,6 +159,10 @@ document.querySelectorAll(".nav").forEach((button) => {
     document.querySelector(".pageContent." + content).style.display = "flex";
     localStorage.setItem("currentPageContent", content);
     resetInputs();
+
+    if (button.getAttribute("name") == "dashboard") {
+      updateDashboard(document.querySelector(".card.active").classList[1]);
+    }
   });
 });
 
@@ -377,7 +386,7 @@ function createEntryContainer(entry, key) {
   entryContainer.innerHTML = `
     <span style="width: 80px">${entry.date}</span>
     <span style="flex: 1">${entry.casino}</span>
-    <span style="flex: 1">${entry.campaign ? entry.campaign : "N/A"}</span>
+    <span style="flex: 1; min-width: 115px">${entry.campaign ? entry.campaign : "N/A"}</span>
     <span style="width: 80px">$${bet.toFixed(2)}</span>
     <span style="width: 80px;">${entry.win ? "$" + win.toFixed(2) : "Pending"}</span>
     <span style="width: 80px; margin-right: 40px; background-color: ${color}; color: white;">${
@@ -456,7 +465,7 @@ async function updateList() {
   if (currentFilter) {
     filterEntries(document.querySelector(".addList .selected").classList[0].slice(0, -9));
   }
-  updateMonthCharts()
+  updateMonthCharts();
 }
 
 function checkCash(checkBox, key) {
@@ -564,7 +573,7 @@ async function updateDashboard(category) {
           pendings.value += +entry.bet;
 
           monthBets += +entry.bet;
-          monthPending += profit;
+          monthPending += +entry.bet;
         }
 
         switch (category) {
@@ -610,7 +619,7 @@ async function updateDashboard(category) {
         const element = document.createElement("div");
         element.setAttribute("class", "listContainerElement");
         element.innerHTML = `
-          <span class="label" style="flex: 1">${name}</span>
+          <span class="label" style="flex: 1">${name ? name : "Other"}</span>
           <span class="profits" style="background-color: ${color}">$${profit.toFixed(0)}</span>
         `;
         container.append(element);
@@ -625,10 +634,16 @@ async function updateDashboard(category) {
 
     dashBoardTotalBarchart.data.datasets[0].data = totalBarchartList;
     dashBoardTotalBarchart.data.labels = months;
-    dashBoardTotalBarchart.data.datasets[0].backgroundColor = category === "totalLoss" ? "rgb(231, 76, 60)" : "rgb(46, 204, 113)";
+    dashBoardTotalBarchart.data.datasets[0].backgroundColor =
+      category === "totalLoss"
+        ? "rgb(231, 76, 60)"
+        : category === "totalPending"
+        ? "rgb(241, 196, 15)"
+        : "rgb(46, 204, 113)";
     document.querySelector(".totalProfit .value").textContent = "$" + totalProfits.value.toFixed(0);
     document.querySelector(".totalLoss .value").textContent = "$" + totalLosses.value.toFixed(0);
-    document.querySelector(".totalWin .value").textContent = "$" + (totalLosses.value * -1 + totalProfits.value).toFixed(0);
+    document.querySelector(".totalWin .value").textContent =
+      "$" + (totalLosses.value * -1 + totalProfits.value).toFixed(0);
     document.querySelector(".totalBet .value").textContent = "$" + totalBets.value.toFixed(0);
     document.querySelector(".totalPayout .value").textContent = "$" + totalPayouts.value.toFixed(0);
     document.querySelector(".totalPending .value").textContent = "$" + pendings.value.toFixed(0);
@@ -947,7 +962,6 @@ async function updateAddLists() {
         });
         this.classList.add("selected");
         currentFilter = this.children[0].innerHTML;
-        
       }
       filterEntries(this.classList[0].slice(0, -9));
       updateList();
@@ -1059,6 +1073,30 @@ let dashBoardTotalBarchart = new Chart("chart_profits", {
         },
       },
     },
+    onClick: (event) => {
+      const points = dashBoardTotalBarchart.getElementsAtEventForMode(event, "nearest", { intersect: true }, false);
+
+      if (points.length) {
+        const firstPoint = points[0];
+        const month = dashBoardTotalBarchart.data.labels[firstPoint.index];
+
+        currentMonth = months.indexOf(month);
+        localStorage.setItem("currentMonth", currentMonth);
+
+        document.querySelectorAll(".pageContent").forEach((page) => {
+          page.style.display = "none";
+        });
+        document.querySelector(".pageContent.table").style.display = "flex";
+        changeMonth();
+      }
+    },
+    onHover: (event, elements) => {
+      if (elements.length) {
+        event.native.target.style.cursor = "pointer";
+      } else {
+        event.native.target.style.cursor = "default";
+      }
+    },
   },
 });
 
@@ -1106,7 +1144,7 @@ let monthBarProfits = new Chart("monthChart_barchart", {
     datasets: [
       {
         data: [],
-        borderRadius: 10,
+        borderRadius: 5,
         borderSkipped: false,
         backgroundColor: [],
       },
