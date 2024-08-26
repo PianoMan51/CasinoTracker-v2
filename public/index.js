@@ -663,6 +663,8 @@ async function updateDashboard(category) {
 function updateMonthCharts(category) {
   let wins = 0;
   let losses = 0;
+  let positives = 0;
+  let negatives = 0;
   let monthTotalProfit = 0;
   let monthBarCategory = [];
   let monthBarData = {};
@@ -699,6 +701,10 @@ function updateMonthCharts(category) {
     }
 
     outcome > 0 ? (wins += +outcome) : win ? (losses += +outcome) : (losses += 0);
+    outcome > 0 ? positives++ : "";
+    outcome < 0 ? negatives++ : "";
+
+    console.log(positives, negatives)
 
     if (cashed_out) {
       if (category == "Casinos") {
@@ -711,9 +717,9 @@ function updateMonthCharts(category) {
     }
   });
 
-  let winRatio = wins === 0 ? 0 : ((monthTotalProfit / wins) * 100).toFixed(0);
+  
   document.querySelector(".doughnut.profits").innerHTML = "$" + monthTotalProfit.toFixed(0);
-  document.querySelector(".doughnut.sub.ratio").innerHTML = winRatio + "/" + (100 - winRatio);
+  document.querySelector(".doughnut.sub.ratio").innerHTML = `${positives}/${negatives}`
 
   let sortedData = Object.entries(monthBarData).sort((a, b) => b[1] - a[1]);
 

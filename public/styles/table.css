@@ -539,9 +539,9 @@
 }
 
  @media screen and (max-width: 1590px) {
-  .table.section.rightTable {
+  /* .table.section.rightTable {
     display: none;
-  }
+  } */
 
   #app{
     min-width: 1300px;
