@@ -51,8 +51,8 @@ let activeEdit = false;
 let activeAdd = false;
 
 window.addEventListener("resize", function () {
-  showSidebar && this.window.innerWidth < 1000 ? this.document.getElementById("app").style.minWidth ="1030px" : "" 
-})
+  showSidebar && this.window.innerWidth < 1000 ? (this.document.getElementById("app").style.minWidth = "1030px") : "";
+});
 
 const months = [
   "January",
@@ -91,8 +91,6 @@ currentMonthSpan.onclick = () => {
   document.getElementById("prevMonth").classList.toggle("hidden");
   document.getElementById("nextMonth").classList.toggle("hidden");
 
-  totalView ? entriesList.classList.remove("hide-scrollbar") : entriesList.classList.add("hide-scrollbar");
-
   currentMonthSpan.innerHTML = totalView ? "Total" : months[currentMonth];
   updateList();
   updateAddLists();
@@ -104,7 +102,7 @@ sideBarButton.addEventListener("click", () => {
 
   let nav = document.querySelectorAll(".nav");
 
-  window.innerWidth < 1070 ? (!showSidebar ? document.getElementById("app").style.minWidth = "925px" : "") : "";
+  window.innerWidth < 1070 ? (!showSidebar ? (document.getElementById("app").style.minWidth = "925px") : "") : "";
 
   if (showSidebar) {
     sideBar.classList.remove("small");
@@ -704,8 +702,6 @@ function updateMonthCharts(category) {
     outcome > 0 ? positives++ : "";
     outcome < 0 ? negatives++ : "";
 
-    console.log(positives, negatives)
-
     if (cashed_out) {
       if (category == "Casinos") {
         monthTotalProfit += +outcome;
@@ -717,9 +713,8 @@ function updateMonthCharts(category) {
     }
   });
 
-  
   document.querySelector(".doughnut.profits").innerHTML = "$" + monthTotalProfit.toFixed(0);
-  document.querySelector(".doughnut.sub.ratio").innerHTML = `${positives}/${negatives}`
+  document.querySelector(".doughnut.sub.ratio").innerHTML = `${positives}/${negatives}/${positives + negatives}`;
 
   let sortedData = Object.entries(monthBarData).sort((a, b) => b[1] - a[1]);
 
@@ -952,6 +947,13 @@ async function updateAddLists() {
   }
 
   let elements = document.querySelectorAll(".addContainer .addList div");
+
+  document.querySelectorAll(".addListContainer").forEach((filterContainerSpan) => {
+    if (filterContainerSpan.children[0].innerHTML == currentFilter) {
+      filterContainerSpan.classList.add("selected");
+    }
+  });
+
   elements.forEach((el) => {
     el.onclick = function () {
       //resets list, shows every entry

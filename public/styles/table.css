@@ -11,6 +11,10 @@
   margin-bottom: 8px;
 }
 
+#entriesList::-webkit-scrollbar{
+  display: none;
+}
+
 .entriesListLoader {
   box-sizing: border-box;
   position: absolute;
@@ -18,10 +22,6 @@
   left: 50%;
   transform: translate(50%) scale(2);
   color: var(--gray);
-}
-
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
 }
 
 #changeMonths {
@@ -539,9 +539,9 @@
 }
 
  @media screen and (max-width: 1590px) {
-  /* .table.section.rightTable {
+  .table.section.rightTable {
     display: none;
-  } */
+  }
 
   #app{
     min-width: 1300px;
