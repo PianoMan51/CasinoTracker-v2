@@ -714,7 +714,7 @@ function updateMonthCharts(category) {
   });
 
   document.querySelector(".doughnut.profits").innerHTML = "$" + monthTotalProfit.toFixed(0);
-  document.querySelector(".doughnut.sub.ratio").innerHTML = `${positives}/${negatives}/${positives + negatives}`;
+  document.querySelector(".doughnut.sub.ratio").innerHTML = `${positives}/${negatives}`
 
   let sortedData = Object.entries(monthBarData).sort((a, b) => b[1] - a[1]);
 
