@@ -75,6 +75,14 @@
   overflow: hidden;
 }
 
+.dashboard.column:first-of-type{
+  width: 60%;
+}
+
+.dashboard.column:last-of-type{
+  width: 40%;
+}
+
 .dashboard.column {
   display: flex;
   flex-direction: column;

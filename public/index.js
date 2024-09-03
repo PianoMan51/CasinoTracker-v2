@@ -1122,6 +1122,9 @@ let dashBoardTotalBarchart = new Chart("chart_profits", {
         currentMonth = months.indexOf(month);
         localStorage.setItem("currentMonth", currentMonth);
         currentFilter = null;
+        totalView = false
+        document.getElementById("prevMonth").classList.remove("hidden");
+        document.getElementById("nextMonth").classList.remove("hidden");
 
         document.querySelectorAll(".pageContent").forEach((page) => {
           page.style.display = "none";
