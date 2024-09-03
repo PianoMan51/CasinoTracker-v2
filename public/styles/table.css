@@ -216,6 +216,11 @@
   margin-right: auto;
 }
 
+#actionButtons.hidden{
+  display: none;
+}
+
+
 .actionButtons {
   background-color: transparent;
   height: 40px;

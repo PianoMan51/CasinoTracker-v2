@@ -90,6 +90,8 @@ currentMonthSpan.onclick = () => {
   document.getElementById("prevMonth").classList.toggle("hidden");
   document.getElementById("nextMonth").classList.toggle("hidden");
 
+  document.getElementById("actionButtons").classList.toggle("hidden")
+
   currentMonthSpan.innerHTML = totalView ? "Total" : months[currentMonth];
   updateList();
   updateAddLists();
