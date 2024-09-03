@@ -115,7 +115,7 @@
 }
 
 .entryContainer span:hover {
-  transform: scale(1.05);
+  transform: translateX(6px);
   transition: 0.2s;
   background-color: var(--gray);
 }
@@ -128,6 +128,7 @@
 .entryContainer.editable {
   background-color: var(--lightgray);
   cursor: pointer;
+  transition: .2s;
 }
 
 .entryContainer.deletable span,
@@ -224,10 +225,9 @@
   margin: 0px 10px;
   transform: scale(1);
   transition: all 0.15s;
-  z-index: 1;
 }
 
-.actionButtons:hover {
+.actionButtons.active {
   transform: scale(1.1);
 }
 

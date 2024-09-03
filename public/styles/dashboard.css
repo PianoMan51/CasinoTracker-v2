@@ -123,6 +123,7 @@
   font-size: 0.9em;
   user-select: none;
   transition: ease-in-out 0.15s;
+  cursor: pointer;
 }
 
 .listContainerElement .label:hover {
@@ -137,4 +138,8 @@
   color: white;
   width: 50px;
   text-align: left;
+}
+
+.listContainerElement .profits:hover{
+  width: 60px;
 }

@@ -87,7 +87,6 @@ async function getMisc(type) {
 
 currentMonthSpan.onclick = () => {
   totalView = !totalView;
-  currentFilter = null;
   document.getElementById("prevMonth").classList.toggle("hidden");
   document.getElementById("nextMonth").classList.toggle("hidden");
 
@@ -263,6 +262,9 @@ function changeMonth(direction) {
   currentMonthSpan.innerHTML = months[currentMonth];
   updateList();
   updateAddLists();
+
+  let actualMonth = new Date();
+  openInputs.style.display = actualMonth.getMonth() !== currentMonth ? "none" : "inline";
 }
 
 document.getElementById("inputsContainerButton").onclick = () => {
@@ -461,7 +463,8 @@ async function updateList() {
 
   // Apply the current filter if applicable
   if (currentFilter) {
-    filterEntries(document.querySelector(".addList .selected").classList[0].slice(0, -9));
+    let category = document.querySelector(".addList .selected").classList[0].slice(0, -9)
+    filterEntries(category);
   }
   updateMonthCharts();
 }
@@ -621,6 +624,30 @@ async function updateDashboard(category) {
           <span class="profits" style="background-color: ${color}">$${profit.toFixed(0)}</span>
         `;
         container.append(element);
+
+        element.addEventListener("click", function () {
+          document.querySelectorAll(".pageContent").forEach((page) => {
+            page.style.display = "none";
+          });
+
+          currentFilter = element.querySelector(".label").innerHTML;
+
+          document.querySelector(".pageContent.table").style.display = "flex";
+
+          document.querySelectorAll(".addListContainer").forEach((filter) => {
+            if (filter.children[0].innerHTML == currentFilter) {
+              filter.classList.add("selected")
+            }
+          })
+
+          totalView = "true";
+          updateList();
+          updateAddLists();
+
+          currentMonthSpan.innerHTML = "Total";
+          document.getElementById("prevMonth").classList.toggle("hidden");
+          document.getElementById("nextMonth").classList.toggle("hidden");
+        });
       });
     };
 
@@ -714,7 +741,7 @@ function updateMonthCharts(category) {
   });
 
   document.querySelector(".doughnut.profits").innerHTML = "$" + monthTotalProfit.toFixed(0);
-  document.querySelector(".doughnut.sub.ratio").innerHTML = `${positives}/${negatives}`
+  document.querySelector(".doughnut.sub.ratio").innerHTML = `${positives}/${negatives}`;
 
   let sortedData = Object.entries(monthBarData).sort((a, b) => b[1] - a[1]);
 
@@ -1090,6 +1117,7 @@ let dashBoardTotalBarchart = new Chart("chart_profits", {
 
         currentMonth = months.indexOf(month);
         localStorage.setItem("currentMonth", currentMonth);
+        currentFilter = null;
 
         document.querySelectorAll(".pageContent").forEach((page) => {
           page.style.display = "none";
