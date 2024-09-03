@@ -688,8 +688,10 @@ async function updateDashboard(category) {
 function updateMonthCharts(category) {
   let wins = 0;
   let losses = 0;
+  let pendings = 0;
   let positives = 0;
   let negatives = 0;
+  let pendingsAmount = 0;
   let monthTotalProfit = 0;
   let monthBarCategory = [];
   let monthBarData = {};
@@ -728,6 +730,8 @@ function updateMonthCharts(category) {
     outcome > 0 ? (wins += +outcome) : win ? (losses += +outcome) : (losses += 0);
     outcome > 0 ? positives++ : "";
     outcome < 0 ? negatives++ : "";
+    !cashed_out && win ? pendings += +outcome: "";
+    !cashed_out ? pendingsAmount++ : "";
 
     if (cashed_out) {
       if (category == "Casinos") {
@@ -741,7 +745,7 @@ function updateMonthCharts(category) {
   });
 
   document.querySelector(".doughnut.profits").innerHTML = "$" + monthTotalProfit.toFixed(0);
-  document.querySelector(".doughnut.sub.ratio").innerHTML = `${positives}/${negatives}`;
+  document.querySelector(".doughnut.sub.ratio").innerHTML = `${positives}/${negatives}/${pendingsAmount}`;
 
   let sortedData = Object.entries(monthBarData).sort((a, b) => b[1] - a[1]);
 
@@ -768,8 +772,8 @@ function updateMonthCharts(category) {
     monthDoughnutProfit.data.datasets[0].data = [100];
     monthDoughnutProfit.data.datasets[0].backgroundColor = ["rgb(243, 156, 18)"];
   } else {
-    monthDoughnutProfit.data.datasets[0].data = [wins, losses];
-    monthDoughnutProfit.data.datasets[0].backgroundColor = ["rgb(46, 204, 113)", "rgb(231, 76, 60)"];
+    monthDoughnutProfit.data.datasets[0].data = [wins, losses, pendings];
+    monthDoughnutProfit.data.datasets[0].backgroundColor = ["rgb(46, 204, 113)", "rgb(231, 76, 60)", "rgb(241, 196, 15)"];
   }
 
   monthDoughnutProfit.update();

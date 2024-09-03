@@ -555,12 +555,18 @@
   }
 
   #app{
-    min-width: 1100px;
+    min-width: 1135px;
   }
 }
 
-@media screen and (max-width: 1120px) {
+@media screen and (max-width: 1155px) {
   #app{
-    min-width: 1050px;
+    min-width: 1080px;
+  }
+}
+
+@media screen and (max-width: 430px){
+  #app{
+    min-height: 1000px;
   }
 }

@@ -37,13 +37,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0px 10px 0px 10px;
+  margin-left: 10px;
 }
 
 .info{
   display: flex;
   flex-direction: column;
-  gap: 5px;
   justify-content: space-between;
   flex: 1;
 }
@@ -54,16 +53,13 @@
   width: 70%;
   border-radius: 5px;
   padding: 0px 6px;
-  height: 20px;
 }
 
 .card span {
   font-size: small;
   color: var(--darkestgray);
   border-radius: 5px;
-  width: 60%;
   padding: 0px 4px;
-  height: 14px;
 }
 
 .card_icon i {
