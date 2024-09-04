@@ -729,7 +729,7 @@ function updateMonthCharts(category) {
       }
     }
 
-    outcome > 0 ? (wins += +outcome) : win ? (losses += +outcome) : (losses += 0);
+    outcome > 0 ? (wins += +outcome) : losses += +outcome
     outcome > 0 ? positives++ : "";
     outcome < 0 ? negatives++ : "";
     !cashed_out && win ? pendings += +outcome: "";
