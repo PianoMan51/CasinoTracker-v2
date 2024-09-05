@@ -560,7 +560,7 @@
   }
 }
 
-@media screen and (max-width: 1330px) {
+/* @media screen and (max-width: 1330px) {
   .table.section.leftTable {
     display: none;
   }
@@ -592,4 +592,4 @@
   .dashboard.column:last-of-type {
     display: none;
   }
-}
+} */

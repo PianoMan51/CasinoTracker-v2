@@ -50,9 +50,9 @@ let activeRemove = false;
 let activeEdit = false;
 let activeAdd = false;
 
-window.addEventListener("resize", function () {
-  showSidebar && this.window.innerWidth < 1000 ? (this.document.getElementById("app").style.minWidth = "1030px") : "";
-});
+// window.addEventListener("resize", function () {
+//   showSidebar && this.window.innerWidth < 1000 ? (this.document.getElementById("app").style.minWidth = "1030px") : "";
+// });
 
 const months = [
   "January",
@@ -90,7 +90,7 @@ currentMonthSpan.onclick = () => {
   document.getElementById("prevMonth").classList.toggle("hidden");
   document.getElementById("nextMonth").classList.toggle("hidden");
 
-  document.getElementById("actionButtons").classList.toggle("hidden")
+  document.getElementById("actionButtons").classList.toggle("hidden");
 
   currentMonthSpan.innerHTML = totalView ? "Total" : months[currentMonth];
   updateList();
@@ -103,7 +103,7 @@ sideBarButton.addEventListener("click", () => {
 
   let nav = document.querySelectorAll(".nav");
 
-  window.innerWidth < 1070 ? (!showSidebar ? (document.getElementById("app").style.minWidth = "925px") : "") : "";
+  //window.innerWidth < 1070 ? (!showSidebar ? (document.getElementById("app").style.minWidth = "925px") : "") : "";
 
   if (showSidebar) {
     sideBar.classList.remove("small");
@@ -135,16 +135,6 @@ document.getElementById("prevMonth").onclick = () => {
 
 document.getElementById("nextMonth").onclick = () => {
   changeMonth("next");
-};
-
-document.querySelector("#casinoList .header").onclick = () => {
-  sortEntries(document.querySelector("#casinoList div"), "addList");
-  isAscending = !isAscending;
-};
-
-document.querySelector("#campaignList .header").onclick = () => {
-  sortEntries(document.querySelector("#campaignList div"), "addList");
-  isAscending = !isAscending;
 };
 
 document.querySelector(".pageContent." + currentPageContent).style.display = "flex";
@@ -465,7 +455,7 @@ async function updateList() {
 
   // Apply the current filter if applicable
   if (currentFilter) {
-    let category = document.querySelector(".addList .selected").classList[0].slice(0, -9)
+    let category = document.querySelector(".addList .selected").classList[0].slice(0, -9);
     filterEntries(category);
   }
   updateMonthCharts();
@@ -638,9 +628,9 @@ async function updateDashboard(category) {
 
           document.querySelectorAll(".addListContainer").forEach((filter) => {
             if (filter.children[0].innerHTML == currentFilter) {
-              filter.classList.add("selected")
+              filter.classList.add("selected");
             }
-          })
+          });
 
           totalView = "true";
           updateList();
@@ -729,10 +719,10 @@ function updateMonthCharts(category) {
       }
     }
 
-    outcome > 0 ? (wins += +outcome) : losses += +outcome
+    outcome > 0 ? (wins += +outcome) : (losses += +outcome);
     outcome > 0 ? positives++ : "";
     outcome < 0 ? negatives++ : "";
-    !cashed_out && win ? pendings += +outcome: "";
+    !cashed_out && win ? (pendings += +outcome) : "";
     !cashed_out ? pendingsAmount++ : "";
 
     if (cashed_out) {
@@ -775,7 +765,11 @@ function updateMonthCharts(category) {
     monthDoughnutProfit.data.datasets[0].backgroundColor = ["rgb(243, 156, 18)"];
   } else {
     monthDoughnutProfit.data.datasets[0].data = [wins, losses, pendings];
-    monthDoughnutProfit.data.datasets[0].backgroundColor = ["rgb(46, 204, 113)", "rgb(231, 76, 60)", "rgb(241, 196, 15)"];
+    monthDoughnutProfit.data.datasets[0].backgroundColor = [
+      "rgb(46, 204, 113)",
+      "rgb(231, 76, 60)",
+      "rgb(241, 196, 15)",
+    ];
   }
 
   monthDoughnutProfit.update();
@@ -979,6 +973,10 @@ async function updateAddLists() {
     console.error("Error updating list", error);
   }
 
+  isAscending = false;
+  sortEntries(document.querySelector("#casinoList div"), "addList");
+  sortEntries(document.querySelector("#campaignList div"), "addList");
+
   let elements = document.querySelectorAll(".addContainer .addList div");
 
   document.querySelectorAll(".addListContainer").forEach((filterContainerSpan) => {
@@ -1124,7 +1122,7 @@ let dashBoardTotalBarchart = new Chart("chart_profits", {
         currentMonth = months.indexOf(month);
         localStorage.setItem("currentMonth", currentMonth);
         currentFilter = null;
-        totalView = false
+        totalView = false;
         document.getElementById("prevMonth").classList.remove("hidden");
         document.getElementById("nextMonth").classList.remove("hidden");
 
