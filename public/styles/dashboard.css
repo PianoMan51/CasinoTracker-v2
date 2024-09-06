@@ -40,7 +40,7 @@
   margin-left: 10px;
 }
 
-.info{
+.info {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -75,11 +75,11 @@
   overflow: hidden;
 }
 
-.dashboard.column:first-of-type{
+.dashboard.column:first-of-type {
   width: 60%;
 }
 
-.dashboard.column:last-of-type{
+.dashboard.column:last-of-type {
   width: 40%;
 }
 
@@ -123,11 +123,15 @@
 .listContainerElement span {
   padding: 6px 10px;
   border-radius: 5px;
-  font-family: "DM Mono", monospace;
   font-size: 0.9em;
+  font-weight: 400;
   user-select: none;
   transition: ease-in-out 0.15s;
   cursor: pointer;
+}
+
+.listContainerElement span:first-of-type{
+  letter-spacing: 3px;
 }
 
 .listContainerElement .label:hover {
@@ -138,12 +142,14 @@
   background-color: var(--lightgray);
 }
 
-.listContainerElement .profits {
+.listContainerElement .profits,
+.listContainerElement .counter {
   color: white;
   width: 50px;
   text-align: left;
 }
 
-.listContainerElement .profits:hover{
+.listContainerElement .profits:hover,
+.listContainerElement .counter:hover {
   width: 60px;
 }

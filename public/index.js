@@ -623,6 +623,7 @@ async function updateDashboard(category) {
         element.setAttribute("class", "listContainerElement");
         element.innerHTML = `
           <span class="label" style="flex: 1">${name ? name : "Other"}</span>
+          <span class="counter" style="background-color: var(--lightgray); color: black">78</span>
           <span class="profits" style="background-color: ${color}">$${profit.toFixed(0)}</span>
         `;
         container.append(element);
@@ -927,14 +928,14 @@ async function updateAddLists() {
       let casinoContainer = document.createElement("div");
       casinoContainer.setAttribute("class", "casinoContainer addListContainer");
 
-      let casinoCount = 0;
+      let casinoAmount = 0;
       entries.forEach((entry) => {
         if (casino == entry.casino) {
-          casinoCount++;
+          casinoAmount++;
         }
       });
 
-      casinoContainer.innerHTML = `<span>${casino}</span><span>${casinoCount}</span>`;
+      casinoContainer.innerHTML = `<span>${casino}</span><span>${casinoAmount}</span>`;
 
       casinoContainerList.append(casinoContainer);
     });
@@ -964,14 +965,14 @@ async function updateAddLists() {
       let campaignContainer = document.createElement("div");
       campaignContainer.setAttribute("class", "campaignContainer addListContainer");
 
-      let campaignCount = 0;
+      let campaignAmount = 0;
       entries.forEach((entry) => {
         if (campaign == entry.campaign) {
-          campaignCount++;
+          campaignAmount++;
         }
       });
 
-      campaignContainer.innerHTML = `<span>${campaign}</span><span>${campaignCount}</span>`;
+      campaignContainer.innerHTML = `<span>${campaign}</span><span>${campaignAmount}</span>`;
 
       campaignContainerList.append(campaignContainer);
     });

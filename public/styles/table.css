@@ -82,7 +82,6 @@
   padding: 6px 10px;
   color: white;
   border-radius: 5px;
-  font-family: "DM Mono", monospace;
   font-size: 0.9em;
   transform: scale(1);
   transition: 0.2s;
@@ -463,7 +462,6 @@
   color: white;
   border-radius: 5px;
   padding: 4px 8px;
-  font-family: "DM Mono", monospace;
   cursor: pointer;
 }
 
@@ -500,6 +498,7 @@
   transition: 0.15s;
   cursor: pointer;
   user-select: none;
+  letter-spacing: 3px;
 }
 
 .addListContainer span:last-child {
@@ -522,7 +521,6 @@
 
 .casinoContainer,
 .campaignContainer {
-  font-family: "DM Mono", monospace;
   display: flex;
   justify-content: space-between;
 }
