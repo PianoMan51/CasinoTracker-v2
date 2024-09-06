@@ -37,11 +37,18 @@
 
 #currentMonthSpan {
   font-size: larger;
-  width: 130px;
+  width: 140px;
   text-align: center;
   cursor: pointer;
   background-color: var(--lightgray);
   border-radius: 14px;
+  transform: scale(1);
+  transition: 0.2s;
+}
+
+#currentMonthSpan:hover {
+  transform: scale(1.1);
+  transition: 0.2s;
 }
 
 .monthButtons {
@@ -215,7 +222,7 @@
   margin-right: auto;
 }
 
-#actionButtons.hidden{
+#actionButtons.hidden {
   display: none;
 }
 
@@ -551,7 +558,7 @@
   }
 }
 
-@media screen and (max-width: 1330px) {
+/* @media screen and (max-width: 1330px) {
   .table.section.leftTable {
     display: none;
   }
@@ -572,15 +579,15 @@
     max-width: 400px;
   }
 
-  #content{
+  #content {
     min-height: 919px;
   }
 
-  .dashboard.column:first-of-type{
+  .dashboard.column:first-of-type {
     width: 100%;
   }
 
-  .dashboard.column:last-of-type{
+  .dashboard.column:last-of-type {
     display: none;
   }
-}
+} */
