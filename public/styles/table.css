@@ -93,6 +93,7 @@
   transform: scale(1);
   transition: 0.2s;
   cursor: pointer;
+  font-family: "DM Mono", monospace;
 }
 
 .listHeaders span:hover {
@@ -188,6 +189,7 @@
 .checkBox:hover {
   transform: scale(1.05);
   transition: 0.2s;
+  opacity: 0.5;
 }
 
 .table.content {
@@ -225,7 +227,6 @@
 #actionButtons.hidden {
   display: none;
 }
-
 
 .actionButtons {
   background-color: transparent;
@@ -509,7 +510,7 @@
 }
 
 .addListContainer span:last-child {
-  width: 20px;
+  width: 26px;
   text-align: center;
 }
 

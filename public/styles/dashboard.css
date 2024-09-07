@@ -120,36 +120,38 @@
   height: 30px;
 }
 
-.listContainerElement span {
+.listContainerElement .label {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  background-color: var(--lightgray);
+  color: black;
   padding: 6px 10px;
   border-radius: 5px;
   font-size: 0.9em;
-  font-weight: 400;
+  font-weight: 500;
   user-select: none;
   transition: ease-in-out 0.15s;
   cursor: pointer;
 }
 
-.listContainerElement span:first-of-type{
-  letter-spacing: 3px;
-}
-
-.listContainerElement .label:hover {
+.listContainerElement .label:hover,
+.listContainerElement .counter:hover {
   background-color: var(--gray);
 }
 
-.listContainerElement .label {
-  background-color: var(--lightgray);
-}
-
-.listContainerElement .profits,
-.listContainerElement .counter {
+.listContainerElement .profits {
   color: white;
   width: 50px;
-  text-align: left;
+  padding: 6px 10px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  font-weight: 500;
+  user-select: none;
+  transition: ease-in-out 0.15s;
+  cursor: pointer;
 }
 
-.listContainerElement .profits:hover,
-.listContainerElement .counter:hover {
+.listContainerElement .profits:hover {
   width: 60px;
 }

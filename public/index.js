@@ -467,11 +467,7 @@ function checkCash(checkBox, key) {
   checkBox.classList.toggle("checked");
   let profit = entryContainer.children[5].value;
 
-  entryContainer.children[5].style.backgroundColor = checkBox.classList.contains("checked")
-    ? profit > 0
-      ? "var(--green)"
-      : "var(--red)"
-    : "var(--yellow)";
+  entryContainer.children[5].style.backgroundColor = checkBox.classList.contains("checked") ? ( profit >= 0 ? "var(--green" : "var(--red)") : "var(--yellow)"
 
   let content = {
     date: entryContainer.children[0].innerHTML,
@@ -604,16 +600,18 @@ async function updateDashboard(category) {
       totalBarchartList.push(dataCategory.toFixed(0));
     });
 
-    const createTotalElement = (entries, containerId) => {
+    const createTotalElement = (totals, containerId) => {
       const container = document.getElementById(containerId);
       container.innerHTML = "";
-      entries.forEach(([name, profit]) => {
+      totals.forEach(([name, profit]) => {
         const color = profit > 0 ? "var(--green)" : "var(--red)";
         const element = document.createElement("div");
         element.setAttribute("class", "listContainerElement");
         element.innerHTML = `
-          <span class="label" style="flex: 1">${name ? name : "Other"}</span>
-          <span class="counter" style="background-color: var(--lightgray); color: black">78</span>
+        <div class="label" style="flex: 1">
+          <span>${name ? name : "Other"}</span>
+          <span class="counter"></span>
+        </div>
           <span class="profits" style="background-color: ${color}">$${profit.toFixed(0)}</span>
         `;
         container.append(element);
@@ -720,7 +718,9 @@ function updateMonthCharts(category) {
       }
     }
 
-    outcome > 0 ? (wins += +outcome) : (losses += +outcome);
+    if (win) {
+      outcome > 0 ? (cashed_out && (wins += +outcome)) : (losses += +outcome);
+    }
     outcome > 0 ? positives++ : "";
     outcome < 0 ? negatives++ : "";
     !cashed_out && win ? (pendings += +outcome) : "";
@@ -740,7 +740,10 @@ function updateMonthCharts(category) {
   document.querySelector(".doughnut.profits").innerHTML = "$" + monthTotalProfit.toFixed(0);
   document.querySelector(".doughnut.sub.ratio").innerHTML = `${positives}/${negatives}/${pendingsAmount}`;
 
-  let sortedData = Object.entries(monthBarData).sort((a, b) => b[1] - a[1]);
+  // Filter out categories where the data is 0
+  let filteredData = Object.entries(monthBarData).filter(([, value]) => value !== 0);
+
+  let sortedData = filteredData.sort((a, b) => b[1] - a[1]);
 
   let sortedLabels = sortedData.map((entry) => entry[0]);
   let sortedChartData = sortedData.map((entry) => entry[1]);
@@ -922,14 +925,14 @@ async function updateAddLists() {
       let casinoContainer = document.createElement("div");
       casinoContainer.setAttribute("class", "casinoContainer addListContainer");
 
-      let casinoAmount = 0;
-      entries.forEach((entry) => {
+      let casinoCount = 0;
+      entries.forEach((entry, index) => {
         if (casino == entry.casino) {
-          casinoAmount++;
+          casinoCount++;
         }
       });
 
-      casinoContainer.innerHTML = `<span>${casino}</span><span>${casinoAmount}</span>`;
+      casinoContainer.innerHTML = `<span>${casino}</span><span>${casinoCount}</span>`;
 
       casinoContainerList.append(casinoContainer);
     });
@@ -959,14 +962,14 @@ async function updateAddLists() {
       let campaignContainer = document.createElement("div");
       campaignContainer.setAttribute("class", "campaignContainer addListContainer");
 
-      let campaignAmount = 0;
+      let campaignCount = 0;
       entries.forEach((entry) => {
         if (campaign == entry.campaign) {
-          campaignAmount++;
+          campaignCount++;
         }
       });
 
-      campaignContainer.innerHTML = `<span>${campaign}</span><span>${campaignAmount}</span>`;
+      campaignContainer.innerHTML = `<span>${campaign}</span><span>${campaignCount}</span>`;
 
       campaignContainerList.append(campaignContainer);
     });
