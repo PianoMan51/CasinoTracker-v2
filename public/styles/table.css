@@ -550,16 +550,14 @@
 }
 
 @media screen and (max-width: 1590px) {
-  .table.section.rightTable {
-    display: none;
-  }
+
 
   #app {
     min-width: 1300px;
   }
 }
 
-/* @media screen and (max-width: 1330px) {
+@media screen and (max-width: 1330px) {
   .table.section.leftTable {
     display: none;
   }
@@ -574,21 +572,3 @@
     min-width: 1080px;
   }
 }
-
-@media screen and (max-width: 412px) {
-  #app {
-    max-width: 400px;
-  }
-
-  #content {
-    min-height: 919px;
-  }
-
-  .dashboard.column:first-of-type {
-    width: 100%;
-  }
-
-  .dashboard.column:last-of-type {
-    display: none;
-  }
-} */
