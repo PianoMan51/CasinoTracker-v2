@@ -719,9 +719,9 @@ function updateMonthCharts(category) {
     }
 
     if (win) {
-      outcome > 0 ? cashed_out && (wins += +outcome) : (losses += +outcome);
+      outcome > 0 ? (cashed_out && (wins += +outcome)) : (losses += +outcome);
     }
-    if (outcome > 0 && cashed_out) positives++;
+    outcome > 0 ? positives++ : "";
     outcome < 0 ? negatives++ : "";
     !cashed_out && win ? (pendings += +outcome) : "";
     !cashed_out ? pendingsAmount++ : "";
@@ -1017,15 +1017,13 @@ function filterEntries(category) {
   let filteredEntries = [];
 
   entries.forEach((entry) => {
-    const filterType = filterTypeIndex === 5 ? entry.children[filterTypeIndex].style.backgroundColor : entry.children[filterTypeIndex].innerHTML;
-
+    let filterType = category == "casino" ? entry.children[1].innerHTML : entry.children[2].innerHTML;
     if (currentFilter) {
-      const match = category === "casino" || category === "campaign" ? filterType === currentFilter : filterType === filterColor;
-
-      if (!match) {
+      if (filterType !== currentFilter) {
         entry.style.display = "none";
       } else {
         entry.classList.toggle("filter");
+        filteredEntries.push(entry);
       }
     }
   });
@@ -1182,27 +1180,6 @@ let monthDoughnutProfit = new Chart("monthChart_doughnut_profits", {
       legend: {
         display: false,
       },
-    },
-    onClick: (event) => {
-      const points = monthDoughnutProfit.getElementsAtEventForMode(event, "nearest", { intersect: true }, false);
-
-      if (points.length) {
-        const firstPoint = points[0];
-        let type = monthDoughnutProfit.data.labels[firstPoint.index];
-        if(currentFilter){
-          currentFilter = type == currentFilter ? null : type;
-        } else{
-          currentFilter = type
-        }
-        filterEntries(type);
-      }
-    },
-    onHover: (event, elements) => {
-      if (elements.length) {
-        event.native.target.style.cursor = "pointer";
-      } else {
-        event.native.target.style.cursor = "default";
-      }
     },
   },
 });
