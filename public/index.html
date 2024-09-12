@@ -260,11 +260,88 @@
                 </div>
             </div>
             <div class="pageContent wash">
-                <div class="wash section"></div>
+                <div class="wash upper section">
+                    <table>
+                        <tr>
+                            <th colspan="2">Casino Vask</th>
+                            <th>Spillere</th>
+                            <th>Indbetalt</th>
+                            <th>Forsikring</th>
+                            <th>Profit</th>
+                            <th>Udbetalt</th>
+                        </tr>
+                        <tr>
+                            <td>Total Gevinst</td>
+                            <td><input id="wash-totalWin" oninput="updateWash()"></td>
+                            <td><input class="wash-player" oninput="updateWash()"></td>
+                            <td><input class="wash-bet" oninput="updateWash()"></td>
+                            <td class="wash-green"></td>
+                            <td class="wash-profit"></td>
+                            <td class="wash-win"></td>
+                        </tr>
+                        <tr>
+                            <td>Indbetalt</td>
+                            <td id="wash-totalbet"></td>
+                            <td><input class="wash-player" oninput="updateWash()"></td>
+                            <td><input class="wash-bet" oninput="updateWash()"></td>
+                            <td class="wash-green"></td>
+                            <td class="wash-profit"></td>
+                            <td class="wash-win"></td>
+                        </tr>
+                        <tr>
+                            <td>Forsikring</td>
+                            <td id="wash-green"></td>
+                            <td><input class="wash-player" oninput="updateWash()"></td>
+                            <td><input class="wash-bet" oninput="updateWash()"></td>
+                            <td class="wash-green"></td>
+                            <td class="wash-profit"></td>
+                            <td class="wash-win"></td>
+                        </tr>
+                        <tr>
+                            <td>Antal runder</td>
+                            <td><input id="wash-numberOfRounds" oninput="updateWash()" type="number" min="0">
+                            </td>
+                            <td><input class="wash-player" oninput="updateWash()"></td>
+                            <td><input class="wash-bet" oninput="updateWash()"></td>
+                            <td class="wash-green"></td>
+                            <td class="wash-profit"></td>
+                            <td class="wash-win"></td>
+                        </tr>
+                        <tr>
+                            <td>Brutto Profit</td>
+                            <td id="wash-grossProfit"></td>
+                            <td><input class="wash-player" oninput="updateWash()"></td>
+                            <td><input class="wash-bet" oninput="updateWash()"></td>
+                            <td class="wash-green"></td>
+                            <td class="wash-profit"></td>
+                            <td class="wash-win"></td>
+                        </tr>
+                        <tr>
+                            <td>Netto Profit</td>
+                            <td id="wash-netProfit"></td>
+                            <td><input class="wash-player" oninput="updateWash()"></td>
+                            <td><input class="wash-bet" oninput="updateWash()"></td>
+                            <td class="wash-green"></td>
+                            <td class="wash-profit"></td>
+                            <td class="wash-win"></td>
+                        </tr>
+                        <tr>
+                            <td>% af bonus</td>
+                            <td id="wash-percentageBonus"></td>
+                            <td><input class="wash-player" oninput="updateWash()"></td>
+                            <td><input class="wash-bet" oninput="updateWash()"></td>
+                            <td class="wash-green"></td>
+                            <td class="wash-profit"></td>
+                            <td class="wash-win"></td>
+                        </tr>
+
+                    </table>
+                </div>
+                <div class="wash lower section"></div>
             </div>
         </div>
     </div>
-
+    <script src="wash.js"></script>
 </body>
 
 </html>

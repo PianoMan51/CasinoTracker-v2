@@ -1,6 +1,76 @@
-.wash.section{
-    background-color: white;
-    width: 100%;
-    height: 100%;
-    border-radius: var(--sectionBorderRadius);
+.wash.section {
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--sectionBorderRadius);
+}
+
+table {
+  box-sizing: border-box;
+  border-spacing: 4px;
+  margin: 30px auto 0 auto;
+}
+
+table input {
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  width: 100%;
+  font-size: 16px;
+}
+
+table input:focus {
+  border: none;
+  outline: none;
+}
+
+th {
+  background-color: var(--green);
+  border-radius: 5px;
+  height: 25px;
+  color: white;
+  transform: scale(1);
+  transition: 0.15s;
+}
+
+th,
+td {
+  width: 110px;
+  height: 28px;
+  padding: 5px 10px;
+}
+
+tr :first-child {
+  user-select: none;
+}
+
+td {
+  border-radius: 5px;
+  background-color: var(--lightgray);
+  transform: scale(1);
+  transition: 0.15s;
+}
+
+td:hover,
+th:hover {
+  transform: scale(1.04);
+  transition: 0.15s;
+}
+
+.wash-green {
+  cursor: pointer;
+  color: white;
+}
+
+.wash-green.active {
+  background-color: var(--green);
+}
+
+.wash-profit {
+  user-select: none;
+}
+
+.wash-win {
+  background-color: var(--gray);
+  user-select: none;
 }
