@@ -8,7 +8,6 @@
   overflow-y: scroll;
   border-radius: 8px;
   position: relative;
-  margin-bottom: 8px;
 }
 
 #entriesList::-webkit-scrollbar {
@@ -550,8 +549,6 @@
 }
 
 @media screen and (max-width: 1590px) {
-
-
   #app {
     min-width: 1300px;
   }

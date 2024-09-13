@@ -90,8 +90,6 @@ currentMonthSpan.onclick = () => {
   document.getElementById("prevMonth").classList.toggle("hidden");
   document.getElementById("nextMonth").classList.toggle("hidden");
 
-  document.getElementById("actionButtons").classList.toggle("hidden");
-
   currentMonthSpan.innerHTML = totalView ? "Total" : months[currentMonth];
   updateList();
   updateAddLists();
@@ -102,8 +100,6 @@ sideBarButton.addEventListener("click", () => {
   localStorage.setItem("showSidebar", showSidebar);
 
   let nav = document.querySelectorAll(".nav");
-
-  //window.innerWidth < 1070 ? (!showSidebar ? (document.getElementById("app").style.minWidth = "925px") : "") : "";
 
   if (showSidebar) {
     sideBar.classList.remove("small");
@@ -381,9 +377,7 @@ function createEntryContainer(entry, key) {
     <span style="flex: 1; min-width: 115px">${entry.campaign ? entry.campaign : "N/A"}</span>
     <span style="width: 80px">$${bet.toFixed(2)}</span>
     <span style="width: 80px;">${entry.win ? "$" + win.toFixed(2) : "Pending"}</span>
-    <span style="width: 80px; margin-right: 40px; background-color: ${color}; color: white;">${
-    entry.win ? "$" + profit.toFixed(2) : "Pending"
-  }</span>
+    <span style="width: 80px; margin-right: 40px; background-color: ${color}; color: white;">${entry.win ? "$" + profit.toFixed(2) : "Pending"}</span>
     <div class="checkBox ${entry.cashed_out ? "checked" : ""}"><i class="fa-solid fa-sack-dollar"></i></div>
   `;
 
@@ -455,7 +449,7 @@ async function updateList() {
 
   // Apply the current filter if applicable
   if (currentFilter) {
-    let category = document.querySelector(".addList .selected").classList[0].slice(0, -9);
+    let category = document.querySelector(".addList .selected").classList[0].slice(0, -9)
     filterEntries(category);
   }
   updateMonthCharts();
@@ -467,7 +461,7 @@ function checkCash(checkBox, key) {
   checkBox.classList.toggle("checked");
   let profit = entryContainer.children[5].value;
 
-  entryContainer.children[5].style.backgroundColor = checkBox.classList.contains("checked") ? ( profit >= 0 ? "var(--green" : "var(--red)") : "var(--yellow)"
+  entryContainer.children[5].style.backgroundColor = checkBox.classList.contains("checked") ? (profit >= 0 ? "var(--green" : "var(--red)") : "var(--yellow)"
 
   let content = {
     date: entryContainer.children[0].innerHTML,
@@ -494,8 +488,6 @@ function checkCash(checkBox, key) {
 }
 
 async function updateDashboard(category) {
-  // Get elements you want to blur
-  const canvasElement = document.querySelector(".dashboard.section canvas");
   const cardAmount = document.querySelectorAll(".info .value");
   const cardSpan = document.querySelectorAll(".info .value_span");
 
@@ -510,27 +502,6 @@ async function updateDashboard(category) {
   const campaigns = await getMisc("Campaigns");
   const casinoTotalProfits = Object.fromEntries(casinos.map((casino) => [casino, 0]));
   const campaignTotalProfits = Object.fromEntries(campaigns.map((campaign) => [campaign, 0]));
-
-  // Apply blur effect to the canvas and profit elements
-  canvasElement.style.filter = "blur(2px)";
-
-  // Apply 'offline'-effect
-  cardAmount.forEach((element) => (element.style.backgroundColor = "var(--lightgray)"));
-  cardAmount.forEach((element) => (element.innerHTML = ""));
-  cardSpan.forEach((element) => (element.style.backgroundColor = "var(--lightgray)"));
-  cardSpan.forEach((element) => (element.style.color = "transparent"));
-
-  for (let i = 0; i < 20; i++) {
-    let offline_element = document.createElement("div");
-    offline_element.setAttribute("class", "offline_element");
-    document.getElementById("campaignTotals").appendChild(offline_element);
-  }
-
-  for (let i = 0; i < 20; i++) {
-    let offline_element = document.createElement("div");
-    offline_element.setAttribute("class", "offline_element");
-    document.getElementById("casinoTotals").appendChild(offline_element);
-  }
 
   const updateProfits = (data) => {
     let monthProfits = 0;
@@ -600,18 +571,15 @@ async function updateDashboard(category) {
       totalBarchartList.push(dataCategory.toFixed(0));
     });
 
-    const createTotalElement = (totals, containerId) => {
+    const createTotalElement = (entries, containerId) => {
       const container = document.getElementById(containerId);
       container.innerHTML = "";
-      totals.forEach(([name, profit]) => {
+      entries.forEach(([name, profit]) => {
         const color = profit > 0 ? "var(--green)" : "var(--red)";
         const element = document.createElement("div");
         element.setAttribute("class", "listContainerElement");
         element.innerHTML = `
-        <div class="label" style="flex: 1">
-          <span>${name ? name : "Other"}</span>
-          <span class="counter"></span>
-        </div>
+          <span class="label" style="flex: 1">${name ? name : "Other"}</span>
           <span class="profits" style="background-color: ${color}">$${profit.toFixed(0)}</span>
         `;
         container.append(element);
@@ -627,9 +595,9 @@ async function updateDashboard(category) {
 
           document.querySelectorAll(".addListContainer").forEach((filter) => {
             if (filter.children[0].innerHTML == currentFilter) {
-              filter.classList.add("selected");
+              filter.classList.add("selected")
             }
-          });
+          })
 
           totalView = "true";
           updateList();
@@ -654,8 +622,8 @@ async function updateDashboard(category) {
       category === "totalLoss"
         ? "rgb(231, 76, 60)"
         : category === "totalPending"
-        ? "rgb(241, 196, 15)"
-        : "rgb(46, 204, 113)";
+          ? "rgb(241, 196, 15)"
+          : "rgb(46, 204, 113)";
     document.querySelector(".totalProfit .value").textContent = "$" + totalProfits.value.toFixed(0);
     document.querySelector(".totalLoss .value").textContent = "$" + totalLosses.value.toFixed(0);
     document.querySelector(".totalWin .value").textContent =
@@ -668,11 +636,8 @@ async function updateDashboard(category) {
   } catch (error) {
     console.error("Error fetching data", error);
   } finally {
-    // Remove blur effect from canvas and profit elements
-    canvasElement.style.filter = "";
     cardAmount.forEach((element) => (element.style.backgroundColor = ""));
     cardSpan.forEach((element) => (element.style.backgroundColor = ""));
-    cardSpan.forEach((element) => (element.style.color = "var(--darkestgray)"));
   }
 }
 
@@ -689,7 +654,6 @@ function updateMonthCharts(category) {
   let barColors = [];
 
   const canvasElement = document.querySelector(".dashboard.section canvas");
-  canvasElement.style.filter = "blur(2px)";
 
   if (category == undefined) {
     category = monthBarChartToggle.className;
@@ -838,11 +802,6 @@ function editEntry(event) {
       container.children[4].innerHTML = container.children[4].value;
     }
 
-    document.getElementById("actionButtons").children[0].style.display = "none";
-    document.getElementById("actionButtons").children[1].style.display = "none";
-    document.getElementById("actionButtons").children[2].style.display = "none";
-    document.getElementById("actionButtons").children[3].style.display = "block";
-
     spans.forEach((span) => {
       span.contentEditable = true;
     });
@@ -862,10 +821,6 @@ function editEntry(event) {
 
       set(entryRef, content)
         .then(() => {
-          document.getElementById("actionButtons").children[0].style.display = "inline";
-          document.getElementById("actionButtons").children[1].style.display = "inline";
-          document.getElementById("actionButtons").children[2].style.display = "inline";
-          document.getElementById("actionButtons").children[3].style.display = "none";
           document.querySelectorAll(".entryContainer").forEach((container) => {
             container.classList.remove("selected");
             container.classList.remove("blur");
@@ -1042,11 +997,11 @@ function sortEntries(entries, sort) {
 
   const getSortingFunction =
     (index, parser = (x) => x) =>
-    (a, b) => {
-      const A = parser(a.children[index].innerText);
-      const B = parser(b.children[index].innerText);
-      return isAscending ? A - B : B - A;
-    };
+      (a, b) => {
+        const A = parser(a.children[index].innerText);
+        const B = parser(b.children[index].innerText);
+        return isAscending ? A - B : B - A;
+      };
 
   const stringSort = (index) => (a, b) => {
     const A = a.children[index].innerText;

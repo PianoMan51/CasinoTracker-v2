@@ -21,6 +21,12 @@
 
 .card.active {
   transform: scale(1.04);
+  background-color: var(--blue);
+  color: white;
+}
+
+.card.active span {
+  color: white;
 }
 
 .card:hover {
