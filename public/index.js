@@ -595,9 +595,9 @@ async function updateDashboard(category) {
 
           document.querySelectorAll(".addListContainer").forEach((filter) => {
             if (filter.children[0].innerHTML == currentFilter) {
-              filter.classList.add("selected")
+              filter.classList.add("selected");
             }
-          })
+          });
 
           totalView = "true";
           updateList();
@@ -652,8 +652,6 @@ function updateMonthCharts(category) {
   let monthBarCategory = [];
   let monthBarData = {};
   let barColors = [];
-
-  const canvasElement = document.querySelector(".dashboard.section canvas");
 
   if (category == undefined) {
     category = monthBarChartToggle.className;
@@ -802,6 +800,11 @@ function editEntry(event) {
       container.children[4].innerHTML = container.children[4].value;
     }
 
+    document.getElementById("actionButtons").children[0].style.display = "none";
+    document.getElementById("actionButtons").children[1].style.display = "none";
+    document.getElementById("actionButtons").children[2].style.display = "none";
+    document.getElementById("actionButtons").children[3].style.display = "block";
+
     spans.forEach((span) => {
       span.contentEditable = true;
     });
@@ -821,6 +824,10 @@ function editEntry(event) {
 
       set(entryRef, content)
         .then(() => {
+          document.getElementById("actionButtons").children[0].style.display = "inline";
+          document.getElementById("actionButtons").children[1].style.display = "inline";
+          document.getElementById("actionButtons").children[2].style.display = "inline";
+          document.getElementById("actionButtons").children[3].style.display = "none";
           document.querySelectorAll(".entryContainer").forEach((container) => {
             container.classList.remove("selected");
             container.classList.remove("blur");
@@ -997,11 +1004,11 @@ function sortEntries(entries, sort) {
 
   const getSortingFunction =
     (index, parser = (x) => x) =>
-      (a, b) => {
-        const A = parser(a.children[index].innerText);
-        const B = parser(b.children[index].innerText);
-        return isAscending ? A - B : B - A;
-      };
+    (a, b) => {
+      const A = parser(a.children[index].innerText);
+      const B = parser(b.children[index].innerText);
+      return isAscending ? A - B : B - A;
+    };
 
   const stringSort = (index) => (a, b) => {
     const A = a.children[index].innerText;

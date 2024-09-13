@@ -11,7 +11,6 @@ let netProfit = document.getElementById("wash-netProfit");
 let roundsAmount = document.getElementById("wash-numberOfRounds");
 
 function updateWash() {
-    console.log("updateWash")
     let totalBetAmount = 0;
 
     washBets.forEach((bet) => {
