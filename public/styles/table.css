@@ -3,11 +3,24 @@
   min-width: 790px;
 }
 
+.table.content .table.section.middleTable.hidden {
+  display: none;
+}
+
+#toggleWash {
+  position: absolute;
+  right: 30px;
+  border: none;
+  background-color: transparent;
+  color: var(--blue);
+}
+
 #entriesList {
   flex: 1;
   overflow-y: scroll;
   border-radius: 8px;
   position: relative;
+  border-radius: var(--sectionBorderRadius);
 }
 
 #entriesList::-webkit-scrollbar {

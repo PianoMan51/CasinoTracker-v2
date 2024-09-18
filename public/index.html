@@ -204,6 +204,7 @@
                     <button id="prevMonth" class="monthButtons"><i class="fa-solid fa-caret-left fa-xl"></i></button>
                     <span id="currentMonthSpan"></span>
                     <button id="nextMonth" class="monthButtons"><i class="fa-solid fa-caret-right fa-xl"></i></button>
+                    <button id="toggleWash"><i class="fa-solid fa-bath fa-xl"></i></button>
                 </div>
                 <div class="table content">
                     <div class="table section leftTable">
@@ -245,6 +246,9 @@
                                     class="fa-solid fa-check fa-xl"></i></button>
                         </div>
                     </div>
+                    <div class="table section middleTable ASG hidden">
+                        <div id="wash_entriesList"></div>
+                    </div>
                     <div class="table section rightTable">
                         <div id="casinoList" class="addContainer">
                             <span class="header">Casinos</span>
@@ -277,7 +281,7 @@
                             <td><input class="wash-bet" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
-                            <td class="wash-win"></td>
+                            <td class="wash-payout"></td>
                         </tr>
                         <tr>
                             <td>Indbetalt</td>
@@ -286,7 +290,7 @@
                             <td><input class="wash-bet" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
-                            <td class="wash-win"></td>
+                            <td class="wash-payout"></td>
                         </tr>
                         <tr>
                             <td>Forsikring</td>
@@ -295,7 +299,7 @@
                             <td><input class="wash-bet" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
-                            <td class="wash-win"></td>
+                            <td class="wash-payout"></td>
                         </tr>
                         <tr>
                             <td>Antal runder</td>
@@ -305,7 +309,7 @@
                             <td><input class="wash-bet" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
-                            <td class="wash-win"></td>
+                            <td class="wash-payout"></td>
                         </tr>
                         <tr>
                             <td>Brutto Profit</td>
@@ -314,7 +318,7 @@
                             <td><input class="wash-bet" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
-                            <td class="wash-win"></td>
+                            <td class="wash-payout"></td>
                         </tr>
                         <tr>
                             <td>Netto Profit</td>
@@ -323,7 +327,7 @@
                             <td><input class="wash-bet" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
-                            <td class="wash-win"></td>
+                            <td class="wash-payout"></td>
                         </tr>
                         <tr>
                             <td>% af bonus</td>
@@ -332,7 +336,7 @@
                             <td><input class="wash-bet" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
-                            <td class="wash-win"></td>
+                            <td class="wash-payout"></td>
                         </tr>
 
                     </table>

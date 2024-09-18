@@ -42,6 +42,7 @@ let showSidebar = localStorage.getItem("showSidebar") === "true";
 let sideBarButton = document.querySelector(".collapse_sidebar_button");
 showSidebar ? sideBar.classList.remove("small") : sideBar.classList.add("small");
 sideBarButton.style.transform = showSidebar ? "rotate(0deg)" : "rotate(180deg)";
+let toggleWash = document.getElementById("toggleWash");
 let year = 2024;
 let currentFilter = null;
 let isAscending = true;
@@ -49,10 +50,6 @@ let totalView = false;
 let activeRemove = false;
 let activeEdit = false;
 let activeAdd = false;
-
-// window.addEventListener("resize", function () {
-//   showSidebar && this.window.innerWidth < 1000 ? (this.document.getElementById("app").style.minWidth = "1030px") : "";
-// });
 
 const months = [
   "January",
@@ -123,6 +120,11 @@ document.querySelectorAll(".listHeaders span").forEach((sort) => {
     sortEntries(entriesList, sort.innerHTML);
     isAscending = !isAscending;
   });
+});
+
+toggleWash.addEventListener("click", function () {
+  document.querySelector(".table.section.middleTable").classList.toggle("hidden");
+  document.querySelector(".table.section.middleTable.ASG").classList.toggle("hidden");
 });
 
 document.getElementById("prevMonth").onclick = () => {
@@ -353,6 +355,15 @@ async function fetchMonthEntries(year, month) {
   }
 }
 
+async function fetchYearEntries(year) {
+  let allEntries = [];
+  for (let i = 0; i < 12; i++) {
+    const data = await fetchMonthEntries(year, months[i]);
+    allEntries.push(...data);
+  }
+  return allEntries;
+}
+
 function createEntryContainer(entry, key) {
   // Calculate profit and determine color based on entry's status
   let bet = parseInt(entry.bet);
@@ -377,7 +388,9 @@ function createEntryContainer(entry, key) {
     <span style="flex: 1; min-width: 115px">${entry.campaign ? entry.campaign : "N/A"}</span>
     <span style="width: 80px">$${bet.toFixed(2)}</span>
     <span style="width: 80px;">${entry.win ? "$" + win.toFixed(2) : "Pending"}</span>
-    <span style="width: 80px; margin-right: 40px; background-color: ${color}; color: white;">${entry.win ? "$" + profit.toFixed(2) : "Pending"}</span>
+    <span style="width: 80px; margin-right: 40px; background-color: ${color}; color: white;">${
+    entry.win ? "$" + profit.toFixed(2) : "Pending"
+  }</span>
     <div class="checkBox ${entry.cashed_out ? "checked" : ""}"><i class="fa-solid fa-sack-dollar"></i></div>
   `;
 
@@ -412,11 +425,13 @@ async function updateList() {
   for (let i = 0; i < 20; i++) {
     let offline_element = document.createElement("div");
     offline_element.setAttribute("class", "offline_element");
-    //entriesList.appendChild(offline_element);
   }
 
   try {
     let entries = [];
+    let ASG_entries = [];
+    let washSession = [];
+    let lastDate = null;
 
     // Fetch data based on the view mode
     if (!totalView) {
@@ -426,14 +441,98 @@ async function updateList() {
         entries = data; // Data already includes keys
       }
     } else {
-      // Fetch data for all months in the year
-      for (let i = 0; i < 12; i++) {
-        const data = await fetchMonthEntries(year, months[i]);
-        if (data) {
-          entries.push(...data); // Flatten and add data to entries
-        }
+      const data = await fetchYearEntries(year);
+      if (data) {
+        entries.push(...data);
       }
     }
+
+    const data = await fetchYearEntries(year);
+    data.forEach((entry) => {
+      if (entry.campaign == "Vask ASG") {
+        if (entry.date !== lastDate) {
+          if (washSession.length > 0) {
+            ASG_entries.push(washSession);
+          }
+          washSession = [entry];
+          lastDate = entry.date;
+        } else {
+          washSession.push(entry);
+        }
+      }
+    });
+
+    if (washSession.length > 0) {
+      ASG_entries.push(washSession);
+    }
+
+    document.getElementById("wash_entriesList").innerHTML = "";
+
+    ASG_entries.forEach((washSession) => {
+      let washSessionContainer = document.createElement("div");
+      washSessionContainer.setAttribute("class", "washSessionContainer");
+      let washSessionCasinos = document.createElement("div");
+      washSessionCasinos.setAttribute("class", "washSessionCasinos");
+      let bet = 0;
+      let win = 0;
+      let date;
+
+      washSession.forEach((entry) => {
+        let washCasino = document.createElement("span");
+        washCasino.innerHTML = entry.casino;
+        washSessionCasinos.appendChild(washCasino);
+        date = entry.date; // Ensure 'date' is correctly taken from 'entry'
+        bet += Number(entry.bet);
+        win += Number(entry.win);
+      });
+
+      let dateSpan = document.createElement("span");
+      dateSpan.setAttribute("class", "wash-date");
+      dateSpan.innerHTML = date;
+
+      let betSpan = document.createElement("span");
+      betSpan.setAttribute("class", "wash-bet");
+      betSpan.innerHTML = "$" + bet;
+
+      let winSpan = document.createElement("span");
+      winSpan.setAttribute("class", "wash-win");
+      winSpan.innerHTML = "$" + win;
+
+      let percentageSpan = document.createElement("span");
+      percentageSpan.setAttribute("class", "wash-percentage");
+      let percentage = ((win / bet - 1) * 100).toFixed(0);
+      let color = "";
+      percentageSpan.innerHTML = `${percentage}%`;
+      console.log("percentage:", percentage);
+      if (percentage > 100) {
+        color = "var(--darkgreen)";
+      } else if (percentage > 80) {
+        color = "var(--green)";
+      } else if (percentage > 70) {
+        color = "var(--yellow)";
+      } else if (percentage > 30) {
+        color = "var(--orange)";
+      } else {
+        color = "var(--red)";
+      }
+
+      percentageSpan.style.backgroundColor = color;
+
+      let profitSpan = document.createElement("span");
+      profitSpan.style.backgroundColor = win - bet > 0 ? "var(--green)" : "var(--red)";
+      profitSpan.setAttribute("class", "wash-profit");
+      profitSpan.innerHTML = `$${win - bet}`;
+
+      // Append the dynamically created elements
+      washSessionContainer.appendChild(dateSpan);
+      washSessionContainer.appendChild(washSessionCasinos);
+      washSessionContainer.appendChild(betSpan);
+      washSessionContainer.appendChild(winSpan);
+      washSessionContainer.appendChild(percentageSpan);
+      washSessionContainer.appendChild(profitSpan);
+
+      document.getElementById("wash_entriesList").appendChild(washSessionContainer);
+    });
 
     // Clear the original content once the data is ready
     entriesList.innerHTML = "";
@@ -449,9 +548,10 @@ async function updateList() {
 
   // Apply the current filter if applicable
   if (currentFilter) {
-    let category = document.querySelector(".addList .selected").classList[0].slice(0, -9)
+    let category = document.querySelector(".addList .selected").classList[0].slice(0, -9);
     filterEntries(category);
   }
+
   updateMonthCharts();
 }
 
@@ -461,7 +561,11 @@ function checkCash(checkBox, key) {
   checkBox.classList.toggle("checked");
   let profit = entryContainer.children[5].value;
 
-  entryContainer.children[5].style.backgroundColor = checkBox.classList.contains("checked") ? (profit >= 0 ? "var(--green" : "var(--red)") : "var(--yellow)"
+  entryContainer.children[5].style.backgroundColor = checkBox.classList.contains("checked")
+    ? profit >= 0
+      ? "var(--green"
+      : "var(--red)"
+    : "var(--yellow)";
 
   let content = {
     date: entryContainer.children[0].innerHTML,
@@ -622,8 +726,8 @@ async function updateDashboard(category) {
       category === "totalLoss"
         ? "rgb(231, 76, 60)"
         : category === "totalPending"
-          ? "rgb(241, 196, 15)"
-          : "rgb(46, 204, 113)";
+        ? "rgb(241, 196, 15)"
+        : "rgb(46, 204, 113)";
     document.querySelector(".totalProfit .value").textContent = "$" + totalProfits.value.toFixed(0);
     document.querySelector(".totalLoss .value").textContent = "$" + totalLosses.value.toFixed(0);
     document.querySelector(".totalWin .value").textContent =
@@ -681,7 +785,7 @@ function updateMonthCharts(category) {
     }
 
     if (win) {
-      outcome > 0 ? (cashed_out && (wins += +outcome)) : (losses += +outcome);
+      outcome > 0 ? cashed_out && (wins += +outcome) : (losses += +outcome);
     }
     outcome > 0 ? positives++ : "";
     outcome < 0 ? negatives++ : "";
@@ -1195,6 +1299,8 @@ let monthBarProfits = new Chart("monthChart_barchart", {
     },
   },
 });
+
+async function fetchASG() {}
 
 updateDashboard("totalProfit");
 changeMonth();

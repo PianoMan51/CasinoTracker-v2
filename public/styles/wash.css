@@ -70,7 +70,64 @@ th:hover {
   user-select: none;
 }
 
-.wash-win {
+.wash-payout {
   background-color: var(--gray);
   user-select: none;
+}
+
+#wash_entriesList {
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  border-radius: var(--sectionBorderRadius);
+}
+
+#wash_entriesList::-webkit-scrollbar {
+  display: none;
+}
+
+.washSessionContainer {
+  display: flex;
+  background-color: var(--lightgray);
+  align-items: center;
+  padding: 10px 20px;
+  border-radius: var(--sectionBorderRadius);
+  gap: 5px;
+  margin-bottom: 6px;
+}
+
+.washSessionContainer span {
+  border-radius: 6px;
+  font-family: "DM Mono", monospace;
+  user-select: none;
+  padding: 10px;
+  color: white;
+}
+
+.washSessionCasinos {
+  display: flex;
+  gap: 5px;
+  flex: 1;
+}
+
+.washSessionCasinos span {
+  background-color: var(--gray);
+}
+
+.wash-date {
+  margin-right: 40px;
+}
+
+.wash-bet,
+.wash-win,
+.wash-date {
+  background-color: var(--blue);
+}
+
+.wash-bet,
+.wash-win,
+.wash-percentage,
+.wash-profit {
+  width: 50px;
+  text-align: left;
 }
