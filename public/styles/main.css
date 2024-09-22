@@ -30,8 +30,7 @@
 }
 
 body {
-  background-color: #f7f9f9;
-  background-color: lightblue;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), transparent 40%) rgba(173, 216, 230, 1);
 }
 
 #app {
@@ -196,7 +195,7 @@ body {
   pointer-events: none;
 }
 
-.offline_element{
+.offline_element {
   background-color: var(--lightgray);
   border-radius: 5px;
   height: 30px;

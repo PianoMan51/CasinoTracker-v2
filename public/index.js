@@ -42,7 +42,6 @@ let showSidebar = localStorage.getItem("showSidebar") === "true";
 let sideBarButton = document.querySelector(".collapse_sidebar_button");
 showSidebar ? sideBar.classList.remove("small") : sideBar.classList.add("small");
 sideBarButton.style.transform = showSidebar ? "rotate(0deg)" : "rotate(180deg)";
-let toggleWash = document.getElementById("toggleWash");
 let year = 2024;
 let currentFilter = null;
 let isAscending = true;
@@ -120,11 +119,6 @@ document.querySelectorAll(".listHeaders span").forEach((sort) => {
     sortEntries(entriesList, sort.innerHTML);
     isAscending = !isAscending;
   });
-});
-
-toggleWash.addEventListener("click", function () {
-  document.querySelector(".table.section.middleTable").classList.toggle("hidden");
-  document.querySelector(".table.section.middleTable.ASG").classList.toggle("hidden");
 });
 
 document.getElementById("prevMonth").onclick = () => {
@@ -492,18 +486,17 @@ async function updateList() {
 
       let betSpan = document.createElement("span");
       betSpan.setAttribute("class", "wash-bet");
-      betSpan.innerHTML = "$" + bet;
+      betSpan.innerHTML = "$" + bet.toFixed(2);
 
       let winSpan = document.createElement("span");
       winSpan.setAttribute("class", "wash-win");
-      winSpan.innerHTML = "$" + win;
+      winSpan.innerHTML = "$" + win.toFixed(2);
 
       let percentageSpan = document.createElement("span");
       percentageSpan.setAttribute("class", "wash-percentage");
-      let percentage = ((win / bet - 1) * 100).toFixed(0);
+      let percentage = ((win / bet - 1) * 100).toFixed(2);
       let color = "";
       percentageSpan.innerHTML = `${percentage}%`;
-      console.log("percentage:", percentage);
       if (percentage > 100) {
         color = "var(--darkgreen)";
       } else if (percentage > 80) {
@@ -519,9 +512,9 @@ async function updateList() {
       percentageSpan.style.backgroundColor = color;
 
       let profitSpan = document.createElement("span");
-      profitSpan.style.backgroundColor = win - bet > 0 ? "var(--green)" : "var(--red)";
+      profitSpan.style.backgroundColor = win - bet >= 0 ? "var(--green)" : "var(--red)";
       profitSpan.setAttribute("class", "wash-profit");
-      profitSpan.innerHTML = `$${win - bet}`;
+      profitSpan.innerHTML = `$${(win - bet).toFixed(2)}`;
 
       // Append the dynamically created elements
       washSessionContainer.appendChild(dateSpan);

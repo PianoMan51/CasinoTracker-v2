@@ -44,7 +44,7 @@
                     </div>
                     <div class="nav" name="wash">
                         <i class="fa-solid fa-bath fa-lg"></i>
-                        <span>Vask</span>
+                        <span>Vask ASG</span>
                     </div>
                 </div>
                 <button class="collapse_sidebar_button"><i class="fa-solid fa-angle-right fa-2xl"></i></button>
@@ -204,7 +204,6 @@
                     <button id="prevMonth" class="monthButtons"><i class="fa-solid fa-caret-left fa-xl"></i></button>
                     <span id="currentMonthSpan"></span>
                     <button id="nextMonth" class="monthButtons"><i class="fa-solid fa-caret-right fa-xl"></i></button>
-                    <button id="toggleWash"><i class="fa-solid fa-bath fa-xl"></i></button>
                 </div>
                 <div class="table content">
                     <div class="table section leftTable">
@@ -230,7 +229,7 @@
                             <span style="width: 90px">Udbetaling</span>
                             <span style="width: 80px; margin-right: 40px;">Profit</span>
                         </div>
-                        <div id="entriesList" class="hide-scrollbar"></div>
+                        <div id="entriesList"></div>
                         <div id="actionButtons">
                             <button class="actionButtons" id="removeEntry"
                                 style="color: var(--red);border: 3px solid var(--red)"><i
@@ -245,9 +244,6 @@
                                 style="color: var(--blue);border: 3px solid var(--blue); display: none;"><i
                                     class="fa-solid fa-check fa-xl"></i></button>
                         </div>
-                    </div>
-                    <div class="table section middleTable ASG hidden">
-                        <div id="wash_entriesList"></div>
                     </div>
                     <div class="table section rightTable">
                         <div id="casinoList" class="addContainer">
@@ -278,7 +274,7 @@
                             <td>Total Gevinst</td>
                             <td><input id="wash-totalWin" oninput="updateWash()"></td>
                             <td><input class="wash-player" oninput="updateWash()"></td>
-                            <td><input class="wash-bet" oninput="updateWash()"></td>
+                            <td><input class="wash-bet-input" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
                             <td class="wash-payout"></td>
@@ -287,7 +283,7 @@
                             <td>Indbetalt</td>
                             <td id="wash-totalbet"></td>
                             <td><input class="wash-player" oninput="updateWash()"></td>
-                            <td><input class="wash-bet" oninput="updateWash()"></td>
+                            <td><input class="wash-bet-input" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
                             <td class="wash-payout"></td>
@@ -296,7 +292,7 @@
                             <td>Forsikring</td>
                             <td id="wash-green"></td>
                             <td><input class="wash-player" oninput="updateWash()"></td>
-                            <td><input class="wash-bet" oninput="updateWash()"></td>
+                            <td><input class="wash-bet-input" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
                             <td class="wash-payout"></td>
@@ -306,7 +302,7 @@
                             <td><input id="wash-numberOfRounds" oninput="updateWash()" type="number" min="0">
                             </td>
                             <td><input class="wash-player" oninput="updateWash()"></td>
-                            <td><input class="wash-bet" oninput="updateWash()"></td>
+                            <td><input class="wash-bet-input" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
                             <td class="wash-payout"></td>
@@ -315,7 +311,7 @@
                             <td>Brutto Profit</td>
                             <td id="wash-grossProfit"></td>
                             <td><input class="wash-player" oninput="updateWash()"></td>
-                            <td><input class="wash-bet" oninput="updateWash()"></td>
+                            <td><input class="wash-bet-input" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
                             <td class="wash-payout"></td>
@@ -324,7 +320,7 @@
                             <td>Netto Profit</td>
                             <td id="wash-netProfit"></td>
                             <td><input class="wash-player" oninput="updateWash()"></td>
-                            <td><input class="wash-bet" oninput="updateWash()"></td>
+                            <td><input class="wash-bet-input" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
                             <td class="wash-payout"></td>
@@ -333,7 +329,7 @@
                             <td>% af bonus</td>
                             <td id="wash-percentageBonus"></td>
                             <td><input class="wash-player" oninput="updateWash()"></td>
-                            <td><input class="wash-bet" oninput="updateWash()"></td>
+                            <td><input class="wash-bet-input" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
                             <td class="wash-payout"></td>
@@ -341,7 +337,9 @@
 
                     </table>
                 </div>
-                <div class="wash lower section"></div>
+                <div class="wash lower section">
+                    <div id="wash_entriesList"></div>
+                </div>
             </div>
         </div>
     </div>
