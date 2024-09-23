@@ -26,6 +26,7 @@
     <script type="module" src="index.js"></script>
     <div id="app">
         <div id="menubar">
+            <button class="monthButtons prevMonth"><i class="fa-solid fa-caret-left fa-xl"></i></button>
             <div class="nav" id="nav-dashboard" name="dashboard">
                 <i class="fa-solid fa-chart-line fa-xl" style="color: white"></i>
             </div>
@@ -35,6 +36,7 @@
             <div class="nav" name="wash">
                 <i class="fa-solid fa-bath fa-xl" style="color: white"></i>
             </div>
+            <button class="monthButtons nextMonth"><i class="fa-solid fa-caret-right fa-xl"></i></button>
         </div>
         <div id="content">
             <div id="sidebar">
@@ -128,7 +130,7 @@
                     </div>
 
                     <div class="dashboard section">
-                        somthinf
+                        fill
                     </div>
 
                     <div class="dashboard section">
@@ -208,13 +210,14 @@
                                 class="fa-solid fa-xmark fa-2xl"></i></button>
                     </div>
                 </div>
-                <div id="changeMonths">
-                    <button id="prevMonth" class="monthButtons"><i class="fa-solid fa-caret-left fa-xl"></i></button>
-                    <span id="currentMonthSpan"></span>
-                    <button id="nextMonth" class="monthButtons"><i class="fa-solid fa-caret-right fa-xl"></i></button>
-                </div>
                 <div class="table content">
                     <div class="table section leftTable">
+                        <div id="changeMonths">
+                            <button class="monthButtons prevMonth"><i class="fa-solid fa-caret-left fa-xl"></i></button>
+                            <span id="currentMonthSpan"></span>
+                            <button class="monthButtons nextMonth"><i
+                                    class="fa-solid fa-caret-right fa-xl"></i></button>
+                        </div>
                         <div class="graphContainer">
                             <canvas id="monthChart_doughnut_profits"></canvas>
                             <div>
@@ -230,12 +233,12 @@
                     </div>
                     <div class="table section middleTable">
                         <div class="listHeaders">
-                            <span style="width: 80px">Dato</span>
-                            <span style="flex: 1">Casino</span>
-                            <span style="flex: 1">Kampagne</span>
-                            <span style="width: 80px">Indsats</span>
-                            <span style="width: 90px">Udbetaling</span>
-                            <span style="width: 80px; margin-right: 40px;">Profit</span>
+                            <span>Dato</span>
+                            <span>Casino</span>
+                            <span>Kampagne</span>
+                            <span>Indsats</span>
+                            <span>Udbetaling</span>
+                            <span>Profit</span>
                         </div>
                         <div id="entriesList"></div>
                         <div id="actionButtons">
@@ -257,12 +260,10 @@
                         <div id="casinoList" class="addContainer">
                             <span class="header">Casinos</span>
                             <div class="addList addCasinosList"></div>
-                            <input class="addInput" id="addCasinoInput" placeholder="Add Casino...">
                         </div>
                         <div id="campaignList" class="addContainer">
                             <span class="header">Campaigns</span>
                             <div class="addList addCampaignsList"></div>
-                            <input class="addInput" id="addCampaignInput" placeholder="Add Campaign...">
                         </div>
                     </div>
                 </div>

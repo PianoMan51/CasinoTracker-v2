@@ -1,10 +1,23 @@
-.middleTable {
-  flex: 1;
-  min-width: 790px;
+.table.content {
+  display: grid;
+  grid-template-columns: 250px auto 250px;
+  gap: 12px;
+  height: 100%;
 }
 
-.table.content .table.section.middleTable.hidden {
-  display: none;
+.table.section {
+  background-color: white;
+  border-radius: var(--sectionBorderRadius);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.table.section.rightTable {
+  display: grid;
+  grid-template-rows: 50% 50%;
 }
 
 #entriesList {
@@ -31,8 +44,6 @@
 #changeMonths {
   width: 100%;
   height: 80px;
-  background-color: white;
-  border-radius: var(--sectionBorderRadius);
   display: flex;
   justify-content: center;
   gap: 20px;
@@ -125,6 +136,38 @@
   transition: 0.2s;
 }
 
+.entryContainer span:nth-child(1),
+.listHeaders span:nth-child(1) {
+  width: 80px;
+}
+
+.entryContainer span:nth-child(2),
+.listHeaders span:nth-child(2) {
+  flex: 1;
+}
+
+.entryContainer span:nth-child(3),
+.listHeaders span:nth-child(3) {
+  flex: 1;
+}
+
+.entryContainer span:nth-child(4),
+.listHeaders span:nth-child(4) {
+  width: 80px;
+}
+
+.entryContainer span:nth-child(5),
+.listHeaders span:nth-child(5) {
+  width: 80px;
+}
+
+.entryContainer span:nth-child(6),
+.listHeaders span:nth-child(6) {
+  width: 80px;
+  margin-right: 40px;
+}
+
+
 .entryContainer span:hover {
   transform: translateX(6px);
   transition: 0.2s;
@@ -194,29 +237,6 @@
   transform: scale(1.05);
   transition: 0.2s;
   opacity: 0.5;
-}
-
-.table.content {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: calc(100% - 92px);
-  gap: 12px;
-}
-
-.table.section {
-  background-color: white;
-  border-radius: var(--sectionBorderRadius);
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  gap: 8px;
-}
-
-.table.section.leftTable {
-  justify-content: flex-start;
-  width: 250px;
 }
 
 .pageContent.table {
@@ -462,11 +482,10 @@
 .addContainer {
   display: flex;
   flex-direction: column;
-  height: 50%;
   background-color: white;
   border-radius: var(--sectionBorderRadius);
   padding: 8px;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .addContainer .header {
@@ -479,13 +498,6 @@
 
 .addContainer .header:hover {
   background-color: var(--darkbackground);
-}
-
-.table.section.rightTable {
-  background-color: transparent;
-  padding: 0px;
-  gap: 12px;
-  width: 250px;
 }
 
 .addList {
@@ -537,18 +549,132 @@
   justify-content: space-between;
 }
 
-.addInput {
-  height: 30px;
-  border: none;
-  background-color: transparent;
-  padding: 0px 8px;
-  background-color: var(--darkergray);
-  border-radius: 5px;
-  color: white;
-  letter-spacing: 2px;
+@media screen and (max-width: 1530px) {
+  .table.content {
+    grid-template-columns: 250px 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "middleTable middleTable"
+      "lowerLeft lowerRight";
+  }
+
+  .table.section.middleTable {
+    grid-area: middleTable;
+  }
+
+
+  .table.section.rightTable {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    grid-area: lowerRight;
+  }
 }
 
-.addInput::placeholder {
-  color: white;
-  opacity: 0.5;
+@media screen and (max-width: 1000px) {
+  .table.section.middleTable {
+    min-width: 775px;
+  }
+}
+
+@media screen and (max-width: 360px) {
+
+  .table.content {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "left"
+      "middleTable"
+      "right";
+  }
+
+  #menubar .monthButtons {
+    display: flex;
+  }
+
+  #entriesList {
+    border-radius: 0px;
+  }
+
+  .table.section.middleTable {
+    grid-area: middleTable;
+    min-width: calc(100vw - 36px);
+  }
+
+  .table.section.leftTable {
+    grid-area: left;
+  }
+
+  .table.section.rightTable {
+    grid-area: right;
+    grid-template-columns: 1fr;
+  }
+
+  .listHeaders,
+  #actionButtons,
+  .graphContainer.monthBarChart,
+  #toggleBarCategory,
+  #changeMonths {
+    display: none;
+  }
+
+  .entryContainer {
+    padding: 0;
+    gap: 3px;
+    height: 15px;
+    position: relative;
+  }
+
+  .entryContainer .checkBox {
+    position: absolute;
+    height: 15px;
+    width: 15px;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: 0px;
+  }
+
+  .entryContainer span,
+  .addListContainer span {
+    padding: 2px 5px;
+    font-size: 7px;
+    border-radius: 3px;
+  }
+
+  .entryContainer span:nth-child(1) {
+    width: 25px;
+  }
+
+  .entryContainer span:nth-child(2) {
+    width: 60px;
+    flex: none;
+  }
+
+  .entryContainer span:nth-child(3) {
+    flex: 1
+  }
+
+  .entryContainer span:nth-child(4) {
+    width: 22px;
+  }
+
+  .entryContainer span:nth-child(5) {
+    width: 22px;
+  }
+
+  .entryContainer span:nth-child(6) {
+    width: 22px;
+    margin-right: 18px;
+  }
+
+  .table.section.rightTable {
+    margin-bottom: 30px;
+  }
+
+  .graphContainer {
+    width: 160px;
+    font-size: .8em;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }

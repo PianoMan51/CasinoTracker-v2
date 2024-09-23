@@ -78,8 +78,8 @@ async function getMisc(type) {
 
 currentMonthSpan.onclick = () => {
   totalView = !totalView;
-  document.getElementById("prevMonth").classList.toggle("hidden");
-  document.getElementById("nextMonth").classList.toggle("hidden");
+  /*   document.querySelector(".monthButtons.prevMonth").classList.toggle("hidden");
+  document.querySelector(".monthButtons.nextMonth").classList.toggle("hidden"); */
 
   currentMonthSpan.innerHTML = totalView ? "Total" : months[currentMonth];
   updateList();
@@ -93,11 +93,11 @@ document.querySelectorAll(".listHeaders span").forEach((sort) => {
   });
 });
 
-document.getElementById("prevMonth").onclick = () => {
+document.querySelector(".prevMonth").onclick = () => {
   changeMonth("prev");
 };
 
-document.getElementById("nextMonth").onclick = () => {
+document.querySelector(".nextMonth").onclick = () => {
   changeMonth("next");
 };
 
@@ -348,16 +348,20 @@ function createEntryContainer(entry, key) {
     entryContainer.classList.add("pending");
   }
 
+  let vp = window.innerWidth;
+
   entryContainer.innerHTML = `
-    <span style="width: 80px">${entry.date}</span>
-    <span style="flex: 1">${entry.casino}</span>
-    <span style="flex: 1; min-width: 115px">${entry.campaign ? entry.campaign : "N/A"}</span>
-    <span style="width: 80px">$${bet.toFixed(2)}</span>
-    <span style="width: 80px;">${entry.win ? "$" + win.toFixed(2) : "Pending"}</span>
-    <span style="width: 80px; margin-right: 40px; background-color: ${color}; color: white;">${
-    entry.win ? "$" + profit.toFixed(2) : "Pending"
+    <span>${entry.date}</span>
+    <span>${entry.casino}</span>
+    <span>${entry.campaign ? entry.campaign : "N/A"}</span>
+    <span>$${vp > 370 ? bet.toFixed(2) : bet.toFixed(0)}</span>
+    <span>${entry.win ? "$" + (vp > 370 ? win.toFixed(2) : win.toFixed(0)) : "Pending"}</span>
+    <span style="background-color: ${color}; color: white;">${
+    entry.win ? "$" + (vp > 370 ? profit.toFixed(2) : profit.toFixed(0)) : "Pending"
   }</span>
-    <div class="checkBox ${entry.cashed_out ? "checked" : ""}"><i class="fa-solid fa-sack-dollar"></i></div>
+    <div class="checkBox ${entry.cashed_out ? "checked" : ""}"><i class="fa-solid fa-sack-dollar ${
+    vp < 370 ? "fa-2xs" : ""
+  }"></i></div>
   `;
 
   entryContainer.children[3].value = bet;

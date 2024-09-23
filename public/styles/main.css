@@ -47,6 +47,7 @@ body::-webkit-scrollbar {
   flex-direction: column;
   align-items: center;
   min-width: 190px;
+  height: 100%;
   transition: .2s;
   background-color: white;
   position: relative;
@@ -62,11 +63,10 @@ body::-webkit-scrollbar {
 .pageContent {
   display: none;
   flex-direction: column;
-  align-items: center;
   flex: 1;
   gap: 12px;
   box-sizing: border-box;
-  margin: 18px;
+  margin: 10px;
 }
 
 #menubar {
@@ -82,6 +82,11 @@ body::-webkit-scrollbar {
   justify-content: center;
 }
 
+#menubar .monthButtons {
+  background-color: transparent;
+  display: none;
+}
+
 #menubar .nav {
   padding: 0;
   width: auto;
@@ -89,9 +94,10 @@ body::-webkit-scrollbar {
 }
 
 
-@media only screen and (max-width: 767px) {
+@media only screen and (max-width: 360px) {
   #menubar {
     display: flex;
+    z-index: 10;
   }
 
   #content {
