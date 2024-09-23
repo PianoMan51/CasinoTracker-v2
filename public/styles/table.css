@@ -552,25 +552,3 @@
   color: white;
   opacity: 0.5;
 }
-
-@media screen and (max-width: 1590px) {
-  #app {
-    min-width: 1300px;
-  }
-}
-
-@media screen and (max-width: 1330px) {
-  .table.section.leftTable {
-    display: none;
-  }
-
-  #app {
-    min-width: 1135px;
-  }
-}
-
-@media screen and (max-width: 1155px) {
-  #app {
-    min-width: 1080px;
-  }
-}

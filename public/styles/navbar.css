@@ -1,0 +1,51 @@
+#navigations {
+    width: 100%;
+}
+
+.nav {
+    width: 90%;
+    height: 40px;
+    box-sizing: border-box;
+    display: flex;
+    padding-left: 23px;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+    gap: 5px;
+    transition: 0.2s;
+    border-radius: 0px 20px 20px 0px;
+}
+
+.nav span {
+    flex: 1;
+    font-size: .8em;
+
+}
+
+.nav i {
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+}
+
+.nav:not(#menubar .nav) * {
+    color: var(--darkbackground);
+}
+
+.nav:hover:not(#menubar .nav) {
+    background-color: var(--darkblue);
+}
+
+.nav:hover * {
+    color: white;
+}
+
+#userContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 30px;
+    user-select: none;
+}

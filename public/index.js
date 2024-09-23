@@ -37,11 +37,6 @@ let campaignSelectsContainer = document.querySelector(".inputs .campaigns.select
 let reopenCasinoSelects = document.querySelector(".reopen.casino");
 let reopenCampaignSelects = document.querySelector(".reopen.campaign");
 let monthBarChartToggle = document.getElementById("toggleBarCategory");
-let sideBar = document.getElementById("sidebar");
-let showSidebar = localStorage.getItem("showSidebar") === "true";
-let sideBarButton = document.querySelector(".collapse_sidebar_button");
-showSidebar ? sideBar.classList.remove("small") : sideBar.classList.add("small");
-sideBarButton.style.transform = showSidebar ? "rotate(0deg)" : "rotate(180deg)";
 let year = 2024;
 let currentFilter = null;
 let isAscending = true;
@@ -90,29 +85,6 @@ currentMonthSpan.onclick = () => {
   updateList();
   updateAddLists();
 };
-
-sideBarButton.addEventListener("click", () => {
-  showSidebar = !showSidebar;
-  localStorage.setItem("showSidebar", showSidebar);
-
-  let nav = document.querySelectorAll(".nav");
-
-  if (showSidebar) {
-    sideBar.classList.remove("small");
-    sideBarButton.style.transform = "rotate(0deg)";
-
-    nav.forEach((nav) => {
-      nav.querySelector("span").style.display = "flex";
-    });
-  } else {
-    sideBar.classList.add("small");
-    sideBarButton.style.transform = "rotate(180deg)";
-
-    nav.forEach((nav) => {
-      nav.querySelector("span").style.display = "none";
-    });
-  }
-});
 
 document.querySelectorAll(".listHeaders span").forEach((sort) => {
   sort.addEventListener("click", () => {
@@ -416,11 +388,6 @@ function createEntryContainer(entry, key) {
 }
 
 async function updateList() {
-  for (let i = 0; i < 20; i++) {
-    let offline_element = document.createElement("div");
-    offline_element.setAttribute("class", "offline_element");
-  }
-
   try {
     let entries = [];
     let ASG_entries = [];
@@ -713,6 +680,7 @@ async function updateDashboard(category) {
     createTotalElement(sortedCasinoEntries, "casinoTotals");
     createTotalElement(sortedCampaignEntries, "campaignTotals");
 
+    if (window.innerWidth < 400) dashBoardTotalBarchart.options.scales.x.display = false;
     dashBoardTotalBarchart.data.datasets[0].data = totalBarchartList;
     dashBoardTotalBarchart.data.labels = months;
     dashBoardTotalBarchart.data.datasets[0].backgroundColor =
@@ -949,18 +917,6 @@ async function updateAddLists() {
   let campaignContainerList = document.querySelector(".addCampaignsList");
   const casinos = await getMisc("Casinos");
   const campaigns = await getMisc("Campaigns");
-
-  for (let i = 0; i < 10; i++) {
-    let offline_element = document.createElement("div");
-    offline_element.setAttribute("class", "offline_element");
-    //casinoContainerList.appendChild(offline_element);
-  }
-
-  for (let i = 0; i < 10; i++) {
-    let offline_element = document.createElement("div");
-    offline_element.setAttribute("class", "offline_element");
-    //campaignContainerList.appendChild(offline_element);
-  }
 
   try {
     let entries = [];

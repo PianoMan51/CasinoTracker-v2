@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="styles/dashboard.css">
     <link rel="stylesheet" href="styles/table.css">
     <link rel="stylesheet" href="styles/wash.css">
+    <link rel="stylesheet" href="styles/navbar.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -24,14 +25,23 @@
 <body>
     <script type="module" src="index.js"></script>
     <div id="app">
-        <div class="banner">
+        <div id="menubar">
+            <div class="nav" id="nav-dashboard" name="dashboard">
+                <i class="fa-solid fa-chart-line fa-xl" style="color: white"></i>
+            </div>
+            <div class="nav" name="table">
+                <i class="fa-solid fa-table-columns fa-xl" style="color: white"></i>
+            </div>
+            <div class="nav" name="wash">
+                <i class="fa-solid fa-bath fa-xl" style="color: white"></i>
+            </div>
         </div>
         <div id="content">
             <div id="sidebar">
                 <div id="userContainer">
                     <h4 style="margin: 0;">PianoMan51</h4>
                     <span style="font-size: .7em;">nikolajwold@hotmail.com</span>
-                    <div class="profile"><img src="images/profile.png"></div>
+                    <div class="profile"><img src="images/profile.png" style="height: 120px"></div>
                 </div>
                 <div id="navigations">
                     <div class="nav" id="nav-dashboard" name="dashboard">
@@ -47,8 +57,6 @@
                         <span>Vask ASG</span>
                     </div>
                 </div>
-                <button class="collapse_sidebar_button"><i class="fa-solid fa-angle-right fa-2xl"></i></button>
-
             </div>
             <div class="pageContent dashboard">
                 <div id="cards">
@@ -107,25 +115,25 @@
                         </div>
                     </div>
                 </div>
-                <div class="dashboard matrix">
-                    <div class="dashboard column">
-                        <div class="dashboard section">
-                            <canvas id="chart_profits"></canvas>
-                        </div>
-                        <div class="dashboard section">
-                            somthinfg
+
+                <div id="dashboard">
+                    <div class="dashboard section" id="graph">
+                        <canvas id="chart_profits"></canvas>
+                    </div>
+
+                    <div class="dashboard section">
+                        <div class="listContainer">
+                            <div class="listedTotals" id="casinoTotals"></div>
                         </div>
                     </div>
-                    <div class="dashboard column">
-                        <div class="dashboard section">
-                            <div class="listContainer">
-                                <div class="listedTotals" id="casinoTotals"></div>
-                            </div>
-                        </div>
-                        <div class="dashboard section">
-                            <div class="listContainer">
-                                <div class="listedTotals" id="campaignTotals"></div>
-                            </div>
+
+                    <div class="dashboard section">
+                        somthinf
+                    </div>
+
+                    <div class="dashboard section">
+                        <div class="listContainer">
+                            <div class="listedTotals" id="campaignTotals"></div>
                         </div>
                     </div>
                 </div>
@@ -342,6 +350,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <script src="wash.js"></script>
 </body>
