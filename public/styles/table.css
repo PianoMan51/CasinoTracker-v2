@@ -587,10 +587,6 @@
       "right";
   }
 
-  #menubar .monthButtons {
-    display: flex;
-  }
-
   #entriesList {
     border-radius: 0px;
   }
@@ -602,12 +598,16 @@
 
   .table.section.leftTable {
     grid-area: left;
+    flex-direction: row;
+    gap: 10px;
   }
 
   .table.section.rightTable {
     grid-area: right;
     grid-template-columns: 1fr;
   }
+
+
 
   .listHeaders,
   #actionButtons,
@@ -634,8 +634,7 @@
     margin-right: 0px;
   }
 
-  .entryContainer span,
-  .addListContainer span {
+  .entryContainer span {
     padding: 2px 5px;
     font-size: 7px;
     border-radius: 3px;
@@ -672,9 +671,57 @@
   }
 
   .graphContainer {
-    width: 160px;
+    width: 50%;
     font-size: .8em;
-    margin-left: auto;
-    margin-right: auto;
+  }
+
+  #quick_info {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+
+  #quick_info span {
+    color: white;
+    background: var(--blue);
+    padding: 3px 16px;
+    border-radius: 4px;
+    width: 90px;
+    text-align: center;
+  }
+
+  #quick_info button {
+    border: none;
+    background: var(--lightgray);
+    height: 30px;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+  }
+
+  .addList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3px;
+  }
+
+  .addContainer .addListContainer {
+    flex: 0 1 50%;
+    box-sizing: border-box;
+    padding-left: 6px;
+    padding-right: 0px
+  }
+
+  .addContainer {
+    padding: 0;
+  }
+
+  .addContainer span {
+    font-size: 10px;
   }
 }

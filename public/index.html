@@ -62,7 +62,16 @@
             </div>
             <div class="pageContent dashboard">
                 <div id="cards">
-                    <div class="card totalProfit active">
+                    <div class="card currentMonthProfit active">
+                        <div class="card_icon">
+                            <i class="fa-solid fa-hand-holding-dollar fa-xl"></i>
+                        </div>
+                        <div class="info">
+                            <div class="value"></div>
+                            <span class="value_span"></span>
+                        </div>
+                    </div>
+                    <div class="card totalProfit">
                         <div class="card_icon">
                             <i class="fa-solid fa-hand-holding-dollar fa-xl"></i>
                         </div>
@@ -89,24 +98,6 @@
                             <span class="value_span">Total Losses</span>
                         </div>
                     </div>
-                    <div class="card totalBet">
-                        <div class="card_icon">
-                            <i class="fa-solid fa-money-bills fa-xl"></i>
-                        </div>
-                        <div class="info">
-                            <div class="value"></div>
-                            <span class="value_span">Total Bets</span>
-                        </div>
-                    </div>
-                    <div class="card totalPayout">
-                        <div class="card_icon">
-                            <i class="fa-solid fa-sack-dollar fa-xl"></i>
-                        </div>
-                        <div class="info">
-                            <div class="value"></div>
-                            <span class="value_span">Total Payouts</span>
-                        </div>
-                    </div>
                     <div class="card totalPending">
                         <div class="card_icon">
                             <i class="fa-solid fa-money-bill-transfer fa-xl"></i>
@@ -123,17 +114,10 @@
                         <canvas id="chart_profits"></canvas>
                     </div>
 
-                    <div class="dashboard section">
+                    <div class="dashboard section" id="siteCampaign_list">
                         <div class="listContainer">
                             <div class="listedTotals" id="casinoTotals"></div>
                         </div>
-                    </div>
-
-                    <div class="dashboard section">
-                        fill
-                    </div>
-
-                    <div class="dashboard section">
                         <div class="listContainer">
                             <div class="listedTotals" id="campaignTotals"></div>
                         </div>
@@ -212,6 +196,7 @@
                 </div>
                 <div class="table content">
                     <div class="table section leftTable">
+
                         <div id="changeMonths">
                             <button class="monthButtons prevMonth"><i class="fa-solid fa-caret-left fa-xl"></i></button>
                             <span id="currentMonthSpan"></span>
@@ -224,6 +209,10 @@
                                 <span class="doughnut main profits"></span>
                                 <span class="doughnut sub ratio"></span>
                             </div>
+                        </div>
+                        <div id="quick_info">
+                            <span class="currentMonthSpan">September</span>
+                            <button class="addEntry"><i class="fa-solid fa-plus fa-xl"></i></button>
                         </div>
                         <button id="toggleBarCategory" class="Casinos">Casinos</button>
                         <div class="graphContainer monthBarChart">

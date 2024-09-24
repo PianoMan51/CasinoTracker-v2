@@ -21,6 +21,12 @@
   box-sizing: border-box;
 }
 
+#siteCampaign_list {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
 .card {
   flex: 1;
   height: 80px;
@@ -33,20 +39,6 @@
   transition: 0.2s;
   user-select: none;
   cursor: pointer;
-}
-
-.card.active {
-  background-color: var(--blue);
-  color: white;
-}
-
-.card.active span {
-  color: white;
-}
-
-.card:hover {
-  transform: scale(1.04);
-  transition: 0.2s;
 }
 
 .card_icon {
@@ -91,8 +83,10 @@
 .listContainer {
   overflow-y: scroll;
   height: 100%;
+  width: 50%;
   border-radius: 8px;
 }
+
 
 .listedTotals {
   display: flex;
@@ -146,8 +140,6 @@
   width: 60px;
 }
 
-
-
 @media screen and (max-width: 1400px) {
   #cards {
     grid-template-columns: repeat(3, 2fr)
@@ -158,15 +150,18 @@
   #dashboard {
     grid-template-columns: 1fr;
     width: 100%;
+    grid-template-rows: 2fr;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  #sidebar {
+    display: none;
   }
 }
 
 /* Phone */
 @media only screen and (max-width: 360px) {
-  #sidebar {
-    display: none;
-  }
-
   #cards {
     grid-template-columns: repeat(2, 3fr)
   }
