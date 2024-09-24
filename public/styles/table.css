@@ -50,7 +50,7 @@
   align-items: center;
 }
 
-#currentMonthSpan {
+.currentMonthSpan {
   font-size: larger;
   width: 140px;
   text-align: center;
@@ -61,7 +61,7 @@
   transition: 0.2s;
 }
 
-#currentMonthSpan:hover {
+.currentMonthSpan:hover {
   transform: scale(1.1);
   transition: 0.2s;
 }
@@ -454,6 +454,10 @@
   cursor: pointer;
 }
 
+#quick_info {
+  display: none;
+}
+
 .graphContainer {
   position: relative;
   user-select: none;
@@ -607,8 +611,6 @@
     grid-template-columns: 1fr;
   }
 
-
-
   .listHeaders,
   #actionButtons,
   .graphContainer.monthBarChart,
@@ -636,7 +638,7 @@
 
   .entryContainer span {
     padding: 2px 5px;
-    font-size: 7px;
+    font-size: .5em;
     border-radius: 3px;
   }
 
@@ -666,10 +668,6 @@
     margin-right: 18px;
   }
 
-  .table.section.rightTable {
-    margin-bottom: 30px;
-  }
-
   .graphContainer {
     width: 50%;
     font-size: .8em;
@@ -689,7 +687,7 @@
     background: var(--blue);
     padding: 3px 16px;
     border-radius: 4px;
-    width: 90px;
+    width: 100px;
     text-align: center;
   }
 
@@ -702,6 +700,10 @@
     justify-content: center;
     align-items: center;
     border-radius: 50%;
+  }
+
+  #siteCampaign_list {
+    margin-bottom: 50px;
   }
 
   .addList {
