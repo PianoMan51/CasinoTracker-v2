@@ -39,7 +39,7 @@ let reopenCampaignSelects = document.querySelector(".reopen.campaign");
 let monthBarChartToggle = document.getElementById("toggleBarCategory");
 let actualMonth = new Date();
 let year = 2024;
-let currentFilter = null;
+let currentFilterElement = null;
 let isAscending = true;
 let totalView = false;
 let activeRemove = false;
@@ -85,7 +85,6 @@ currentMonthSpan.forEach((span) => {
   span.onclick = () => {
     totalView = !totalView;
 
-    span.innerHTML = totalView ? "Total" : months[currentMonth];
     updateList();
     updateMonthLists();
   };
@@ -113,19 +112,29 @@ document.querySelectorAll(".nextMonth").forEach((button) => {
 document.querySelector(".pageContent." + currentPageContent).style.display = "flex";
 
 document.querySelectorAll(".nav").forEach((button) => {
-  let content = button.getAttribute("name");
-
   button.addEventListener("click", function () {
-    if (content == "table") monthDoughnutProfit.update();
-
-    document.querySelectorAll(".pageContent").forEach((page) => {
-      page.style.display = "none";
-    });
-    document.querySelector(".pageContent." + content).style.display = "flex";
-    localStorage.setItem("currentPageContent", content);
-    resetInputs();
+    nav(button.getAttribute("name"));
   });
 });
+
+document.querySelector(".card.currentMonthProfit").onclick = () => {
+  nav("table");
+  currentMonth = actualMonth.getMonth();
+  localStorage.setItem("currentMonth", currentMonth);
+  updateList();
+};
+
+function nav(page) {
+  if (page == "table") monthDoughnutProfit.update();
+
+  document.querySelectorAll(".pageContent").forEach((page) => {
+    page.style.display = "none";
+  });
+
+  document.querySelector(".pageContent." + page).style.display = "flex";
+  localStorage.setItem("currentPageContent", page);
+  resetInputs();
+}
 
 openInputs.onclick = () => {
   activeAdd = !activeAdd;
@@ -223,9 +232,6 @@ function changeMonth(direction) {
     currentMonth = (currentMonth + 1) % 12;
   }
   localStorage.setItem("currentMonth", currentMonth);
-  currentMonthSpan.forEach((span) => {
-    span.innerHTML = months[currentMonth];
-  });
   updateList();
   updateMonthLists();
 
@@ -390,6 +396,10 @@ function createEntryContainer(entry, key) {
 }
 
 async function updateList() {
+  currentMonthSpan.forEach((span) => {
+    span.innerHTML = totalView ? "Total" : months[localStorage.getItem("currentMonth")];
+  });
+
   try {
     let entries = [];
     let ASG_entries = [];
@@ -509,9 +519,8 @@ async function updateList() {
   }
 
   // Apply the current filter if applicable
-  if (currentFilter) {
-    let category = document.querySelector(".listedTotals .selected").classList[0].slice(0, -9);
-    filterEntries(category);
+  if (currentFilterElement) {
+    filterEntries(currentFilterElement);
   }
 
   updateMonthCharts();
@@ -612,7 +621,10 @@ async function updateDashboard() {
       entries.forEach(([name, profit]) => {
         const color = profit > 0 ? "var(--green)" : "var(--red)";
         const element = document.createElement("div");
-        element.setAttribute("class", "listContainerElement");
+        element.setAttribute(
+          "class",
+          `${containerId.substring(0, containerId.length - 6)} filter listContainerElement`
+        );
         element.innerHTML = `
           <span class="label">${name ? name : "Other"}</span>
           <span class="profits" style="background-color: ${color}">$${profit.toFixed(0)}</span>
@@ -624,12 +636,12 @@ async function updateDashboard() {
             page.style.display = "none";
           });
 
-          currentFilter = element.querySelector(".label").innerHTML;
+          currentFilterElement = element;
 
           document.querySelector(".pageContent.table").style.display = "flex";
 
           document.querySelectorAll(".listContainerElement").forEach((filter) => {
-            if (filter.children[0].innerHTML == currentFilter) {
+            if (filter.children[0].innerHTML == currentFilterElement) {
               filter.classList.add("selected");
             }
           });
@@ -637,10 +649,6 @@ async function updateDashboard() {
           totalView = "true";
           updateList();
           updateMonthLists();
-
-          currentMonthSpan.innerHTML = "Total";
-          document.getElementById("prevMonth").classList.toggle("hidden");
-          document.getElementById("nextMonth").classList.toggle("hidden");
         });
       });
     };
@@ -686,7 +694,7 @@ function updateMonthCharts(category) {
     category = monthBarChartToggle.className;
   }
 
-  let entries = currentFilter
+  let entries = currentFilterElement
     ? document.querySelectorAll(".entryContainer.filter")
     : document.querySelectorAll(".entryContainer");
   entries.forEach((entry) => {
@@ -902,7 +910,7 @@ async function updateMonthLists() {
 
     casinos.forEach((casino) => {
       let casinoContainer = document.createElement("div");
-      casinoContainer.setAttribute("class", "casinoContainer listContainerElement");
+      casinoContainer.setAttribute("class", "casino filter listContainerElement");
 
       let casinoCount = 0;
       entries.forEach((entry) => {
@@ -939,7 +947,7 @@ async function updateMonthLists() {
 
     campaigns.forEach((campaign) => {
       let campaignContainer = document.createElement("div");
-      campaignContainer.setAttribute("class", "campaignContainer listContainerElement");
+      campaignContainer.setAttribute("class", "campaign filter listContainerElement");
 
       let campaignCount = 0;
       entries.forEach((entry) => {
@@ -960,11 +968,15 @@ async function updateMonthLists() {
   sortEntries(document.querySelector("#casinoList div"), "listedTotals");
   sortEntries(document.querySelector("#campaignList div"), "listedTotals");
 
-  let elements = document.querySelectorAll(".table.section.list .listedTotals div");
+  let elements = document.querySelectorAll("#table_list_totals .table.section.list .listedTotals div");
 
-  document.querySelectorAll(".listContainerElement").forEach((filterContainerSpan) => {
-    if (filterContainerSpan.children[0].innerHTML == currentFilter) {
-      filterContainerSpan.classList.add("selected");
+  document.querySelectorAll("#table_list_totals .listContainerElement").forEach((element) => {
+    if (currentFilterElement) {
+      if (element.querySelector(".label").innerHTML == currentFilterElement.querySelector(".label").innerHTML) {
+        element.classList.add("selected");
+      } else {
+        currentFilterElement = null;
+      }
     }
   });
 
@@ -977,35 +989,34 @@ async function updateMonthLists() {
 
       if (this.classList.contains("selected")) {
         this.classList.remove("selected");
-        currentFilter = null;
+        currentFilterElement = null;
       } else {
-        document.querySelectorAll(".table.section.list .listedTotals div").forEach((e) => {
+        document.querySelectorAll("#table_list_totals .table.section.list .listedTotals div").forEach((e) => {
           e.classList.remove("selected");
         });
         this.classList.add("selected");
-        currentFilter = this.children[0].innerHTML;
+        currentFilterElement = this;
       }
-      filterEntries(this.classList[0].slice(0, -9));
+      filterEntries(currentFilterElement);
       updateList();
     };
   });
 }
 
-function filterEntries(category) {
+function filterEntries(currentFilterElement) {
   let entries = document.querySelectorAll(".entryContainer");
-  let filteredEntries = [];
 
-  entries.forEach((entry) => {
-    let filterType = category == "casino" ? entry.children[1].innerHTML : entry.children[2].innerHTML;
-    if (currentFilter) {
-      if (filterType !== currentFilter) {
+  if (currentFilterElement) {
+    entries.forEach((entry) => {
+      let filterCategory =
+        currentFilterElement.classList[0] == "casino" ? entry.children[1].innerHTML : entry.children[2].innerHTML;
+      if (filterCategory !== currentFilterElement.querySelector(".label").innerHTML) {
         entry.style.display = "none";
       } else {
         entry.classList.toggle("filter");
-        filteredEntries.push(entry);
       }
-    }
-  });
+    });
+  }
 }
 
 function sortEntries(entries, sort) {

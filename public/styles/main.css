@@ -69,49 +69,86 @@ body::-webkit-scrollbar {
   margin: 10px;
 }
 
-#menubar {
-  display: none;
-  width: 100vw;
-  height: 18px;
-  background: var(--blue);
-  position: fixed;
-  padding: 10px;
-  bottom: 0;
-  left: 0;
-  align-items: center;
-  justify-content: center;
-}
-
-#menubar .monthButtons {
-  background-color: transparent;
-  display: none;
-}
-
-#menubar .nav {
-  padding: 0;
-  width: auto;
-  margin: 0 20px
-}
-
 #dashboard_list_totals,
 #table_list_totals {
-  display: grid;
+  display: flex;
   width: 100%;
   gap: 12px;
   padding: 0;
   background-color: transparent;
-  grid-template-columns: 60% auto;
-  /*   grid-template-rows: 50% 50%; */
+  grid-template-rows: auto auto;
 }
 
+.listedTotals {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 4px;
+  overflow-y: scroll;
+  border-radius: 5px;
+}
+
+.listedTotals::-webkit-scrollbar {
+  display: none;
+}
+
+.listedTotalsContainer {
+  background-color: var(--darkgray);
+  color: white;
+  border-radius: 5px;
+  padding: 4px 8px;
+  transition: 0.15s;
+  cursor: pointer;
+  user-select: none;
+  letter-spacing: 3px;
+}
+
+.listedTotalsContainer span:last-child {
+  width: 26px;
+  text-align: center;
+}
+
+.listedTotalsContainer:hover {
+  background-color: var(--darkergray);
+  transition: 0.15s;
+}
+
+.listedTotals .selected .label {
+  background-color: var(--blue);
+  color: white;
+}
+
+.listedTotals .selected .label:hover {
+  background-color: var(--darkblue);
+}
+
+.listedTotals .listContainerElement .profits {
+  background-color: var(--background);
+}
+
+.phone_nav {
+  background: white;
+  border-radius: var(--sectionBorderRadius);
+  display: none;
+  padding: 5px;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+}
+
+.phone_nav button {
+  border: none;
+  height: 30px;
+  width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--background)
+}
 
 @media only screen and (max-width: 700px) {
-  #menubar {
-    display: flex;
-    z-index: 10;
-  }
-
-  #menubar .monthButtons {
+  .phone_nav {
     display: flex;
   }
 
@@ -121,7 +158,12 @@ body::-webkit-scrollbar {
 
   #dashboard:last-child,
   #table:last-child {
-    margin-bottom: 50px;
+    margin-bottom: 20px;
+  }
+
+  #dashboard_list_totals,
+  #table_list_totals {
+    display: grid;
   }
 
   .dashboard.section.list {

@@ -8,6 +8,7 @@
 #dashboard {
   display: grid;
   gap: 8px;
+  grid-template-columns: 50% 50%;
 }
 
 .dashboard.section {
@@ -104,8 +105,7 @@
   cursor: pointer;
 }
 
-.listContainerElement .label:hover,
-.listContainerElement .counter:hover {
+.listContainerElement .label:hover {
   background-color: var(--gray);
 }
 
@@ -161,6 +161,10 @@
 
   #dashboard_list_totals {
     grid-template-columns: 1fr;
+  }
+
+  .listContainerElement .label:hover {
+    background-color: var(--lightgray);
   }
 
 }

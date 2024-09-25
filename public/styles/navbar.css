@@ -2,7 +2,7 @@
     width: 100%;
 }
 
-.nav {
+#navigations .nav {
     width: 90%;
     height: 40px;
     box-sizing: border-box;
@@ -16,28 +16,28 @@
     border-radius: 0px 20px 20px 0px;
 }
 
-.nav span {
+#navigations .nav span {
     flex: 1;
     font-size: .8em;
 
 }
 
-.nav i {
+#navigations .nav i {
     width: 25px;
     height: 25px;
     display: flex;
     align-items: center;
 }
 
-.nav:not(#menubar .nav) * {
+#navigations .nav * {
     color: var(--darkbackground);
 }
 
-.nav:hover:not(#menubar .nav) {
+#navigations .nav:hover {
     background-color: var(--darkblue);
 }
 
-.nav:hover * {
+#navigations .nav:hover * {
     color: white;
 }
 
