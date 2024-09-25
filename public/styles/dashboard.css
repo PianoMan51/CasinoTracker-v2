@@ -7,11 +7,7 @@
 
 #dashboard {
   display: grid;
-  width: 100%;
-  height: calc(100% - 100px);
   gap: 8px;
-  grid-template-columns: 60% auto;
-  grid-template-rows: 50% 50%;
 }
 
 .dashboard.section {
@@ -21,11 +17,14 @@
   box-sizing: border-box;
 }
 
-#siteCampaign_list {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
+.dashboard.section.list {
+  overflow: scroll;
 }
+
+.dashboard.section.list::-webkit-scrollbar {
+  display: none;
+}
+
 
 .card {
   flex: 1;
@@ -78,21 +77,10 @@
   color: var(--darkblue);
 }
 
-.listContainer {
-  overflow-y: scroll;
-  height: 100%;
-  width: 50%;
-  border-radius: 8px;
-}
-
 .listedTotals {
   display: flex;
   flex-direction: column;
   gap: 5px;
-}
-
-.listContainer::-webkit-scrollbar {
-  display: none;
 }
 
 .listContainerElement {
@@ -133,6 +121,10 @@
   cursor: pointer;
 }
 
+.listContainerElement .label {
+  flex: 1;
+}
+
 .listContainerElement .profits:hover {
   width: 60px;
 }
@@ -167,29 +159,8 @@
     height: 375px
   }
 
-  .dashboard.section {
-    max-height: none;
-  }
-
-  .listContainer {
-    overflow: visible;
-    height: 100%
-  }
-
-  #siteCampaign_list {
-    font-size: 0.6em;
-  }
-
-  .listedTotals .listContainerElement span {
-    padding: 6px;
-  }
-
-  .listContainerElement {
-    height: 24px;
-  }
-
-  .table.section.rightTable {
-    margin-bottom: 50px;
+  #dashboard_list_totals {
+    grid-template-columns: 1fr;
   }
 
 }

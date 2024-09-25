@@ -87,7 +87,7 @@ currentMonthSpan.forEach((span) => {
 
     span.innerHTML = totalView ? "Total" : months[currentMonth];
     updateList();
-    updateAddLists();
+    updateMonthLists();
   };
 });
 
@@ -114,7 +114,10 @@ document.querySelector(".pageContent." + currentPageContent).style.display = "fl
 
 document.querySelectorAll(".nav").forEach((button) => {
   let content = button.getAttribute("name");
+
   button.addEventListener("click", function () {
+    if (content == "table") monthDoughnutProfit.update();
+
     document.querySelectorAll(".pageContent").forEach((page) => {
       page.style.display = "none";
     });
@@ -128,7 +131,7 @@ openInputs.onclick = () => {
   activeAdd = !activeAdd;
   openInputs.classList.toggle("active");
   inputsContainer.classList.toggle("hidden");
-  document.querySelector(".table.content").classList.toggle("blur");
+  document.querySelector("#table").classList.toggle("blur");
 };
 
 removeBtn.onclick = () => {
@@ -224,7 +227,7 @@ function changeMonth(direction) {
     span.innerHTML = months[currentMonth];
   });
   updateList();
-  updateAddLists();
+  updateMonthLists();
 
   openInputs.style.display = actualMonth.getMonth() !== currentMonth ? "none" : "inline";
 }
@@ -265,7 +268,7 @@ function addEntry() {
 
       // Toggle UI elements and reset inputs
       inputsContainer.classList.toggle("hidden");
-      document.querySelector(".table.content").classList.toggle("blur");
+      document.querySelector("#table").classList.toggle("blur");
       activeAdd = false;
       openInputs.classList.toggle("active");
       resetInputs();
@@ -280,7 +283,7 @@ function resetInputs() {
   win_input.value = "";
   casinoSelectsContainer.classList.add("open");
   campaignSelectsContainer.classList.add("hidden");
-  document.querySelector(".table.content").classList.remove("blur");
+  document.querySelector("#table").classList.remove("blur");
   document.querySelector(".amountInputs").classList.add("hidden");
 
   document.getElementById("inputsContainer").classList.add("hidden");
@@ -507,7 +510,7 @@ async function updateList() {
 
   // Apply the current filter if applicable
   if (currentFilter) {
-    let category = document.querySelector(".addList .selected").classList[0].slice(0, -9);
+    let category = document.querySelector(".listedTotals .selected").classList[0].slice(0, -9);
     filterEntries(category);
   }
 
@@ -611,7 +614,7 @@ async function updateDashboard() {
         const element = document.createElement("div");
         element.setAttribute("class", "listContainerElement");
         element.innerHTML = `
-          <span class="label" style="flex: 1">${name ? name : "Other"}</span>
+          <span class="label">${name ? name : "Other"}</span>
           <span class="profits" style="background-color: ${color}">$${profit.toFixed(0)}</span>
         `;
         container.append(element);
@@ -625,7 +628,7 @@ async function updateDashboard() {
 
           document.querySelector(".pageContent.table").style.display = "flex";
 
-          document.querySelectorAll(".addListContainer").forEach((filter) => {
+          document.querySelectorAll(".listContainerElement").forEach((filter) => {
             if (filter.children[0].innerHTML == currentFilter) {
               filter.classList.add("selected");
             }
@@ -633,7 +636,7 @@ async function updateDashboard() {
 
           totalView = "true";
           updateList();
-          updateAddLists();
+          updateMonthLists();
 
           currentMonthSpan.innerHTML = "Total";
           document.getElementById("prevMonth").classList.toggle("hidden");
@@ -873,9 +876,9 @@ function editEntry(event) {
   }
 }
 
-async function updateAddLists() {
-  let casinoContainerList = document.querySelector(".addCasinosList");
-  let campaignContainerList = document.querySelector(".addCampaignsList");
+async function updateMonthLists() {
+  let casinoContainerList = document.querySelector("#monthCasinoTotals");
+  let campaignContainerList = document.querySelector("#monthCampaignTotals");
   const casinos = await getMisc("Casinos");
   const campaigns = await getMisc("Campaigns");
 
@@ -899,18 +902,18 @@ async function updateAddLists() {
 
     casinos.forEach((casino) => {
       let casinoContainer = document.createElement("div");
-      casinoContainer.setAttribute("class", "casinoContainer addListContainer");
+      casinoContainer.setAttribute("class", "casinoContainer listContainerElement");
 
       let casinoCount = 0;
-      entries.forEach((entry, index) => {
+      entries.forEach((entry) => {
         if (casino == entry.casino) {
           casinoCount++;
         }
       });
 
-      casinoContainer.innerHTML = `<span>${casino}</span><span>${casinoCount}</span>`;
+      casinoContainer.innerHTML = `<span class="label">${casino}</span><span class="profits">${casinoCount}</span>`;
 
-      casinoContainerList.append(casinoContainer);
+      if (casinoCount > 0) casinoContainerList.append(casinoContainer);
     });
   } catch (error) {
     console.error("Error updating list", error);
@@ -936,7 +939,7 @@ async function updateAddLists() {
 
     campaigns.forEach((campaign) => {
       let campaignContainer = document.createElement("div");
-      campaignContainer.setAttribute("class", "campaignContainer addListContainer");
+      campaignContainer.setAttribute("class", "campaignContainer listContainerElement");
 
       let campaignCount = 0;
       entries.forEach((entry) => {
@@ -945,21 +948,21 @@ async function updateAddLists() {
         }
       });
 
-      campaignContainer.innerHTML = `<span>${campaign}</span><span>${campaignCount}</span>`;
+      campaignContainer.innerHTML = `<span class="label">${campaign}</span><span class="profits">${campaignCount}</span>`;
 
-      campaignContainerList.append(campaignContainer);
+      if (campaignCount > 0) campaignContainerList.append(campaignContainer);
     });
   } catch (error) {
     console.error("Error updating list", error);
   }
 
   isAscending = false;
-  sortEntries(document.querySelector("#casinoList div"), "addList");
-  sortEntries(document.querySelector("#campaignList div"), "addList");
+  sortEntries(document.querySelector("#casinoList div"), "listedTotals");
+  sortEntries(document.querySelector("#campaignList div"), "listedTotals");
 
-  let elements = document.querySelectorAll(".addContainer .addList div");
+  let elements = document.querySelectorAll(".table.section.list .listedTotals div");
 
-  document.querySelectorAll(".addListContainer").forEach((filterContainerSpan) => {
+  document.querySelectorAll(".listContainerElement").forEach((filterContainerSpan) => {
     if (filterContainerSpan.children[0].innerHTML == currentFilter) {
       filterContainerSpan.classList.add("selected");
     }
@@ -976,7 +979,7 @@ async function updateAddLists() {
         this.classList.remove("selected");
         currentFilter = null;
       } else {
-        document.querySelectorAll(".addContainer .addList div").forEach((e) => {
+        document.querySelectorAll(".table.section.list .listedTotals div").forEach((e) => {
           e.classList.remove("selected");
         });
         this.classList.add("selected");
@@ -1037,7 +1040,7 @@ function sortEntries(entries, sort) {
     Profit: getSortingFunction(5, parseProfit),
     Casino: stringSort(1),
     Kampagne: stringSort(2),
-    addList: getSortingFunction(1, parseProfit),
+    listedTotals: getSortingFunction(1, parseProfit),
   };
 
   if (sort in sortMapping) {
@@ -1123,8 +1126,8 @@ let dashBoardTotalBarchart = new Chart("chart_profits", {
         localStorage.setItem("currentMonth", currentMonth);
         currentFilter = null;
         totalView = false;
-        document.getElementById("prevMonth").classList.remove("hidden");
-        document.getElementById("nextMonth").classList.remove("hidden");
+        //document.getElementById("prevMonth").classList.remove("hidden");
+        //document.getElementById("nextMonth").classList.remove("hidden");
 
         document.querySelectorAll(".pageContent").forEach((page) => {
           page.style.display = "none";
@@ -1146,8 +1149,6 @@ let dashBoardTotalBarchart = new Chart("chart_profits", {
 window.addEventListener("resize", function () {
   dashBoardTotalBarchart.update(); // Update chart if window size changes
 });
-
-//if (window.innerWidth < 400) dashBoardTotalBarchart.options.scales.x.display = false;
 
 let monthDoughnutProfit = new Chart("monthChart_doughnut_profits", {
   type: "doughnut",

@@ -93,6 +93,17 @@ body::-webkit-scrollbar {
   margin: 0 20px
 }
 
+#dashboard_list_totals,
+#table_list_totals {
+  display: grid;
+  width: 100%;
+  gap: 12px;
+  padding: 0;
+  background-color: transparent;
+  grid-template-columns: 60% auto;
+  /*   grid-template-rows: 50% 50%; */
+}
+
 
 @media only screen and (max-width: 700px) {
   #menubar {
@@ -106,5 +117,31 @@ body::-webkit-scrollbar {
 
   #content {
     flex-direction: column;
+  }
+
+  #dashboard:last-child,
+  #table:last-child {
+    margin-bottom: 50px;
+  }
+
+  .dashboard.section.list {
+    overflow: visible;
+    height: 100%;
+  }
+
+  .listedTotals {
+    font-size: 0.6em;
+  }
+
+  .listedTotals .listContainerElement span {
+    padding: 6px;
+  }
+
+  .listedTotals .listContainerElement .profits {
+    width: 30px;
+  }
+
+  .listedTotals .listContainerElement {
+    height: 24px;
   }
 }
