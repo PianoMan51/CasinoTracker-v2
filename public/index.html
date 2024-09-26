@@ -98,10 +98,19 @@
                             <span class="value_span">Pending</span>
                         </div>
                     </div>
+                    <div class="card entryCount">
+                        <div class="card_icon">
+                            <i class="fa-solid fa-money-bill-transfer fa-xl"></i>
+                        </div>
+                        <div class="info">
+                            <div class="value"></div>
+                            <span class="value_span">Entries/Profit</span>
+                        </div>
+                    </div>
                 </div>
                 <div id="dashboard">
-                    <div class="dashboard section" id="graph">
-                        <canvas id="chart_profits"></canvas>
+                    <div class="dashboard section" id="dashboard_total_graph">
+                        <canvas id="dashboard_total_barchart"></canvas>
                     </div>
                     <div class="dashboard section" id="dashboard_list_totals">
                         <div class="dashboard section list">
@@ -198,7 +207,7 @@
                                     class="fa-solid fa-caret-right fa-xl"></i></button>
                         </div>
                         <div class="graphContainer">
-                            <canvas id="monthChart_doughnut_profits"></canvas>
+                            <canvas id="month_doughnut_profits"></canvas>
                             <div>
                                 <span class="doughnut main profits"></span>
                                 <span class="doughnut sub ratio"></span>
@@ -216,9 +225,12 @@
                         </div>
                         <button id="toggleBarCategory" class="Casinos">Casinos</button>
                         <div class="graphContainer monthBarChart">
-                            <canvas id="monthChart_barchart"></canvas>
+                            <canvas id="month_barchart"></canvas>
                         </div>
 
+                    </div>
+                    <div class="table section" id="line_chart">
+                        <canvas id="month_linechart"></canvas>
                     </div>
                     <div class="table section" id="entry_list_container">
                         <div class="listHeaders">

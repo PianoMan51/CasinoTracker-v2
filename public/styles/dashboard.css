@@ -155,7 +155,7 @@
     grid-template-columns: repeat(2, 3fr)
   }
 
-  #graph {
+  #dashboard_total_graph {
     height: 375px
   }
 

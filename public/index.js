@@ -125,7 +125,6 @@ document.querySelector(".card.currentMonthProfit").onclick = () => {
 };
 
 function nav(page) {
-  if (page == "table") monthDoughnutProfit.update();
 
   document.querySelectorAll(".pageContent").forEach((page) => {
     page.style.display = "none";
@@ -571,6 +570,7 @@ async function updateDashboard() {
   const totalProfits = { value: 0 };
   const totalLosses = { value: 0 };
   const pendings = { value: 0 };
+  const entries = { value: 0};
   const totalBarchartList = [];
   const casinos = await getMisc("Casinos");
   const campaigns = await getMisc("Campaigns");
@@ -588,6 +588,8 @@ async function updateDashboard() {
         campaignTotalProfits[entry.campaign] = (campaignTotalProfits[entry.campaign] || 0) + profit;
 
         let [entry_day, entry_month] = entry.date.split("/").map(Number);
+
+        entries.value++;
 
         if (entry.cashed_out) {
           totalProfits.value += +profit;
@@ -665,9 +667,9 @@ async function updateDashboard() {
     document.querySelector(".currentMonthProfit .value_span").textContent = months[actualMonth.getMonth()];
     document.querySelector(".totalProfit .value").textContent = "$" + totalProfits.value.toFixed(0);
     document.querySelector(".totalLoss .value").textContent = "$" + totalLosses.value.toFixed(0);
-    document.querySelector(".totalWin .value").textContent =
-      "$" + (totalLosses.value * -1 + totalProfits.value).toFixed(0);
+    document.querySelector(".totalWin .value").textContent = "$" + (totalLosses.value * -1 + totalProfits.value).toFixed(0);
     document.querySelector(".totalPending .value").textContent = "$" + pendings.value.toFixed(0);
+    document.querySelector(".entryCount .value").textContent = entries.value + "/$" + (totalProfits.value/entries.value).toFixed(0);
 
     dashBoardTotalBarchart.update();
   } catch (error) {
@@ -687,6 +689,7 @@ function updateMonthCharts(category) {
   let pendingsAmount = 0;
   let monthTotalProfit = 0;
   let monthBarCategory = [];
+  let monthAccOutcome = [];
   let monthBarData = {};
   let barColors = [];
 
@@ -697,7 +700,7 @@ function updateMonthCharts(category) {
   let entries = currentFilterElement
     ? document.querySelectorAll(".entryContainer.filter")
     : document.querySelectorAll(".entryContainer");
-  entries.forEach((entry) => {
+  entries.forEach((entry, index) => {
     let casino = entry.children[1].innerHTML;
     let campaign = entry.children[2].innerHTML;
     let bet = entry.children[3].value;
@@ -716,6 +719,8 @@ function updateMonthCharts(category) {
         monthBarData[campaign] = 0;
       }
     }
+
+    monthAccOutcome.push((monthAccOutcome[index - 1] || 0) + (cashed_out ? outcome : 0));
 
     if (win) {
       outcome > 0 ? cashed_out && (wins += +outcome) : (losses += +outcome);
@@ -773,9 +778,12 @@ function updateMonthCharts(category) {
       "rgb(231, 76, 60)",
       "rgb(241, 196, 15)",
     ];
-  }
 
+    month_linechart.data.datasets[0].data = monthAccOutcome;
+    month_linechart.data.labels = Array.from({ length: monthAccOutcome.length }, (_, i) => i + 1);
+  }
   monthDoughnutProfit.update();
+  month_linechart.update();
   monthBarProfits.update();
 }
 
@@ -1062,7 +1070,7 @@ function sortEntries(entries, sort) {
   entriesArray.forEach((entry) => entries.appendChild(entry));
 }
 
-let dashBoardTotalBarchart = new Chart("chart_profits", {
+let dashBoardTotalBarchart = new Chart("dashboard_total_barchart", {
   type: "bar",
   data: {
     labels: [],
@@ -1082,6 +1090,9 @@ let dashBoardTotalBarchart = new Chart("chart_profits", {
         grid: {
           display: false,
         },
+        border: {
+          display: false,
+        },
         ticks: {
           callback: function (value) {
             if (value >= 1000) {
@@ -1090,6 +1101,8 @@ let dashBoardTotalBarchart = new Chart("chart_profits", {
             return value;
           },
         },
+        min:0,
+        max: 9000,
       },
       x: {
         border: {
@@ -1158,10 +1171,10 @@ let dashBoardTotalBarchart = new Chart("chart_profits", {
 });
 
 window.addEventListener("resize", function () {
-  dashBoardTotalBarchart.update(); // Update chart if window size changes
+  dashBoardTotalBarchart.update();
 });
 
-let monthDoughnutProfit = new Chart("monthChart_doughnut_profits", {
+let monthDoughnutProfit = new Chart("month_doughnut_profits", {
   type: "doughnut",
   data: {
     labels: ["Wins", "Losses", "Pendings"],
@@ -1198,7 +1211,7 @@ let monthDoughnutProfit = new Chart("monthChart_doughnut_profits", {
   },
 });
 
-let monthBarProfits = new Chart("monthChart_barchart", {
+let monthBarProfits = new Chart("month_barchart", {
   type: "bar",
   data: {
     labels: [],
@@ -1241,6 +1254,75 @@ let monthBarProfits = new Chart("monthChart_barchart", {
           label: function (tooltipItem) {
             let value = tooltipItem.raw;
             return "$" + value;
+          },
+        },
+      },
+    },
+  },
+});
+
+let month_linechart = new Chart("month_linechart", {
+  type: "line",
+  data: {
+    labels: [], // Keep it empty as needed
+    datasets: [
+      {
+        data: [], // Your data will go here
+        borderColor: "rgba(46, 204, 113, 1)", // Line color
+        borderWidth: 4, // Line thickness
+        fill: false, // No fill under the line
+        tension: 0.2, // Smooth curve for the line
+        pointRadius: 0, // No dots on the line
+        pointHoverRadius: 0, // No hover effect on points
+        borderCapStyle: 'round',
+      },
+    ],
+  },
+  options: {
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        grid: {
+          display: false, // No grid lines
+        },
+        border: {
+          display: false,
+        },
+        ticks: {
+          padding: 10, // Adds some space between ticks and the axis
+          callback: function (value) {
+            if (value >= 1000) {
+              return value / 1000 + "k"; // Display large numbers in 'k' format
+            }
+            return value;
+          },
+        },
+        min: 0,
+        max: 9000,
+      },
+      x: {
+        grid: {
+          display: false, // No grid lines
+        },
+        border: {
+          display: false,
+        },
+        ticks: {
+          display: false, // Hide X-axis labels
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: false, // Hides the legend for a clean look
+      },
+      tooltip: {
+        enabled: true, // Show tooltips
+        displayColors: false, // Disable color indicators in tooltip
+        callbacks: {
+          label: function (tooltipItem) {
+            let value = tooltipItem.raw;
+            return "$" + value; // Display value with a $ prefix
           },
         },
       },

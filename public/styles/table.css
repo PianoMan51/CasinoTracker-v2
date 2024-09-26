@@ -613,7 +613,12 @@
     font-size: .8em;
   }
 
-  #monthChart_doughnut_profits {
+  #month_linechart{
+    width: 324px !important;
+    height: 324px !important;
+  }
+
+  #month_doughnut_profits {
     width: 162px !important;
     height: 162px !important;
   }
