@@ -58,6 +58,7 @@ body::-webkit-scrollbar {
   flex-direction: row;
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
 }
 
 .pageContent {
@@ -77,6 +78,13 @@ body::-webkit-scrollbar {
   padding: 0;
   background-color: transparent;
   grid-template-rows: auto auto;
+}
+
+#table,
+#dashboard {
+  display: grid;
+  gap: 12px;
+  height: 100%;
 }
 
 .listedTotals {
@@ -147,7 +155,14 @@ body::-webkit-scrollbar {
   color: var(--background)
 }
 
-@media only screen and (max-width: 700px) {
+@media screen and (max-width: 1512px) {
+  #content {
+    overflow: visible;
+  }
+}
+
+
+@media screen and (max-width: 700px) {
   .phone_nav {
     display: flex;
   }

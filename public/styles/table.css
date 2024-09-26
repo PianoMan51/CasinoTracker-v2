@@ -1,8 +1,5 @@
 #table {
-  display: grid;
   grid-template-columns: 250px auto 250px;
-  gap: 12px;
-  height: 100%;
 }
 
 #entry_list_graphs {
@@ -243,10 +240,6 @@
   opacity: 0.5;
 }
 
-.pageContent.table {
-  position: relative;
-}
-
 #actionButtons {
   margin-left: auto;
   margin-right: auto;
@@ -469,6 +462,10 @@
   align-items: center;
 }
 
+#quick_info .buttons.hidden {
+  display: none;
+}
+
 #quick_info .buttons button {
   color: var(--background)
 }
@@ -613,7 +610,7 @@
     font-size: .8em;
   }
 
-  #month_linechart{
+  #month_linechart {
     width: 324px !important;
     height: 324px !important;
   }

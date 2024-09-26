@@ -84,7 +84,6 @@ async function getMisc(type) {
 currentMonthSpan.forEach((span) => {
   span.onclick = () => {
     totalView = !totalView;
-
     updateList();
     updateMonthLists();
   };
@@ -125,7 +124,6 @@ document.querySelector(".card.currentMonthProfit").onclick = () => {
 };
 
 function nav(page) {
-
   document.querySelectorAll(".pageContent").forEach((page) => {
     page.style.display = "none";
   });
@@ -397,6 +395,9 @@ function createEntryContainer(entry, key) {
 async function updateList() {
   currentMonthSpan.forEach((span) => {
     span.innerHTML = totalView ? "Total" : months[localStorage.getItem("currentMonth")];
+    totalView
+      ? document.querySelector("#quick_info .buttons").classList.add("hidden")
+      : document.querySelector("#quick_info .buttons").classList.remove("hidden");
   });
 
   try {
@@ -570,7 +571,7 @@ async function updateDashboard() {
   const totalProfits = { value: 0 };
   const totalLosses = { value: 0 };
   const pendings = { value: 0 };
-  const entries = { value: 0};
+  const entries = { value: 0 };
   const totalBarchartList = [];
   const casinos = await getMisc("Casinos");
   const campaigns = await getMisc("Campaigns");
@@ -638,17 +639,12 @@ async function updateDashboard() {
             page.style.display = "none";
           });
 
+          totalView = "true";
+
           currentFilterElement = element;
 
           document.querySelector(".pageContent.table").style.display = "flex";
 
-          document.querySelectorAll(".listContainerElement").forEach((filter) => {
-            if (filter.children[0].innerHTML == currentFilterElement) {
-              filter.classList.add("selected");
-            }
-          });
-
-          totalView = "true";
           updateList();
           updateMonthLists();
         });
@@ -667,9 +663,11 @@ async function updateDashboard() {
     document.querySelector(".currentMonthProfit .value_span").textContent = months[actualMonth.getMonth()];
     document.querySelector(".totalProfit .value").textContent = "$" + totalProfits.value.toFixed(0);
     document.querySelector(".totalLoss .value").textContent = "$" + totalLosses.value.toFixed(0);
-    document.querySelector(".totalWin .value").textContent = "$" + (totalLosses.value * -1 + totalProfits.value).toFixed(0);
+    document.querySelector(".totalWin .value").textContent =
+      "$" + (totalLosses.value * -1 + totalProfits.value).toFixed(0);
     document.querySelector(".totalPending .value").textContent = "$" + pendings.value.toFixed(0);
-    document.querySelector(".entryCount .value").textContent = entries.value + "/$" + (totalProfits.value/entries.value).toFixed(0);
+    document.querySelector(".entryCount .value").textContent =
+      entries.value + "/$" + (totalProfits.value / entries.value).toFixed(0);
 
     dashBoardTotalBarchart.update();
   } catch (error) {
@@ -1101,7 +1099,7 @@ let dashBoardTotalBarchart = new Chart("dashboard_total_barchart", {
             return value;
           },
         },
-        min:0,
+        min: 0,
         max: 9000,
       },
       x: {
@@ -1148,10 +1146,8 @@ let dashBoardTotalBarchart = new Chart("dashboard_total_barchart", {
 
         currentMonth = months.indexOf(month);
         localStorage.setItem("currentMonth", currentMonth);
-        currentFilter = null;
+        currentFilterElement = null;
         totalView = false;
-        //document.getElementById("prevMonth").classList.remove("hidden");
-        //document.getElementById("nextMonth").classList.remove("hidden");
 
         document.querySelectorAll(".pageContent").forEach((page) => {
           page.style.display = "none";
@@ -1268,13 +1264,14 @@ let month_linechart = new Chart("month_linechart", {
     datasets: [
       {
         data: [], // Your data will go here
-        borderColor: "rgba(46, 204, 113, 1)", // Line color
+        borderColor: "rgb(46, 204, 113)", // Line color
         borderWidth: 4, // Line thickness
         fill: false, // No fill under the line
         tension: 0.2, // Smooth curve for the line
         pointRadius: 0, // No dots on the line
-        pointHoverRadius: 0, // No hover effect on points
-        borderCapStyle: 'round',
+        pointBackgroundColor: "rgb(46, 204, 113)",
+        pointHoverRadius: 4, // No hover effect on points
+        borderCapStyle: "round",
       },
     ],
   },
@@ -1298,7 +1295,6 @@ let month_linechart = new Chart("month_linechart", {
           },
         },
         min: 0,
-        max: 9000,
       },
       x: {
         grid: {
@@ -1320,12 +1316,30 @@ let month_linechart = new Chart("month_linechart", {
         enabled: true, // Show tooltips
         displayColors: false, // Disable color indicators in tooltip
         callbacks: {
+          title: () => null, // Disable the X-axis label in the tooltip
           label: function (tooltipItem) {
             let value = tooltipItem.raw;
             return "$" + value; // Display value with a $ prefix
           },
         },
       },
+    },
+    interaction: {
+      mode: "nearest", // Find the nearest point
+      axis: "x", // Based on x-axis
+      intersect: false, // Do not require the cursor to intersect with the point
+    },
+    onHover: (event, chartElement) => {
+      if (chartElement.length) {
+        // If a point is found
+        month_linechart.setActiveElements(chartElement); // Highlight the point
+        month_linechart.tooltip.setActiveElements(chartElement, event); // Trigger the tooltip
+        month_linechart.update();
+      } else {
+        month_linechart.setActiveElements([]); // Clear any active elements
+        month_linechart.tooltip.setActiveElements([], event); // Hide the tooltip
+        month_linechart.update();
+      }
     },
   },
 });
