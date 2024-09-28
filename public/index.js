@@ -1,11 +1,11 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
 import {
-  getDatabase,
-  ref,
   get,
-  set,
-  remove,
+  getDatabase,
   push,
+  ref,
+  remove,
+  set,
 } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -32,8 +32,9 @@ let currentPageContent = localStorage.getItem("currentPageContent") || "dashboar
 let removeBtn = document.querySelector("#removeEntry");
 let editBtn = document.querySelector("#editEntry");
 let openInputs = document.querySelector("#openInput");
-let casinoSelectsContainer = document.querySelector(".inputs .casinos.selects");
-let campaignSelectsContainer = document.querySelector(".inputs .campaigns.selects");
+let view_toggle = document.getElementById("view_toggle");
+let casinoSelectsContainer = inputsContainer.querySelector(".casinos.selects");
+let campaignSelectsContainer = inputsContainer.querySelector(".campaigns.selects");
 let reopenCasinoSelects = document.querySelector(".reopen.casino");
 let reopenCampaignSelects = document.querySelector(".reopen.campaign");
 let monthBarChartToggle = document.getElementById("toggleBarCategory");
@@ -81,12 +82,16 @@ async function getMisc(type) {
   }
 }
 
-currentMonthSpan.forEach((span) => {
-  span.onclick = () => {
-    totalView = !totalView;
-    updateList();
-    updateMonthLists();
-  };
+view_toggle.addEventListener("click", function () {
+  totalView = !totalView;
+  view_toggle.classList.toggle("active");
+
+  document.querySelectorAll("#quick_info .buttons button").forEach((button) => {
+    button.disabled = totalView ? true : false;
+  });
+
+  updateList();
+  updateMonthLists();
 });
 
 document.querySelectorAll(".listHeaders span").forEach((sort) => {
@@ -110,8 +115,24 @@ document.querySelectorAll(".nextMonth").forEach((button) => {
 
 document.querySelector(".pageContent." + currentPageContent).style.display = "flex";
 
-document.querySelectorAll(".nav").forEach((button) => {
+document.querySelectorAll(".sidebar_buttons.nav_buttons .nav").forEach((button) => {
+  if (button.getAttribute("name") == localStorage.getItem("currentPageContent")) {
+    button.classList.add("active");
+  }
+  resetInputs();
+});
+
+document.querySelector(".sidebar_buttons.toolbar_buttons").style.display =
+  localStorage.getItem("currentPageContent") == "table" ? "flex" : "none";
+
+document.querySelectorAll(".nav_buttons .nav").forEach((button) => {
   button.addEventListener("click", function () {
+    document.querySelectorAll(".nav_buttons .nav").forEach((button) => {
+      button.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
     nav(button.getAttribute("name"));
   });
 });
@@ -128,6 +149,8 @@ function nav(page) {
     page.style.display = "none";
   });
 
+  document.querySelector(".sidebar_buttons.toolbar_buttons").style.display = page == "table" ? "flex" : "none";
+
   document.querySelector(".pageContent." + page).style.display = "flex";
   localStorage.setItem("currentPageContent", page);
   resetInputs();
@@ -135,15 +158,19 @@ function nav(page) {
 
 openInputs.onclick = () => {
   activeAdd = !activeAdd;
-  openInputs.classList.toggle("active");
-  inputsContainer.classList.toggle("hidden");
-  document.querySelector("#table").classList.toggle("blur");
+  if (activeAdd) {
+    document.getElementById("table_list_totals").style.display = "none";
+    inputsContainer.style.display = "flex";
+  } else {
+    document.getElementById("table_list_totals").style.display = "flex";
+    inputsContainer.style.display = "none";
+  }
 };
 
 removeBtn.onclick = () => {
   activeRemove = !activeRemove;
   activeEdit = false;
-  removeBtn.classList.toggle("active");
+  //removeBtn.classList.toggle("active");
   document.querySelectorAll(".entryContainer").forEach((element) => {
     element.classList.toggle("deletable");
   });
@@ -152,11 +179,24 @@ removeBtn.onclick = () => {
 editBtn.onclick = () => {
   activeEdit = !activeEdit;
   activeRemove = false;
-  editBtn.classList.toggle("active");
+  //editBtn.classList.toggle("active");
   document.querySelectorAll(".entryContainer").forEach((element) => {
     element.classList.toggle("editable");
   });
 };
+
+document.querySelectorAll(".nav.actionButtons").forEach((button) => {
+  button.addEventListener("click", function () {
+    if (button.classList.contains("active")) {
+      button.classList.remove("active");
+    } else {
+      document.querySelectorAll(".nav.actionButtons.active").forEach((activeButton) => {
+        activeButton.classList.remove("active");
+      });
+      button.classList.add("active");
+    }
+  });
+});
 
 monthBarChartToggle.onclick = () => {
   monthBarChartToggle.className = monthBarChartToggle.className == "Casinos" ? "Campaigns" : "Casinos";
@@ -167,10 +207,10 @@ monthBarChartToggle.onclick = () => {
 reopenCasinoSelects.onclick = () => casinoSelectsContainer.classList.toggle("open");
 reopenCampaignSelects.onclick = () => campaignSelectsContainer.classList.toggle("open");
 
-document.querySelectorAll(".inputs .casinos.selects span").forEach((element) => {
+document.querySelectorAll("#inputsContainer .casinos.selects span").forEach((element) => {
   element.addEventListener("click", () => {
     // Remove active class from all spans and add it to the clicked span
-    document.querySelectorAll(".inputs .casinos.selects span").forEach((el) => {
+    document.querySelectorAll("#inputsContainer .casinos.selects span").forEach((el) => {
       el.classList.remove("active");
     });
 
@@ -188,10 +228,10 @@ document.querySelectorAll(".inputs .casinos.selects span").forEach((element) => 
   });
 });
 
-document.querySelectorAll(".inputs .campaigns.selects span").forEach((element) => {
+document.querySelectorAll("#inputsContainer .campaigns.selects span").forEach((element) => {
   element.addEventListener("click", () => {
     // Remove active class from all spans and add it to the clicked span
-    document.querySelectorAll(".inputs .campaigns.selects span").forEach((el) => {
+    document.querySelectorAll("#inputsContainer .campaigns.selects span").forEach((el) => {
       el.classList.remove("active");
     });
 
@@ -209,7 +249,7 @@ document.querySelectorAll(".inputs .campaigns.selects span").forEach((element) =
     document.querySelector(".amountInputs").classList.remove("hidden");
 
     bet_input.addEventListener("input", () => {
-      if (bet_input.value) {
+      /* if (bet_input.value) {
         document.getElementById("inputsContainerButton").style.color = "var(--green)";
         document.getElementById("inputsContainerButton").style.border = "3px solid var(--green)";
         document.getElementById("inputsContainerButton").style.transform = "rotate(45deg)";
@@ -217,7 +257,7 @@ document.querySelectorAll(".inputs .campaigns.selects span").forEach((element) =
         document.getElementById("inputsContainerButton").style.color = "var(--red)";
         document.getElementById("inputsContainerButton").style.border = "3px solid var(--red)";
         document.getElementById("inputsContainerButton").style.transform = "rotate(90deg)";
-      }
+      } */
     });
   });
 });
@@ -231,8 +271,6 @@ function changeMonth(direction) {
   localStorage.setItem("currentMonth", currentMonth);
   updateList();
   updateMonthLists();
-
-  openInputs.style.display = actualMonth.getMonth() !== currentMonth ? "none" : "inline";
 }
 
 document.getElementById("inputsContainerButton").onclick = () => {
@@ -271,7 +309,6 @@ function addEntry() {
 
       // Toggle UI elements and reset inputs
       inputsContainer.classList.toggle("hidden");
-      document.querySelector("#table").classList.toggle("blur");
       activeAdd = false;
       openInputs.classList.toggle("active");
       resetInputs();
@@ -286,7 +323,6 @@ function resetInputs() {
   win_input.value = "";
   casinoSelectsContainer.classList.add("open");
   campaignSelectsContainer.classList.add("hidden");
-  document.querySelector("#table").classList.remove("blur");
   document.querySelector(".amountInputs").classList.add("hidden");
 
   document.getElementById("inputsContainer").classList.add("hidden");
@@ -294,17 +330,15 @@ function resetInputs() {
   document.getElementById("campaignContainer").classList.remove("active");
   document.getElementById("openInput").classList.remove("active");
 
-  document.getElementById("inputsContainerButton").style.color = "var(--red)";
-  document.getElementById("inputsContainerButton").style.border = "3px solid var(--red)";
-  document.getElementById("inputsContainerButton").style.transform = "rotate(90deg)";
+  document.getElementById("table_list_totals").style.display = "flex";
+  inputsContainer.style.display = "none";
+  activeAdd = false;
 
-  inputsContainer.classList.add("hidden");
-
-  document.querySelectorAll(".inputs .casinos.selects span").forEach((el) => {
+  document.querySelectorAll("#inputsContainer .casinos.selects span").forEach((el) => {
     el.classList.remove("active");
   });
 
-  document.querySelectorAll(".inputs .campaigns.selects span").forEach((el) => {
+  document.querySelectorAll("#inputsContainer .campaigns.selects span").forEach((el) => {
     el.classList.remove("active");
   });
 }
@@ -395,9 +429,6 @@ function createEntryContainer(entry, key) {
 async function updateList() {
   currentMonthSpan.forEach((span) => {
     span.innerHTML = totalView ? "Total" : months[localStorage.getItem("currentMonth")];
-    totalView
-      ? document.querySelector("#quick_info .buttons").classList.add("hidden")
-      : document.querySelector("#quick_info .buttons").classList.remove("hidden");
   });
 
   try {
@@ -826,10 +857,8 @@ function editEntry(event) {
 
     document.querySelectorAll(".entryContainer").forEach((container) => {
       container.classList.remove("selected");
-      container.classList.add("blur");
     });
 
-    container.classList.remove("blur");
     container.classList.add("selected");
 
     let checkBox = container.querySelector(".checkBox");
@@ -842,11 +871,6 @@ function editEntry(event) {
     } else {
       container.children[4].innerHTML = container.children[4].value;
     }
-
-    document.getElementById("actionButtons").children[0].style.display = "none";
-    document.getElementById("actionButtons").children[1].style.display = "none";
-    document.getElementById("actionButtons").children[2].style.display = "none";
-    document.getElementById("actionButtons").children[3].style.display = "block";
 
     spans.forEach((span) => {
       span.contentEditable = true;
@@ -867,13 +891,8 @@ function editEntry(event) {
 
       set(entryRef, content)
         .then(() => {
-          document.getElementById("actionButtons").children[0].style.display = "inline";
-          document.getElementById("actionButtons").children[1].style.display = "inline";
-          document.getElementById("actionButtons").children[2].style.display = "inline";
-          document.getElementById("actionButtons").children[3].style.display = "none";
           document.querySelectorAll(".entryContainer").forEach((container) => {
             container.classList.remove("selected");
-            container.classList.remove("blur");
             container.classList.remove("editable");
           });
           spans.forEach((span) => {
@@ -1253,6 +1272,23 @@ let monthBarProfits = new Chart("month_barchart", {
           },
         },
       },
+    },
+    interaction: {
+      mode: "nearest", // Find the nearest point
+      axis: "y", // Based on x-axis
+      intersect: false, // Do not require the cursor to intersect with the point
+    },
+    onHover: (event, chartElement) => {
+      if (chartElement.length) {
+        // If a point is found
+        monthBarProfits.setActiveElements(chartElement); // Highlight the point
+        monthBarProfits.tooltip.setActiveElements(chartElement, event); // Trigger the tooltip
+        monthBarProfits.update();
+      } else {
+        monthBarProfits.setActiveElements([]); // Clear any active elements
+        monthBarProfits.tooltip.setActiveElements([], event); // Hide the tooltip
+        monthBarProfits.update();
+      }
     },
   },
 });

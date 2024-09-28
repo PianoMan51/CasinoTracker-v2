@@ -1,51 +1,110 @@
-#navigations {
-    width: 100%;
-}
-
-#navigations .nav {
-    width: 90%;
-    height: 40px;
-    box-sizing: border-box;
-    display: flex;
-    padding-left: 23px;
-    align-items: center;
-    justify-content: flex-start;
-    cursor: pointer;
-    gap: 5px;
-    transition: 0.2s;
-    border-radius: 0px 20px 20px 0px;
-}
-
-#navigations .nav span {
-    flex: 1;
-    font-size: .8em;
-
-}
-
-#navigations .nav i {
-    width: 25px;
-    height: 25px;
-    display: flex;
-    align-items: center;
-}
-
-#navigations .nav * {
-    color: var(--darkbackground);
-}
-
-#navigations .nav:hover {
-    background-color: var(--darkblue);
-}
-
-#navigations .nav:hover * {
-    color: white;
-}
-
-#userContainer {
+#navbar {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    margin-top: 30px;
+    width: 80px;
+    background-color: white;
+    margin: 10px 0px 10px 10px;
+    border-radius: var(--sectionBorderRadius);
+    gap: 50px;
+    padding-top: 30px;
+}
+
+.sidebar_buttons.nav_buttons {
+    display: flex;
+}
+
+.sidebar_buttons {
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+}
+
+.sidebar_buttons .nav.active::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    height: 5px;
+    width: 5px;
+    border-radius: 50%;
+    background-color: var(--background);
+}
+
+.sidebar_buttons.nav_buttons::after,
+.sidebar_buttons.toolbar_buttons::after {
+    content: '';
+    position: absolute;
+    height: 2px;
+    width: 130%;
+    background-color: var(--lightgray);
+    left: 50%;
+    bottom: -25px;
+    transform: translate(-50%);
+}
+
+.sidebar_buttons .nav.active {
+    background-color: var(--background);
+    color: white;
+}
+
+.nav {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--darkbackground);
+    border: 2px solid var(--darkbackground);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: .15s;
+    transform: scale(1);
     user-select: none;
+}
+
+.nav:hover{
+    transform: scale(1.07);
+}
+
+.nav:active {
+    transform: scale(1.1);
+}
+
+#view_toggle.active {
+    background-color: var(--darkbackground);
+    color: white;
+}
+
+@media screen and (max-width: 700px) {
+
+    #navbar {
+        flex-direction: row;
+        padding: 0;
+        margin: 10px 10px 0px 10px;
+        width: auto;
+        height: 40px;
+        gap: 30px;
+        border-radius: 6px;
+        justify-content: center;
+    }
+
+    .nav {
+        width: 25px;
+        height: 25px;
+    }
+
+    #navbar .nav_buttons {
+        flex-direction: row;
+    }
+
+    #navbar img,
+    #navbar .sidebar_buttons.toolbar_buttons {
+        display: none !important;
+    }
+
+    #navbar .sidebar_buttons.view_toggle {
+        position: absolute;
+        right: 20px;
+    }
+
 }

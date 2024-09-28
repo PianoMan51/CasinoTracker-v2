@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="styles/table.css">
     <link rel="stylesheet" href="styles/wash.css">
     <link rel="stylesheet" href="styles/navbar.css">
+    <link rel="stylesheet" href="styles/addEntry.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -29,28 +30,44 @@
 <body>
     <script type="module" src="index.js"></script>
     <div id="app">
-        <div id="content">
-            <div id="sidebar">
-                <div id="userContainer">
-                    <h4 style="margin: 0;">PianoMan51</h4>
-                    <span style="font-size: .7em;">nikolajwold@hotmail.com</span>
-                    <div class="profile"><img src="images/profile.png" style="height: 120px"></div>
+        <div id="navbar">
+            <div class="sidebar_buttons nav_buttons">
+                <div class="nav" name="dashboard">
+                    <span class="material-symbols-outlined">space_dashboard</span>
                 </div>
-                <div id="navigations">
-                    <div class="nav" id="nav-dashboard" name="dashboard">
-                        <i class="fa-solid fa-chart-line fa-lg"></i>
-                        <span>Dashboard</span>
-                    </div>
-                    <div class="nav" name="table">
-                        <i class="fa-solid fa-table-columns fa-lg"></i>
-                        <span>Table</span>
-                    </div>
-                    <div class="nav" name="wash">
-                        <i class="fa-solid fa-bath fa-lg"></i>
-                        <span>Vask ASG</span>
-                    </div>
+                <div class="nav" name="table">
+                    <span class="material-symbols-outlined">view_list</span>
+                </div>
+                <div class="nav" name="wash">
+                    <span class="material-symbols-outlined">shower</span>
                 </div>
             </div>
+            <div class="sidebar_buttons toolbar_buttons">
+                <div class="nav actionButtons" id="openInput" name="add">
+                    <span class="material-symbols-outlined">add</span>
+                </div>
+                <div class="nav actionButtons" id="removeEntry" name="remove">
+                    <span class="material-symbols-outlined">close</span>
+                </div>
+                <div class="nav actionButtons" id="editEntry" name="edit">
+                    <span class="material-symbols-outlined">edit</span>
+                </div>
+                <div class="nav actionButtons" id="doneEditing" name="done">
+                    <span class="material-symbols-outlined">check</span>
+                </div>
+            </div>
+            <div class="sidebar_buttons view_toggle">
+                <div class="nav" id="view_toggle">
+                    <span class="material-symbols-outlined">
+                        date_range
+                    </span>
+                </div>
+            </div>
+            <img src="images/profile.png" style="width: 50px; margin-top: auto; margin-bottom: 30px;">
+
+
+        </div>
+        <div id="content">
             <div class="pageContent dashboard">
                 <div id="cards">
                     <div class="card currentMonthProfit active">
@@ -123,9 +140,9 @@
                 </div>
             </div>
             <div class="pageContent table">
-                <div id="inputsContainer" class="hidden">
-                    <div class="banner" style="height: 26px; background-color: var(--darkgreen);"></div>
-                    <div class="inputs">
+                <div id="table">
+                    <div class="table section hidden" id="inputsContainer">
+
                         <div class="selectContainer" id="casinoContainer">
                             <div class="selectedCasino"></div>
                             <button class="reopen casino"><i class="fa-solid fa-chevron-down"></i></button>
@@ -187,17 +204,9 @@
                             <input type="number" id="bet_input" placeholder="Bet">
                             <input type="number" id="win_input" placeholder="Win">
                         </div>
+                        <button id="inputsContainerButton" class="actionButtons"><span
+                                class="material-symbols-outlined">add</span></button>
 
-                        <button id="inputsContainerButton" class="actionButtons"><i
-                                class="fa-solid fa-xmark fa-2xl"></i></button>
-                    </div>
-                </div>
-                <div id="table">
-                    <div class="phone_nav">
-                        <button class="nav" name="dashboard"><span
-                                class="material-symbols-outlined">space_dashboard</span></button>
-                        <button class="nav" name="table"><i class="fa-solid fa-table-columns fa-lg"></i></button>
-                        <button class="nav" name="wash"><i class="fa-solid fa-bath fa-lg"></i></button>
                     </div>
                     <div class="table section" id="entry_list_graphs">
                         <div id="changeMonths">
@@ -242,20 +251,6 @@
                             <span>Profit</span>
                         </div>
                         <div id="entriesList"></div>
-                        <div id="actionButtons">
-                            <button class="actionButtons" id="removeEntry"
-                                style="color: var(--red);border: 3px solid var(--red)"><i
-                                    class="fa-solid fa-xmark fa-xl"></i></button>
-                            <button class="actionButtons" id="openInput"
-                                style="color: var(--green);border: 3px solid var(--green)"><i
-                                    class="fa-solid fa-plus fa-xl"></i></button>
-                            <button class="actionButtons" id="editEntry"
-                                style="color: var(--yellow);border: 3px solid var(--yellow)"><i
-                                    class="fa-solid fa-pencil fa-xl"></i></button>
-                            <button class="actionButtons" id="doneEditing"
-                                style="color: var(--blue);border: 3px solid var(--blue); display: none;"><i
-                                    class="fa-solid fa-check fa-xl"></i></button>
-                        </div>
                     </div>
                     <div class="table section" id="table_list_totals">
                         <div id="casinoList" class="table section list">
@@ -268,12 +263,6 @@
                 </div>
             </div>
             <div class="pageContent wash">
-                <div class="phone_nav">
-                    <button class="nav" name="dashboard"><span
-                            class="material-symbols-outlined">space_dashboard</span></button>
-                    <button class="nav" name="table"><i class="fa-solid fa-table-columns fa-lg"></i></button>
-                    <button class="nav" name="wash"><i class="fa-solid fa-bath fa-lg"></i></button>
-                </div>
                 <div class="wash upper section">
                     <table>
                         <tr>

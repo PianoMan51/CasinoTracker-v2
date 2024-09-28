@@ -57,11 +57,6 @@
   transition: 0.2s;
 }
 
-.currentMonthSpan:hover {
-  transform: scale(1.1);
-  transition: 0.2s;
-}
-
 #changeMonths button {
   border: none;
   width: 30px;
@@ -240,204 +235,6 @@
   opacity: 0.5;
 }
 
-#actionButtons {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-#actionButtons.hidden {
-  display: none;
-}
-
-.actionButtons {
-  background-color: transparent;
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  margin: 0px 10px;
-  transform: scale(1);
-  transition: all 0.15s;
-}
-
-.actionButtons.active {
-  transform: scale(1.1);
-}
-
-#removeEntry.active {
-  background-color: rgba(231, 76, 60, 0.5);
-}
-
-#editEntry.active {
-  background-color: rgba(241, 196, 15, 0.5);
-}
-
-#openInput.active {
-  background-color: rgba(46, 204, 113, 0.5);
-}
-
-#inputsContainer {
-  left: 50%;
-  top: 20%;
-  transform: translate(-50%);
-  position: absolute;
-  display: none;
-  width: 50vw;
-  max-width: 500px;
-  flex-direction: column;
-  z-index: 1;
-  display: flex;
-}
-
-#inputsContainer.hidden {
-  display: none;
-}
-
-#inputsContainer.banner {
-  height: 20px;
-}
-
-.inputs {
-  background-color: var(--white);
-  border-radius: 0px 0px 15px 15px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.selectContainer {
-  display: none;
-  align-items: center;
-  margin-left: auto;
-  margin-right: auto;
-  gap: 20px;
-}
-
-.selectContainer.active {
-  display: flex;
-}
-
-.reopen {
-  border: none;
-  background-color: var(--darkgray);
-  color: white;
-  text-align: center;
-  border-radius: 8px;
-  transition: ease-in-out 0.2s;
-}
-
-.reopen:hover {
-  background-color: var(--darkergray);
-  transition: ease-in-out 0.2s;
-}
-
-.campaigns.selects.hidden {
-  display: none;
-}
-
-.casinos.selects {
-  display: none;
-}
-
-.inputs .campaigns.selects.hidden {
-  display: none;
-}
-
-.inputs .campaigns.selects.open,
-.inputs .casinos.selects.open {
-  flex-wrap: wrap;
-  display: flex;
-  justify-content: center;
-}
-
-.selects span {
-  background-color: var(--gray);
-  padding: 5px 16px;
-  font-size: 1em;
-  border-radius: 8px;
-  margin: 5px;
-  cursor: pointer;
-  user-select: none;
-  transform: scale(1);
-  transition: ease-in-out 0.2s;
-}
-
-.selects span:hover {
-  background-color: var(--blue);
-  color: white;
-  transform: scale(1.05);
-}
-
-.selectContainer div {
-  background-color: var(--background);
-}
-
-.selects span:hover {
-  transition: ease-in-out 0.2s;
-}
-
-.selectedCasino,
-.selectedCampaign {
-  padding: 5px 16px;
-  color: white;
-  width: 130px;
-  border-radius: 8px;
-  font-size: 1em;
-  cursor: pointer;
-  user-select: none;
-  text-align: center;
-}
-
-.inputs button {
-  cursor: pointer;
-}
-
-.amountInputs.hidden {
-  display: none;
-}
-
-.amountInputs {
-  display: flex;
-  gap: 20px;
-}
-
-.inputs input {
-  border: 2px solid var(--darkbackground);
-  border-radius: 4px;
-  background-color: transparent;
-  height: 30px;
-  width: 50%;
-  padding: 5px 15px;
-  text-align: center;
-  font-size: 1.5em;
-}
-
-.inputs input::placeholder {
-  font-style: italic;
-}
-
-.inputs input:focus {
-  outline: none;
-}
-
-#inputsContainerButton {
-  border: 3px solid var(--red);
-  color: var(--red);
-  margin-left: auto;
-  margin-right: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: scale(1);
-  transition: all 0.15s;
-}
-
-#inputsContainerButton:hover {
-  transform: scale(1.1);
-  transition: all 0.15s;
-}
-
 #toggleBarCategory {
   background-color: var(--background);
   color: white;
@@ -462,12 +259,13 @@
   align-items: center;
 }
 
-#quick_info .buttons.hidden {
-  display: none;
-}
-
 #quick_info .buttons button {
   color: var(--background)
+}
+
+#quick_info .buttons button:disabled {
+  opacity: .3;
+  cursor: not-allowed;
 }
 
 .graphContainer {
@@ -505,15 +303,43 @@
 }
 
 
-@media screen and (max-width: 1530px) {
+@media screen and (max-width: 1512px) {
   #table {
-    grid-template-columns: 250px 1fr;
-    grid-template-rows: auto auto;
+    grid-template-columns: 250px 300px auto;
+    grid-template-areas:
+      'doughnut acc list'
+      'doughnut totals list'
+      'doughnut totals list'
+  }
+
+  #inputsContainer{
+    grid-area: totals;
+  }
+
+  #entry_list_container {
+    grid-area: list;
+  }
+
+  #line_chart {
+    grid-area: acc;
+  }
+
+  #entry_list_graphs {
+    grid-area: doughnut;
   }
 
   #table_list_totals {
+    grid-area: totals
+  }
+
+  #table_list_totals {
+    grid-area: totals;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto;
+  }
+
+  .table.section.list {
+    height: 50%;
   }
 }
 
@@ -526,8 +352,8 @@
 @media screen and (max-width: 360px) {
 
   #table {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
+    display: flex;
+    flex-direction: column;
   }
 
   #entriesList {
@@ -544,7 +370,6 @@
 
 
   .listHeaders,
-  #actionButtons,
   .graphContainer.monthBarChart,
   #toggleBarCategory,
   #changeMonths {
@@ -670,11 +495,16 @@
 
   #table_list_totals {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   #table_list_totals .listContainerElement .profits {
     width: 15px;
     text-align: center;
+  }
+
+  .table.section.list {
+    height: auto;
   }
 
 }

@@ -1,0 +1,125 @@
+#inputsContainer {
+    flex-direction: column;
+    display: flex;
+    overflow: hidden;
+    background-color: white;
+}
+
+#inputsContainer.hidden {
+    display: none;
+}
+
+#inputsContainer button{
+    cursor: pointer;
+}
+
+.selectContainer {
+    display: none;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 20px;
+}
+
+.selectContainer.active {
+    display: flex;
+}
+
+.reopen {
+    border: none;
+    background-color: var(--darkgray);
+    color: white;
+    text-align: center;
+    border-radius: 8px;
+    transition: ease-in-out 0.2s;
+}
+
+.reopen:hover {
+    background-color: var(--darkergray);
+    transition: ease-in-out 0.2s;
+}
+
+.campaigns.selects.hidden {
+    display: none;
+}
+
+.casinos.selects {
+    display: none;
+}
+
+#inputsContainer .campaigns.selects.hidden {
+    display: none;
+}
+
+#inputsContainer .campaigns.selects.open,
+#inputsContainer .casinos.selects.open {
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.selects span {
+    background-color: var(--gray);
+    padding: 5px 10px;
+    font-size: .8em;
+    border-radius: 8px;
+    margin: 5px;
+    cursor: pointer;
+    user-select: none;
+    transform: scale(1);
+    transition: ease-in-out 0.2s;
+}
+
+.selects span:hover {
+    background-color: var(--blue);
+    color: white;
+    transform: scale(1.05);
+}
+
+.selectContainer div {
+    background-color: var(--background);
+}
+
+.selects span:hover {
+    transition: ease-in-out 0.2s;
+}
+
+.selectedCasino,
+.selectedCampaign {
+    padding: 5px 16px;
+    color: white;
+    width: 130px;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    user-select: none;
+    text-align: center;
+}
+
+.amountInputs.hidden {
+    display: none;
+}
+
+.amountInputs {
+    display: flex;
+    gap: 20px;
+}
+
+#inputsContainer input {
+    border: 2px solid var(--darkbackground);
+    border-radius: 4px;
+    background-color: transparent;
+    height: 30px;
+    width: 50%;
+    padding: 5px 15px;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+#inputsContainer input::placeholder {
+    font-style: italic;
+}
+
+#inputsContainer input:focus {
+    outline: none;
+}

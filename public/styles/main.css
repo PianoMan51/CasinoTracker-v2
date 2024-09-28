@@ -42,15 +42,8 @@ body::-webkit-scrollbar {
   display: none;
 }
 
-#sidebar {
+#app {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 190px;
-  height: 100%;
-  transition: .2s;
-  background-color: white;
-  position: relative;
 }
 
 #content {
@@ -134,26 +127,6 @@ body::-webkit-scrollbar {
   background-color: var(--background);
 }
 
-.phone_nav {
-  background: white;
-  border-radius: var(--sectionBorderRadius);
-  display: none;
-  padding: 5px;
-  align-items: center;
-  justify-content: center;
-  gap: 40px;
-}
-
-.phone_nav button {
-  border: none;
-  height: 30px;
-  width: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  color: var(--background)
-}
 
 @media screen and (max-width: 1512px) {
   #content {
@@ -163,8 +136,9 @@ body::-webkit-scrollbar {
 
 
 @media screen and (max-width: 700px) {
-  .phone_nav {
-    display: flex;
+
+  #app{
+    flex-direction: column;
   }
 
   #content {
