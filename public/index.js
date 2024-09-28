@@ -169,8 +169,6 @@ openInputs.onclick = () => {
 
 removeBtn.onclick = () => {
   activeRemove = !activeRemove;
-  activeEdit = false;
-  //removeBtn.classList.toggle("active");
   document.querySelectorAll(".entryContainer").forEach((element) => {
     element.classList.toggle("deletable");
   });
@@ -179,7 +177,6 @@ removeBtn.onclick = () => {
 editBtn.onclick = () => {
   activeEdit = !activeEdit;
   activeRemove = false;
-  //editBtn.classList.toggle("active");
   document.querySelectorAll(".entryContainer").forEach((element) => {
     element.classList.toggle("editable");
   });
@@ -311,6 +308,7 @@ function addEntry() {
       inputsContainer.classList.toggle("hidden");
       activeAdd = false;
       openInputs.classList.toggle("active");
+      updateMonthCharts();
       resetInputs();
     })
     .catch((error) => {
@@ -378,11 +376,6 @@ function createEntryContainer(entry, key) {
   entryContainer.setAttribute("class", "entryContainer");
   entryContainer.setAttribute("data-key", key); // Set the unique key as a data attribute
 
-  // Add "pending" class if the entry has not been cashed out
-  if (!entry.cashed_out) {
-    entryContainer.classList.add("pending");
-  }
-
   let vp = window.innerWidth;
 
   entryContainer.innerHTML = `
@@ -390,13 +383,9 @@ function createEntryContainer(entry, key) {
     <span>${entry.casino}</span>
     <span>${entry.campaign ? entry.campaign : "N/A"}</span>
     <span>$${vp > 360 ? bet.toFixed(2) : bet.toFixed(0)}</span>
-    <span>${entry.win ? "$" + (vp > 360 ? win.toFixed(2) : win.toFixed(0)) : ""}</span>
-    <span style="background-color: ${color}; color: white;">${
-    entry.win ? "$" + (vp > 360 ? profit.toFixed(2) : profit.toFixed(0)) : "Pending"
-  }</span>
-    <div class="checkBox ${entry.cashed_out ? "checked" : ""}"><i class="fa-solid fa-sack-dollar ${
-    vp < 360 ? "fa-2xs" : ""
-  }"></i></div>
+    <span>${entry.win ? "$" + (vp > 360 ? win.toFixed(2) : win.toFixed(0)) : "$"}</span>
+    <span style="background-color: ${color}; color: white;">${entry.win ? "$" + (vp > 360 ? profit.toFixed(2) : profit.toFixed(0)) : "$"}</span>
+    <div class="checkBox ${entry.cashed_out ? "checked" : ""}"><i class="fa-solid fa-sack-dollar ${vp > 360 ? "" : "fa-2xs"}"></i></div>
   `;
 
   entryContainer.children[3].value = bet;
@@ -839,6 +828,7 @@ async function removeEntry(event) {
       updateMonthCharts();
       activeRemove = false;
       removeBtn.classList.remove("active");
+
       document.querySelectorAll(".entryContainer").forEach((element) => {
         element.classList.remove("deletable");
       });
@@ -853,6 +843,10 @@ function editEntry(event) {
   let key = container.getAttribute("data-key");
 
   if (activeEdit) {
+    console.log("hi");
+    document.getElementById("doneEditing").style.display = "flex";
+    //editBtn.style.display = "none";
+
     container.removeEventListener("click", editEntry);
 
     document.querySelectorAll(".entryContainer").forEach((container) => {
@@ -861,13 +855,12 @@ function editEntry(event) {
 
     container.classList.add("selected");
 
-    let checkBox = container.querySelector(".checkBox");
-    let spans = container.querySelectorAll("span");
+    let spans = container.querySelectorAll("span:not(:last-of-type)");
 
     container.children[3].innerHTML = container.children[3].value;
 
-    if (container.children[4].innerHTML == "Pending") {
-      container.children[4].innerHTML = "Pending";
+    if (container.children[4].innerHTML == "$") {
+      container.children[4].innerHTML = "";
     } else {
       container.children[4].innerHTML = container.children[4].value;
     }
@@ -883,7 +876,7 @@ function editEntry(event) {
         campaign: container.children[2].innerHTML,
         bet: container.children[3].innerHTML,
         win: container.children[4].innerHTML,
-        cashed_out: checkBox.classList.contains("checked") ? true : false,
+        cashed_out: container.querySelector(".checkBox").classList.contains("checked") ? true : false,
       };
 
       // Reference the specific entry using its unique key
@@ -895,11 +888,15 @@ function editEntry(event) {
             container.classList.remove("selected");
             container.classList.remove("editable");
           });
+
           spans.forEach((span) => {
             span.contentEditable = false;
           });
+
           activeEdit = false;
-          editBtn.classList.toggle("active");
+          editBtn.classList.remove("active");
+          document.getElementById("doneEditing").style.display = "none";
+          editBtn.style.display = "flex";
           updateList();
         })
         .catch((error) => {

@@ -35,7 +35,6 @@ body {
   width: 100vw;
   height: 100vh;
   background-color: var(--lightgray);
-  position: relative;
 }
 
 body::-webkit-scrollbar {
@@ -44,14 +43,27 @@ body::-webkit-scrollbar {
 
 #app {
   display: flex;
+  gap: 10px;
+  height: calc(100% - 20px);
+  padding: 10px;
+}
+
+#navbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80px;
+  background-color: white;
+  border-radius: var(--sectionBorderRadius);
+  gap: 50px;
+  height: 100%;
 }
 
 #content {
   display: flex;
   flex-direction: row;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+  height: 100%;
+  flex: 1;
 }
 
 .pageContent {
@@ -60,7 +72,6 @@ body::-webkit-scrollbar {
   flex: 1;
   gap: 12px;
   box-sizing: border-box;
-  margin: 10px;
 }
 
 #dashboard_list_totals,
@@ -137,7 +148,7 @@ body::-webkit-scrollbar {
 
 @media screen and (max-width: 700px) {
 
-  #app{
+  #app {
     flex-direction: column;
   }
 

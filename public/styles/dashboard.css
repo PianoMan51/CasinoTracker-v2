@@ -143,13 +143,17 @@
   #dashboard {
     height: calc(100% - 184px);
     grid-template-columns: 70% auto;
+    grid-template-rows: 1fr;
     grid-template-areas:
-      'graph list'
       'graph list';
   }
 
   #dashboard_list_totals {
-    grid-area: list
+    grid-area: list;
+  }
+
+  #dashboard_total_graph {
+    grid-area: graph;
   }
 
   .dashboard.section.list {

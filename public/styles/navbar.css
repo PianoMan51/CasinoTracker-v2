@@ -1,17 +1,6 @@
-#navbar {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 80px;
-    background-color: white;
-    margin: 10px 0px 10px 10px;
-    border-radius: var(--sectionBorderRadius);
-    gap: 50px;
-    padding-top: 30px;
-}
-
 .sidebar_buttons.nav_buttons {
     display: flex;
+    margin-top: 30px;
 }
 
 .sidebar_buttons {
@@ -20,26 +9,28 @@
     position: relative;
 }
 
-.sidebar_buttons .nav.active::before {
-    content: '';
-    position: absolute;
-    left: -10px;
-    height: 5px;
-    width: 5px;
-    border-radius: 50%;
-    background-color: var(--background);
-}
+@media screen and (min-width: 361px) {
+    .sidebar_buttons .nav.active:not(#doneEditing)::before {
+        content: '';
+        position: absolute;
+        left: -10px;
+        height: 5px;
+        width: 5px;
+        border-radius: 50%;
+        background-color: var(--background);
+    }
 
-.sidebar_buttons.nav_buttons::after,
-.sidebar_buttons.toolbar_buttons::after {
-    content: '';
-    position: absolute;
-    height: 2px;
-    width: 130%;
-    background-color: var(--lightgray);
-    left: 50%;
-    bottom: -25px;
-    transform: translate(-50%);
+    .sidebar_buttons.nav_buttons::after,
+    .sidebar_buttons.toolbar_buttons::after {
+        content: '';
+        position: absolute;
+        height: 2px;
+        width: 130%;
+        background-color: var(--lightgray);
+        left: 50%;
+        bottom: -25px;
+        transform: translate(-50%);
+    }
 }
 
 .sidebar_buttons .nav.active {
@@ -62,7 +53,7 @@
     user-select: none;
 }
 
-.nav:hover{
+.nav:hover {
     transform: scale(1.07);
 }
 
@@ -75,12 +66,15 @@
     color: white;
 }
 
+#doneEditing {
+    display: none;
+}
+
 @media screen and (max-width: 700px) {
 
     #navbar {
         flex-direction: row;
         padding: 0;
-        margin: 10px 10px 0px 10px;
         width: auto;
         height: 40px;
         gap: 30px;
@@ -95,6 +89,7 @@
 
     #navbar .nav_buttons {
         flex-direction: row;
+        margin: 10px;
     }
 
     #navbar img,
@@ -106,5 +101,4 @@
         position: absolute;
         right: 20px;
     }
-
 }

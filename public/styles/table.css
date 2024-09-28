@@ -1,9 +1,36 @@
 #table {
-  grid-template-columns: 250px auto 250px;
+  grid-template-columns: 250px 500px auto 50%;
+  grid-template-rows: 550px auto auto;
+  grid-template-areas:
+    'doughnut acc fill list'
+    'doughnut totals fill list'
+    'doughnut totals fill list'
+}
+
+#inputsContainer {
+  grid-area: totals;
+}
+
+#entry_list_container {
+  grid-area: list;
+}
+
+#line_chart {
+  grid-area: acc;
 }
 
 #entry_list_graphs {
+  grid-area: doughnut;
   gap: 10px;
+}
+
+#table_list_totals {
+  grid-area: totals;
+  flex-direction: row;
+}
+
+.table.section.list {
+  width: 100%;
 }
 
 .table.section {
@@ -81,160 +108,6 @@
   display: none;
 }
 
-.listHeaders {
-  display: flex;
-  gap: 10px;
-  height: 40px;
-  align-items: center;
-  border-radius: var(--sectionBorderRadius);
-  background-color: var(--darkblue);
-  padding: 0px 6px;
-}
-
-.listHeaders span {
-  padding: 6px 10px;
-  color: white;
-  border-radius: 5px;
-  font-size: 0.9em;
-  transform: scale(1);
-  transition: 0.2s;
-  cursor: pointer;
-  font-family: "DM Mono", monospace;
-}
-
-.listHeaders span:hover {
-  background-color: rgba(0, 0, 0, 0.4);
-  transform: scale(1.05);
-  transition: 0.2s;
-}
-
-.entryContainer {
-  display: flex;
-  gap: 10px;
-  border-radius: var(--sectionBorderRadius);
-  margin-bottom: 6px;
-  padding: 0px 6px;
-  position: relative;
-}
-
-.entryContainer:last-of-type,
-.entryContainer.filter:last-of-type {
-  margin-bottom: 0;
-}
-
-.entryContainer span {
-  padding: 6px 10px;
-  border-radius: 5px;
-  font-family: "DM Mono", monospace;
-  font-size: 0.9em;
-  user-select: none;
-  transform: scale(1);
-  transition: 0.2s;
-}
-
-.entryContainer span:nth-child(1),
-.listHeaders span:nth-child(1) {
-  width: 80px;
-}
-
-.entryContainer span:nth-child(2),
-.listHeaders span:nth-child(2) {
-  flex: 1;
-}
-
-.entryContainer span:nth-child(3),
-.listHeaders span:nth-child(3) {
-  flex: 1;
-}
-
-.entryContainer span:nth-child(4),
-.listHeaders span:nth-child(4) {
-  width: 80px;
-}
-
-.entryContainer span:nth-child(5),
-.listHeaders span:nth-child(5) {
-  width: 80px;
-}
-
-.entryContainer span:nth-child(6),
-.listHeaders span:nth-child(6) {
-  width: 80px;
-  margin-right: 40px;
-}
-
-
-.entryContainer span:hover {
-  transform: translateX(6px);
-  transition: 0.2s;
-  background-color: var(--gray);
-}
-
-.entryContainer span {
-  background-color: var(--lightgray);
-}
-
-.entryContainer.deletable,
-.entryContainer.editable {
-  background-color: var(--lightgray);
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.entryContainer.deletable span,
-.entryContainer.editable span {
-  background-color: transparent;
-}
-
-.entryContainer.deletable:hover {
-  background-color: var(--red);
-}
-
-.entryContainer.editable:hover {
-  background-color: var(--yellow);
-}
-
-.entryContainer.deletable:hover span,
-.entryContainer.editable:hover span {
-  transform: none;
-}
-
-.entryContainer.selected {
-  background-color: var(--yellow);
-}
-
-.entryContainer.selected span {
-  font-style: italic;
-}
-
-.entryContainer .checkBox {
-  background-color: var(--background);
-  color: white;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  position: absolute;
-  right: 0;
-  width: 30px;
-  height: 30px;
-  margin-right: 6px;
-  opacity: 0.3;
-}
-
-.checkBox.checked {
-  transform: scale(1);
-  transition: 0.2s;
-  opacity: 1;
-}
-
-.checkBox:hover {
-  transform: scale(1.05);
-  transition: 0.2s;
-  opacity: 0.5;
-}
-
 #toggleBarCategory {
   background-color: var(--background);
   color: white;
@@ -302,44 +175,25 @@
   overflow-y: auto;
 }
 
-
 @media screen and (max-width: 1512px) {
   #table {
     grid-template-columns: 250px 300px auto;
+    grid-template-rows: auto auto auto;
     grid-template-areas:
       'doughnut acc list'
       'doughnut totals list'
       'doughnut totals list'
   }
 
-  #inputsContainer{
-    grid-area: totals;
-  }
-
-  #entry_list_container {
-    grid-area: list;
-  }
-
-  #line_chart {
-    grid-area: acc;
-  }
-
-  #entry_list_graphs {
-    grid-area: doughnut;
-  }
-
-  #table_list_totals {
-    grid-area: totals
-  }
-
-  #table_list_totals {
-    grid-area: totals;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto;
-  }
-
   .table.section.list {
     height: 50%;
+    width: auto;
+    min-height: 200px;
+
+  }
+
+  #table_list_totals {
+    flex-direction: column;
   }
 }
 
@@ -368,66 +222,11 @@
     flex-direction: row;
   }
 
-
   .listHeaders,
   .graphContainer.monthBarChart,
   #toggleBarCategory,
   #changeMonths {
     display: none;
-  }
-
-  .entryContainer {
-    padding: 0;
-    gap: 3px;
-    height: 15px;
-    position: relative;
-  }
-
-  .entryContainer .checkBox {
-    position: absolute;
-    height: 15px;
-    width: 15px;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    margin-right: 0px;
-  }
-
-  .entryContainer span {
-    padding: 2px 5px;
-    font-size: .5em;
-    border-radius: 3px;
-  }
-
-  .entryContainer span:nth-child(1) {
-    width: 25px;
-  }
-
-  .entryContainer span:nth-child(2) {
-    min-width: 70px;
-    flex: none;
-  }
-
-  .entryContainer span:nth-child(3) {
-    flex: 1
-  }
-
-  .entryContainer span:nth-child(4) {
-    width: 22px;
-  }
-
-  .entryContainer span:nth-child(5) {
-    width: 25px;
-  }
-
-  .entryContainer span:nth-child(6) {
-    width: 22px;
-    margin-right: 18px;
-  }
-
-  .entryContainer span:hover {
-    transform: translateX(0px);
-    background-color: var(--lightgray);
   }
 
   .graphContainer {
@@ -505,6 +304,7 @@
 
   .table.section.list {
     height: auto;
+    min-height: auto;
   }
 
 }
