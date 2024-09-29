@@ -385,12 +385,14 @@ function createEntryContainer(entry, key) {
     <span>$${vp > 360 ? bet.toFixed(2) : bet.toFixed(0)}</span>
     <span>${entry.win ? "$" + (vp > 360 ? win.toFixed(2) : win.toFixed(0)) : "$"}</span>
     <span style="background-color: ${color}; color: white;">${entry.win ? "$" + (vp > 360 ? profit.toFixed(2) : profit.toFixed(0)) : "$"}</span>
-    <div class="checkBox ${entry.cashed_out ? "checked" : ""}"><i class="fa-solid fa-sack-dollar ${vp > 360 ? "" : "fa-2xs"}"></i></div>
+    <input class="checkBox ${entry.cashed_out ? "checked" : ""}" type="checkbox" ${entry.win ? "" : "disabled"}>
   `;
 
   entryContainer.children[3].value = bet;
   entryContainer.children[4].value = win;
   entryContainer.children[5].value = profit;
+  entryContainer.children[6].checked = entry.cashed_out;
+
 
   // Set up the checkBox click event listener
   let checkBox = entryContainer.querySelector(".checkBox");
@@ -552,11 +554,7 @@ function checkCash(checkBox, key) {
   checkBox.classList.toggle("checked");
   let profit = entryContainer.children[5].value;
 
-  entryContainer.children[5].style.backgroundColor = checkBox.classList.contains("checked")
-    ? profit >= 0
-      ? "var(--green"
-      : "var(--red)"
-    : "var(--yellow)";
+  entryContainer.children[5].style.backgroundColor = checkBox.classList.contains("checked") ? profit >= 0 ? "var(--green" : "var(--red)" : "var(--yellow)";
 
   let content = {
     date: entryContainer.children[0].innerHTML,
@@ -725,6 +723,7 @@ function updateMonthCharts(category) {
     let win = entry.children[4].value;
     let outcome = win - bet;
     let cashed_out = entry.children[6].classList.contains("checked");
+    console.log("cashed_out:", cashed_out)
 
     if (category == "Casinos") {
       if (!monthBarCategory.includes(casino)) {
@@ -740,9 +739,7 @@ function updateMonthCharts(category) {
 
     monthAccOutcome.push((monthAccOutcome[index - 1] || 0) + (cashed_out ? outcome : 0));
 
-    if (win) {
-      outcome > 0 ? cashed_out && (wins += +outcome) : (losses += +outcome);
-    }
+    if (win) { outcome > 0 ? cashed_out && (wins += +outcome) : (losses += +outcome) }
     outcome > 0 ? positives++ : "";
     outcome < 0 ? negatives++ : "";
     !cashed_out && win ? (pendings += +outcome) : "";
@@ -845,7 +842,7 @@ function editEntry(event) {
   if (activeEdit) {
     console.log("hi");
     document.getElementById("doneEditing").style.display = "flex";
-    //editBtn.style.display = "none";
+    editBtn.style.display = "none";
 
     container.removeEventListener("click", editEntry);
 
