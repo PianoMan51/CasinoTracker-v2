@@ -37,6 +37,10 @@ body {
   background-color: var(--lightgray);
 }
 
+body::-webkit-scrollbar{
+  display: none;
+}
+
 #app {
   display: flex;
   gap: 10px;

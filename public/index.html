@@ -55,6 +55,9 @@
                         date_range
                     </span>
                 </div>
+                <div class="nav" id="outcome_x_toggle">
+                    <span class="material-symbols-outlined">1x_mobiledata</span>
+                </div>
             </div>
             <img src="images/profile.png" style="width: 50px; margin-top: auto; margin-bottom: 30px;">
 
@@ -203,10 +206,9 @@
                     </div>
                     <div class="table section" id="entry_list_graphs">
                         <div id="changeMonths">
-                            <button class="monthButtons prevMonth"><i class="fa-solid fa-caret-left fa-xl"></i></button>
+                            <button class="monthButtons prevMonth"><span class="material-symbols-outlined" style="margin-right: 2px;">chevron_left</span></button>
                             <span class="currentMonthSpan"></span>
-                            <button class="monthButtons nextMonth"><i
-                                    class="fa-solid fa-caret-right fa-xl"></i></button>
+                            <button class="monthButtons nextMonth"><span class="material-symbols-outlined" style="margin-left: 2px;">chevron_right</span></button>
                         </div>
                         <div class="graphContainer">
                             <canvas id="month_doughnut_profits"></canvas>
@@ -218,11 +220,9 @@
                         <div id="quick_info">
                             <span class="currentMonthSpan">September</span>
                             <div class="buttons">
-                                <button class="monthButtons prevMonth"><i
-                                        class="fa-solid fa-caret-left fa-xl"></i></button>
-                                <button class="addEntry"><i class="fa-solid fa-plus fa-xl"></i></button>
-                                <button class="monthButtons nextMonth"><i
-                                        class="fa-solid fa-caret-right fa-xl"></i></button>
+                                <button class="monthButtons prevMonth"><span class="material-symbols-outlined" style="margin-right: 2px;">chevron_left</span></button>
+                                <button class="addEntry"><span class="material-symbols-outlined">add</span></button>
+                                <button class="monthButtons nextMonth"><span class="material-symbols-outlined" style="margin-left: 2px;">chevron_right</span></button>
                             </div>
                         </div>
                         <button id="toggleBarCategory" class="Casinos">Casinos</button>
@@ -236,12 +236,12 @@
                     </div>
                     <div class="table section" id="entry_list_container">
                         <div class="listHeaders">
-                            <span>Dato</span>
+                            <span>Date</span>
                             <span>Casino</span>
-                            <span>Kampagne</span>
-                            <span>Indsats</span>
-                            <span>Udbetaling</span>
-                            <span>Profit</span>
+                            <span>Campaign</span>
+                            <span>Bet</span>
+                            <span>Win</span>
+                            <span>Outcome</span>
                         </div>
                         <div id="entriesList"></div>
                     </div>

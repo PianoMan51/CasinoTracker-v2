@@ -33,6 +33,7 @@ let removeBtn = document.querySelector("#removeEntry");
 let editBtn = document.querySelector("#editEntry");
 let openInputs = document.querySelector("#openInput");
 let view_toggle = document.getElementById("view_toggle");
+let outcomeX_toggle = document.getElementById("outcome_x_toggle");
 let casinoSelectsContainer = inputsContainer.querySelector(".casinos.selects");
 let campaignSelectsContainer = inputsContainer.querySelector(".campaigns.selects");
 let reopenCasinoSelects = document.querySelector(".reopen.casino");
@@ -43,6 +44,7 @@ let year = 2024;
 let currentFilterElement = null;
 let isAscending = true;
 let totalView = false;
+let outcome_x = false;
 let activeRemove = false;
 let activeEdit = false;
 let activeAdd = false;
@@ -122,17 +124,10 @@ document.querySelectorAll(".sidebar_buttons.nav_buttons .nav").forEach((button) 
   resetInputs();
 });
 
-document.querySelector(".sidebar_buttons.toolbar_buttons").style.display =
-  localStorage.getItem("currentPageContent") == "table" ? "flex" : "none";
+document.querySelector(".sidebar_buttons.toolbar_buttons").style.display = localStorage.getItem("currentPageContent") == "table" ? "flex" : "none";
 
 document.querySelectorAll(".nav_buttons .nav").forEach((button) => {
   button.addEventListener("click", function () {
-    document.querySelectorAll(".nav_buttons .nav").forEach((button) => {
-      button.classList.remove("active");
-    });
-
-    button.classList.add("active");
-
     nav(button.getAttribute("name"));
   });
 });
@@ -144,9 +139,34 @@ document.querySelector(".card.currentMonthProfit").onclick = () => {
   updateList();
 };
 
+document.querySelector(".card.totalProfit").onclick = () => {
+  nav("table");
+  totalView = true;
+  view_toggle.classList.add("active");
+  updateList();
+};
+
+outcomeX_toggle.onclick = () => {
+  outcome_x = !outcome_x;
+  outcomeX_toggle.classList.toggle("active");
+
+  document.querySelectorAll(".entryContainer").forEach((entry)=>{
+    entry.children[5].innerHTML = entry.getAttribute(outcome_x ? "data-outcome_x" : "data-outcome_amount")
+  })
+};
+
 function nav(page) {
   document.querySelectorAll(".pageContent").forEach((page) => {
     page.style.display = "none";
+  });
+
+  document.querySelectorAll(".nav_buttons .nav").forEach((nav) => {
+    if (nav.getAttribute("name") == page) {
+      document.querySelectorAll(".nav_buttons .nav").forEach((button) => {
+        button.classList.remove("active");
+      });
+      nav.classList.add("active");
+    }
   });
 
   document.querySelector(".sidebar_buttons.toolbar_buttons").style.display = page == "table" ? "flex" : "none";
@@ -378,13 +398,19 @@ function createEntryContainer(entry, key) {
 
   let vp = window.innerWidth;
 
+  let formatted_outcome = entry.win ? "$" + (vp > 360 ? profit.toFixed(2) : profit.toFixed(0)) : "$";
+  let formatted_outcomeX = (entry.win / (entry.bet > 1 ? entry.bet : 1)).toFixed(2) + "x";
+
+  entryContainer.setAttribute("data-outcome_amount", formatted_outcome)
+  entryContainer.setAttribute("data-outcome_x", formatted_outcomeX)
+ 
   entryContainer.innerHTML = `
     <span>${entry.date}</span>
     <span>${entry.casino}</span>
     <span>${entry.campaign ? entry.campaign : "N/A"}</span>
     <span>$${vp > 360 ? bet.toFixed(2) : bet.toFixed(0)}</span>
     <span>${entry.win ? "$" + (vp > 360 ? win.toFixed(2) : win.toFixed(0)) : "$"}</span>
-    <span style="background-color: ${color}; color: white;">${entry.win ? "$" + (vp > 360 ? profit.toFixed(2) : profit.toFixed(0)) : "$"}</span>
+    <span style="background-color: ${color}; color: white">${outcome_x ? formatted_outcomeX : formatted_outcome}</span>
     <input class="checkBox ${entry.cashed_out ? "checked" : ""}" type="checkbox" ${entry.win ? "" : "disabled"}>
   `;
 
@@ -392,7 +418,6 @@ function createEntryContainer(entry, key) {
   entryContainer.children[4].value = win;
   entryContainer.children[5].value = profit;
   entryContainer.children[6].checked = entry.cashed_out;
-
 
   // Set up the checkBox click event listener
   let checkBox = entryContainer.querySelector(".checkBox");
@@ -554,7 +579,11 @@ function checkCash(checkBox, key) {
   checkBox.classList.toggle("checked");
   let profit = entryContainer.children[5].value;
 
-  entryContainer.children[5].style.backgroundColor = checkBox.classList.contains("checked") ? profit >= 0 ? "var(--green" : "var(--red)" : "var(--yellow)";
+  entryContainer.children[5].style.backgroundColor = checkBox.classList.contains("checked")
+    ? profit >= 0
+      ? "var(--green"
+      : "var(--red)"
+    : "var(--yellow)";
 
   let content = {
     date: entryContainer.children[0].innerHTML,
@@ -653,15 +682,12 @@ async function updateDashboard() {
         container.append(element);
 
         element.addEventListener("click", function () {
-          document.querySelectorAll(".pageContent").forEach((page) => {
-            page.style.display = "none";
-          });
-
           totalView = "true";
+          document.getElementById("view_toggle").classList.add("active");
 
           currentFilterElement = element;
 
-          document.querySelector(".pageContent.table").style.display = "flex";
+          nav("table");
 
           updateList();
           updateMonthLists();
@@ -713,9 +739,7 @@ function updateMonthCharts(category) {
     category = monthBarChartToggle.className;
   }
 
-  let entries = currentFilterElement
-    ? document.querySelectorAll(".entryContainer.filter")
-    : document.querySelectorAll(".entryContainer");
+  let entries = currentFilterElement ? document.querySelectorAll(".entryContainer.filter") : document.querySelectorAll(".entryContainer");
   entries.forEach((entry, index) => {
     let casino = entry.children[1].innerHTML;
     let campaign = entry.children[2].innerHTML;
@@ -723,7 +747,6 @@ function updateMonthCharts(category) {
     let win = entry.children[4].value;
     let outcome = win - bet;
     let cashed_out = entry.children[6].classList.contains("checked");
-    console.log("cashed_out:", cashed_out)
 
     if (category == "Casinos") {
       if (!monthBarCategory.includes(casino)) {
@@ -739,7 +762,8 @@ function updateMonthCharts(category) {
 
     monthAccOutcome.push((monthAccOutcome[index - 1] || 0) + (cashed_out ? outcome : 0));
 
-    if (win) { outcome > 0 ? cashed_out && (wins += +outcome) : (losses += +outcome) }
+    if (win) {outcome > 0 ? cashed_out && (wins += +outcome) : (losses += +outcome)}
+
     outcome > 0 ? positives++ : "";
     outcome < 0 ? negatives++ : "";
     !cashed_out && win ? (pendings += +outcome) : "";
@@ -840,7 +864,6 @@ function editEntry(event) {
   let key = container.getAttribute("data-key");
 
   if (activeEdit) {
-    console.log("hi");
     document.getElementById("doneEditing").style.display = "flex";
     editBtn.style.display = "none";
 
@@ -988,17 +1011,6 @@ async function updateMonthLists() {
   sortEntries(document.querySelector("#campaignList div"), "listedTotals");
 
   let elements = document.querySelectorAll("#table_list_totals .table.section.list .listedTotals div");
-
-  document.querySelectorAll("#table_list_totals .listContainerElement").forEach((element) => {
-    if (currentFilterElement) {
-      if (element.querySelector(".label").innerHTML == currentFilterElement.querySelector(".label").innerHTML) {
-        element.classList.add("selected");
-      } else {
-        currentFilterElement = null;
-      }
-    }
-  });
-
   elements.forEach((el) => {
     el.onclick = function () {
       //resets list, shows every entry
@@ -1027,8 +1039,7 @@ function filterEntries(currentFilterElement) {
 
   if (currentFilterElement) {
     entries.forEach((entry) => {
-      let filterCategory =
-        currentFilterElement.classList[0] == "casino" ? entry.children[1].innerHTML : entry.children[2].innerHTML;
+      let filterCategory = currentFilterElement.classList[0] == "casino" ? entry.children[1].innerHTML : entry.children[2].innerHTML;
       if (filterCategory !== currentFilterElement.querySelector(".label").innerHTML) {
         entry.style.display = "none";
       } else {
@@ -1064,12 +1075,12 @@ function sortEntries(entries, sort) {
   };
 
   const sortMapping = {
-    Dato: getSortingFunction(0, parseDate),
-    Indsats: getSortingFunction(3, parseProfit),
-    Udbetaling: getSortingFunction(4, parseProfit),
-    Profit: getSortingFunction(5, parseProfit),
+    Date: getSortingFunction(0, parseDate),
+    Bet: getSortingFunction(3, parseProfit),
+    Win: getSortingFunction(4, parseProfit),
+    Outcome: getSortingFunction(5, parseProfit),
     Casino: stringSort(1),
-    Kampagne: stringSort(2),
+    Campaign: stringSort(2),
     listedTotals: getSortingFunction(1, parseProfit),
   };
 

@@ -4,6 +4,7 @@
 }
 
 .sidebar_buttons {
+    display: flex;
     flex-direction: column;
     gap: 14px;
     position: relative;
@@ -90,6 +91,7 @@
     #navbar .nav_buttons {
         flex-direction: row;
         margin: 10px;
+        z-index: 1;
     }
 
     #navbar img,
@@ -98,7 +100,11 @@
     }
 
     #navbar .sidebar_buttons.view_toggle {
+        display: flex;
+        justify-content: space-between;
+        width: 90%;
+        flex-direction: row-reverse;
         position: absolute;
-        right: 20px;
+        z-index: 0;
     }
 }

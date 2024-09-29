@@ -4,8 +4,7 @@
     height: 40px;
     align-items: center;
     border-radius: var(--sectionBorderRadius);
-    background-color: var(--darkblue);
-    padding: 0px 6px;
+    background-color: var(--background);
 }
 
 .listHeaders span {
@@ -17,20 +16,35 @@
     transition: 0.2s;
     cursor: pointer;
     font-family: "DM Mono", monospace;
+    user-select: none;
+    position: relative;
 }
 
-.listHeaders span:hover {
-    background-color: rgba(0, 0, 0, 0.4);
-    transform: scale(1.05);
-    transition: 0.2s;
+.listHeaders span::after {
+    font-family: 'Material Symbols Outlined';
+    content: 'swap_vert';
+    transition: .15s;
+    position: absolute;
+    right: 10%;
+    top: 50%;
+    height: 10px;
+    width: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-50%);
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.listHeaders span:hover::after {
+    background-color: var(--darkbackground);
 }
 
 .entryContainer {
     display: flex;
     gap: 10px;
     border-radius: var(--sectionBorderRadius);
-    margin-bottom: 6px;
-    padding: 0px 6px;
     position: relative;
     align-items: center;
 }
@@ -75,9 +89,12 @@
     width: 80px;
 }
 
-.entryContainer span:nth-child(6),
-.listHeaders span:nth-child(6) {
+.entryContainer span:nth-child(6) {
     width: 80px;
+}
+
+.listHeaders span:nth-child(6) {
+    width: 115px;
 }
 
 
@@ -147,15 +164,30 @@
 
 @media screen and (max-width: 360px) {
 
-    .listHeaders{
-        display: none;
+    .listHeaders {
+        background: transparent;
+        height: auto;
+        gap: 3px;
+    }
+
+    .listHeaders span {
+        background: var(--background);
+    }
+
+    .listHeaders span::after {
+        right: 2%;
+        padding: 0;
+    }
+
+    .listHeaders span:nth-child(6) {
+        margin: 0;
+        width: 54px;
     }
 
     .entryContainer {
         padding: 0;
         gap: 3px;
         height: 15px;
-        position: relative;
     }
 
     .entryContainer .checkBox {
@@ -163,35 +195,41 @@
         width: 15px;
     }
 
-    .entryContainer span {
-        padding: 2px 5px;
+    .entryContainer span,
+    .listHeaders span {
+        padding: 2px 4px;
         font-size: .5em;
         border-radius: 3px;
     }
 
-    .entryContainer span:nth-child(1) {
+    .entryContainer span:nth-child(1),
+    .listHeaders span:nth-child(1) {
         width: 25px;
     }
 
-    .entryContainer span:nth-child(2) {
-        min-width: 70px;
+    .entryContainer span:nth-child(2),
+    .listHeaders span:nth-child(2) {
+        min-width: 63px;
         flex: none;
     }
 
-    .entryContainer span:nth-child(3) {
+    .entryContainer span:nth-child(3),
+    .listHeaders span:nth-child(3) {
         flex: 1
     }
 
-    .entryContainer span:nth-child(4) {
-        width: 22px;
+    .entryContainer span:nth-child(4),
+    .listHeaders span:nth-child(4) {
+        width: 25px;
     }
 
-    .entryContainer span:nth-child(5) {
+    .entryContainer span:nth-child(5),
+    .listHeaders span:nth-child(5) {
         width: 25px;
     }
 
     .entryContainer span:nth-child(6) {
-        width: 22px;
+        width: 36px;
     }
 
     .entryContainer span:hover {
