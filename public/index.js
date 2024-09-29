@@ -93,7 +93,6 @@ view_toggle.addEventListener("click", function () {
   });
 
   updateList();
-  updateMonthLists();
 });
 
 document.querySelectorAll(".listHeaders span").forEach((sort) => {
@@ -124,7 +123,8 @@ document.querySelectorAll(".sidebar_buttons.nav_buttons .nav").forEach((button) 
   resetInputs();
 });
 
-document.querySelector(".sidebar_buttons.toolbar_buttons").style.display = localStorage.getItem("currentPageContent") == "table" ? "flex" : "none";
+document.querySelector(".sidebar_buttons.toolbar_buttons").style.display =
+  localStorage.getItem("currentPageContent") == "table" ? "flex" : "none";
 
 document.querySelectorAll(".nav_buttons .nav").forEach((button) => {
   button.addEventListener("click", function () {
@@ -150,9 +150,9 @@ outcomeX_toggle.onclick = () => {
   outcome_x = !outcome_x;
   outcomeX_toggle.classList.toggle("active");
 
-  document.querySelectorAll(".entryContainer").forEach((entry)=>{
-    entry.children[5].innerHTML = entry.getAttribute(outcome_x ? "data-outcome_x" : "data-outcome_amount")
-  })
+  document.querySelectorAll(".entryContainer").forEach((entry) => {
+    entry.children[5].innerHTML = entry.getAttribute(outcome_x ? "data-outcome_x" : "data-outcome_amount");
+  });
 };
 
 function nav(page) {
@@ -287,7 +287,6 @@ function changeMonth(direction) {
   }
   localStorage.setItem("currentMonth", currentMonth);
   updateList();
-  updateMonthLists();
 }
 
 document.getElementById("inputsContainerButton").onclick = () => {
@@ -401,9 +400,9 @@ function createEntryContainer(entry, key) {
   let formatted_outcome = entry.win ? "$" + (vp > 360 ? profit.toFixed(2) : profit.toFixed(0)) : "$";
   let formatted_outcomeX = (entry.win / (entry.bet > 1 ? entry.bet : 1)).toFixed(2) + "x";
 
-  entryContainer.setAttribute("data-outcome_amount", formatted_outcome)
-  entryContainer.setAttribute("data-outcome_x", formatted_outcomeX)
- 
+  entryContainer.setAttribute("data-outcome_amount", formatted_outcome);
+  entryContainer.setAttribute("data-outcome_x", formatted_outcomeX);
+
   entryContainer.innerHTML = `
     <span>${entry.date}</span>
     <span>${entry.casino}</span>
@@ -561,6 +560,10 @@ async function updateList() {
       let entryContainer = createEntryContainer(entry, entry.key); // Pass the key
       entriesList.append(entryContainer);
     });
+
+    updateMonthLists();
+
+    
   } catch (error) {
     console.error("Error updating list", error);
   }
@@ -690,7 +693,6 @@ async function updateDashboard() {
           nav("table");
 
           updateList();
-          updateMonthLists();
         });
       });
     };
@@ -739,7 +741,9 @@ function updateMonthCharts(category) {
     category = monthBarChartToggle.className;
   }
 
-  let entries = currentFilterElement ? document.querySelectorAll(".entryContainer.filter") : document.querySelectorAll(".entryContainer");
+  let entries = currentFilterElement
+    ? document.querySelectorAll(".entryContainer.filter")
+    : document.querySelectorAll(".entryContainer");
   entries.forEach((entry, index) => {
     let casino = entry.children[1].innerHTML;
     let campaign = entry.children[2].innerHTML;
@@ -762,7 +766,9 @@ function updateMonthCharts(category) {
 
     monthAccOutcome.push((monthAccOutcome[index - 1] || 0) + (cashed_out ? outcome : 0));
 
-    if (win) {outcome > 0 ? cashed_out && (wins += +outcome) : (losses += +outcome)}
+    if (win) {
+      outcome > 0 ? cashed_out && (wins += +outcome) : (losses += +outcome);
+    }
 
     outcome > 0 ? positives++ : "";
     outcome < 0 ? negatives++ : "";
@@ -929,86 +935,63 @@ function editEntry(event) {
 async function updateMonthLists() {
   let casinoContainerList = document.querySelector("#monthCasinoTotals");
   let campaignContainerList = document.querySelector("#monthCampaignTotals");
-  const casinos = await getMisc("Casinos");
-  const campaigns = await getMisc("Campaigns");
 
-  try {
-    let entries = [];
+  let entries = document.querySelectorAll(".entryContainer");
+  const casinos = []
+  const campaigns = []
 
-    if (!totalView) {
-      const data = await fetchMonthEntries(year, months[currentMonth]);
-      if (data) {
-        entries = Object.values(data);
-      }
-    } else {
-      // Fetch data for all months in the year
-      for (let i = 0; i < 12; i++) {
-        const data = await fetchMonthEntries(year, months[i]);
-        entries.push(...data);
-      }
+  entries.forEach((entry) => {
+    const casino = entry.children[1].innerHTML;
+    const campaign = entry.children[2].innerHTML;
+    if (!casinos.includes(casino)) {
+      casinos.push(casino);
     }
+    if (!campaigns.includes(campaign)) {
+      campaigns.push(campaign);
+    }
+  });
 
-    casinoContainerList.innerHTML = "";
+  casinoContainerList.innerHTML = "";
+  campaignContainerList.innerHTML = "";
 
-    casinos.forEach((casino) => {
-      let casinoContainer = document.createElement("div");
-      casinoContainer.setAttribute("class", "casino filter listContainerElement");
+  createMonthContainers(casinos, "casino");
+  createMonthContainers(campaigns, "campaign");
 
-      let casinoCount = 0;
+  function createMonthContainers(list, name){
+    list.forEach((item) => {
+      let listContainerElement = document.createElement("div");
+      listContainerElement.setAttribute("class", `${name} filter listContainerElement`);
+  
+      let count = 0;
+      
       entries.forEach((entry) => {
-        if (casino == entry.casino) {
-          casinoCount++;
+        if(name == "casino"){
+          if (item == entry.children[1].innerHTML) {
+            count++;
+          }
+        } else {
+          if (item == entry.children[2].innerHTML) {
+            count++;
+          }
         }
       });
-
-      casinoContainer.innerHTML = `<span class="label">${casino}</span><span class="profits">${casinoCount}</span>`;
-
-      if (casinoCount > 0) casinoContainerList.append(casinoContainer);
-    });
-  } catch (error) {
-    console.error("Error updating list", error);
-  }
-
-  try {
-    let entries = [];
-
-    if (!totalView) {
-      const data = await fetchMonthEntries(year, months[currentMonth]);
-      if (data) {
-        entries = Object.values(data);
+  
+      listContainerElement.innerHTML = `<span class="label">${item}</span><span class="profits">${count}</span>`;
+  
+      if(currentFilterElement){
+        if (currentFilterElement.querySelector(".label").innerHTML == item) listContainerElement.classList.add("selected")
       }
-    } else {
-      // Fetch data for all months in the year
-      for (let i = 0; i < 12; i++) {
-        const data = await fetchMonthEntries(year, months[i]);
-        entries.push(...data);
+
+      if(name == "casino"){
+        casinoContainerList.append(listContainerElement);
+      } else{
+        campaignContainerList.append(listContainerElement);
       }
-    }
-
-    campaignContainerList.innerHTML = "";
-
-    campaigns.forEach((campaign) => {
-      let campaignContainer = document.createElement("div");
-      campaignContainer.setAttribute("class", "campaign filter listContainerElement");
-
-      let campaignCount = 0;
-      entries.forEach((entry) => {
-        if (campaign == entry.campaign) {
-          campaignCount++;
-        }
-      });
-
-      campaignContainer.innerHTML = `<span class="label">${campaign}</span><span class="profits">${campaignCount}</span>`;
-
-      if (campaignCount > 0) campaignContainerList.append(campaignContainer);
     });
-  } catch (error) {
-    console.error("Error updating list", error);
   }
 
   isAscending = false;
   sortEntries(document.querySelector("#casinoList div"), "listedTotals");
-  sortEntries(document.querySelector("#campaignList div"), "listedTotals");
 
   let elements = document.querySelectorAll("#table_list_totals .table.section.list .listedTotals div");
   elements.forEach((el) => {
@@ -1039,7 +1022,8 @@ function filterEntries(currentFilterElement) {
 
   if (currentFilterElement) {
     entries.forEach((entry) => {
-      let filterCategory = currentFilterElement.classList[0] == "casino" ? entry.children[1].innerHTML : entry.children[2].innerHTML;
+      let filterCategory =
+        currentFilterElement.classList[0] == "casino" ? entry.children[1].innerHTML : entry.children[2].innerHTML;
       if (filterCategory !== currentFilterElement.querySelector(".label").innerHTML) {
         entry.style.display = "none";
       } else {
