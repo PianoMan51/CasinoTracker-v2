@@ -57,6 +57,11 @@
   margin-left: 10px;
 }
 
+.card .card_icon span{
+  font-size: 30px;
+  color: var(--background)
+}
+
 .info {
   display: flex;
   flex-direction: column;
@@ -94,6 +99,7 @@
   display: flex;
   gap: 5px;
   height: 30px;
+  color: white;
 }
 
 .listContainerElement .label {
@@ -115,9 +121,9 @@
   background-color: var(--gray);
 }
 
-.listContainerElement .profits {
-  color: white;
-  width: 50px;
+.listContainerElement .profits, 
+.listContainerElement .counts {
+  width: 20px;
   padding: 6px 10px;
   border-radius: 5px;
   font-size: 0.9em;

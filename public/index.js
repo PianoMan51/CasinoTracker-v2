@@ -123,8 +123,7 @@ document.querySelectorAll(".sidebar_buttons.nav_buttons .nav").forEach((button) 
   resetInputs();
 });
 
-document.querySelector(".sidebar_buttons.toolbar_buttons").style.display =
-  localStorage.getItem("currentPageContent") == "table" ? "flex" : "none";
+document.querySelector(".sidebar_buttons.toolbar_buttons").style.display = localStorage.getItem("currentPageContent") == "table" ? "flex" : "none";
 
 document.querySelectorAll(".nav_buttons .nav").forEach((button) => {
   button.addEventListener("click", function () {
@@ -623,8 +622,12 @@ async function updateDashboard() {
   const totalBarchartList = [];
   const casinos = await getMisc("Casinos");
   const campaigns = await getMisc("Campaigns");
+
   const casinoTotalProfits = Object.fromEntries(casinos.map((casino) => [casino, 0]));
   const campaignTotalProfits = Object.fromEntries(campaigns.map((campaign) => [campaign, 0]));
+
+  const casinoEntryCounts = Object.fromEntries(casinos.map((casino) => [casino, 0]));
+  const campaignEntryCounts = Object.fromEntries(campaigns.map((campaign) => [campaign, 0]));
 
   const updateProfits = (data) => {
     let dashcard_totalProfits = 0;
@@ -635,6 +638,9 @@ async function updateDashboard() {
         const outcome = entry.win - entry.bet;
         casinoTotalProfits[entry.casino] = (casinoTotalProfits[entry.casino] || 0) + outcome;
         campaignTotalProfits[entry.campaign] = (campaignTotalProfits[entry.campaign] || 0) + outcome;
+
+        casinoEntryCounts[entry.casino] = (casinoEntryCounts[entry.casino] || 0) + 1;
+        campaignEntryCounts[entry.campaign] = (campaignEntryCounts[entry.campaign] || 0) + 1;
 
         let [entry_day, entry_month] = entry.date.split("/").map(Number);
 
@@ -666,19 +672,18 @@ async function updateDashboard() {
       totalBarchartList.push(dataCategory.toFixed(0));
     });
 
-    const createTotalElement = (entries, containerId) => {
+    const createTotalElement = (entries, entryCounts, containerId) => {
       const container = document.getElementById(containerId);
       container.innerHTML = "";
       entries.forEach(([name, profit]) => {
         const color = profit > 0 ? "var(--green)" : "var(--red)";
+        const count = entryCounts[name] || 0;
         const element = document.createElement("div");
-        element.setAttribute(
-          "class",
-          `${containerId.substring(0, containerId.length - 6)} filter listContainerElement`
-        );
+        element.setAttribute("class", `${containerId.substring(0, containerId.length - 6)} filter listContainerElement`);
         element.innerHTML = `
           <span class="label">${name ? name : "Other"}</span>
-          <span class="profits" style="background-color: ${color}">$${profit.toFixed(0)}</span>
+          <span class="counts" value="${count}" style="background-color: var(--background); width: 25px">${count}</span>
+          <span class="profits" value="${profit}" style="background-color: ${color}; width: 50px">$${profit.toFixed(0)}</span>
         `;
         container.append(element);
 
@@ -698,8 +703,8 @@ async function updateDashboard() {
     const sortedCasinoEntries = Object.entries(casinoTotalProfits).sort((a, b) => b[1] - a[1]);
     const sortedCampaignEntries = Object.entries(campaignTotalProfits).sort((a, b) => b[1] - a[1]);
 
-    createTotalElement(sortedCasinoEntries, "casinoTotals");
-    createTotalElement(sortedCampaignEntries, "campaignTotals");
+    createTotalElement(sortedCasinoEntries, casinoEntryCounts, "casinoTotals");
+    createTotalElement(sortedCampaignEntries, campaignEntryCounts, "campaignTotals");
 
     dashBoardTotalBarchart.data.datasets[0].data = totalBarchartList;
     dashBoardTotalBarchart.data.labels = months;
@@ -707,11 +712,9 @@ async function updateDashboard() {
     document.querySelector(".currentMonthProfit .value_span").textContent = months[actualMonth.getMonth()];
     document.querySelector(".totalProfit .value").textContent = "$" + totalProfits.value.toFixed(0);
     document.querySelector(".totalLoss .value").textContent = "$" + totalLosses.value.toFixed(0);
-    document.querySelector(".totalWin .value").textContent =
-      "$" + (totalLosses.value * -1 + totalProfits.value).toFixed(0);
+    document.querySelector(".totalWin .value").textContent = "$" + (totalLosses.value * -1 + totalProfits.value).toFixed(0);
     document.querySelector(".totalPending .value").textContent = "$" + pendings.value.toFixed(0);
-    document.querySelector(".entryCount .value").textContent =
-      entries.value + "/$" + (totalProfits.value / entries.value).toFixed(0);
+    document.querySelector(".entryCount .value").textContent = entries.value + "/$" + (totalProfits.value / entries.value).toFixed(0);
 
     dashBoardTotalBarchart.update();
   } catch (error) {
@@ -1022,12 +1025,11 @@ function filterEntries(currentFilterElement) {
 
   if (currentFilterElement) {
     entries.forEach((entry) => {
-      let filterCategory =
-        currentFilterElement.classList[0] == "casino" ? entry.children[1].innerHTML : entry.children[2].innerHTML;
-      if (filterCategory !== currentFilterElement.querySelector(".label").innerHTML) {
-        entry.style.display = "none";
-      } else {
+      let filterCategory = currentFilterElement.classList[0] == "casino" ? entry.children[1].innerHTML : entry.children[2].innerHTML;
+      if (filterCategory == currentFilterElement.querySelector(".label").innerHTML) {
         entry.classList.toggle("filter");
+      } else {
+        entry.style.display = "none";
       }
     });
   }
@@ -1172,10 +1174,6 @@ let dashBoardTotalBarchart = new Chart("dashboard_total_barchart", {
       }
     },
   },
-});
-
-window.addEventListener("resize", function () {
-  dashBoardTotalBarchart.update();
 });
 
 let monthDoughnutProfit = new Chart("month_doughnut_profits", {
@@ -1367,6 +1365,10 @@ let month_linechart = new Chart("month_linechart", {
       }
     },
   },
+});
+
+window.addEventListener("resize", function () {
+  dashBoardTotalBarchart.update();
 });
 
 updateDashboard();
