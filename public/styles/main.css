@@ -95,7 +95,7 @@ body::-webkit-scrollbar{
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 4px;
+  gap: 5px;
   overflow-y: scroll;
   border-radius: 5px;
 }
@@ -115,29 +115,53 @@ body::-webkit-scrollbar{
   letter-spacing: 3px;
 }
 
-.listedTotalsContainer span:last-child {
-  width: 26px;
-  text-align: center;
-}
-
-.listedTotalsContainer:hover {
-  background-color: var(--darkergray);
-  transition: 0.15s;
-}
-
 .listedTotals .selected .label {
   background-color: var(--blue);
   color: white;
 }
 
-.listedTotals .selected .label:hover {
-  background-color: var(--darkblue);
-}
-
-.listedTotals .listContainerElement .profits {
+.listedTotals .listContainerElement .counts {
   background-color: var(--background);
+  width: 24px;
 }
 
+.listContainerElement {
+  display: flex;
+  gap: 5px;
+  height: 30px;
+  color: white;
+}
+
+.listContainerElement .label {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  background-color: var(--lightgray);
+  color: black;
+  padding: 6px 10px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  font-weight: 500;
+  user-select: none;
+  transition: ease-in-out 0.15s;
+  cursor: pointer;
+  flex: 1;
+}
+
+.listContainerElement .label:hover {
+  background-color: var(--gray);
+}
+
+.listContainerElement .profits,
+.listContainerElement .counts {
+  padding: 6px 10px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  font-weight: 500;
+  user-select: none;
+  transition: ease-in-out 0.15s;
+  cursor: pointer;
+}
 
 @media screen and (max-width: 1512px) {
   #content {

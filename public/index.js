@@ -150,7 +150,7 @@ outcomeX_toggle.onclick = () => {
   outcomeX_toggle.classList.toggle("active");
 
   document.querySelectorAll(".entryContainer").forEach((entry) => {
-    entry.children[5].innerHTML = entry.getAttribute(outcome_x ? "data-outcome_x" : "data-outcome_amount");
+    entry.children[5].innerHTML = outcome_x ? Number(entry.getAttribute("data-outcome_x")).toFixed(2) + "x" : entry.getAttribute("data-outcome_amount");
   });
 };
 
@@ -397,7 +397,7 @@ function createEntryContainer(entry, key) {
   let vp = window.innerWidth;
 
   let formatted_outcome = entry.win ? "$" + (vp > 360 ? profit.toFixed(2) : profit.toFixed(0)) : "$";
-  let formatted_outcomeX = (entry.win / (entry.bet > 1 ? entry.bet : 1)).toFixed(2) + "x";
+  let formatted_outcomeX = entry.win / (entry.bet > 1 ? entry.bet : 1);
 
   entryContainer.setAttribute("data-outcome_amount", formatted_outcome);
   entryContainer.setAttribute("data-outcome_x", formatted_outcomeX);
@@ -408,7 +408,7 @@ function createEntryContainer(entry, key) {
     <span>${entry.campaign ? entry.campaign : "N/A"}</span>
     <span>$${vp > 360 ? bet.toFixed(2) : bet.toFixed(0)}</span>
     <span>${entry.win ? "$" + (vp > 360 ? win.toFixed(2) : win.toFixed(0)) : "$"}</span>
-    <span style="background-color: ${color}; color: white">${outcome_x ? formatted_outcomeX : formatted_outcome}</span>
+    <span style="background-color: ${color}; color: white">${outcome_x ? formatted_outcomeX.toFixed(2) + "x" : formatted_outcome}</span>
     <input class="checkBox ${entry.cashed_out ? "checked" : ""}" type="checkbox" ${entry.win ? "" : "disabled"}>
   `;
 
@@ -559,7 +559,7 @@ async function updateList() {
       let entryContainer = createEntryContainer(entry, entry.key); // Pass the key
       entriesList.append(entryContainer);
     });
-
+    
     updateMonthLists();
   } catch (error) {
     console.error("Error updating list", error);
@@ -569,6 +569,13 @@ async function updateList() {
   if (currentFilterElement) {
     filterEntries(currentFilterElement);
   }
+
+  let sum = 0;
+    let outcomes = currentFilterElement ? document.querySelectorAll(".entryContainer.filter") : document.querySelectorAll(".entryContainer")
+    outcomes.forEach((entry)=>{
+      sum += Number(entry.getAttribute("data-outcome_x"))
+    })
+    document.querySelector(".statistics.outcome_x").innerHTML = (sum / outcomes.length).toFixed(2) + "x"
 
   updateMonthCharts();
 }
@@ -682,8 +689,8 @@ async function updateDashboard() {
         element.setAttribute("class", `${containerId.substring(0, containerId.length - 6)} filter listContainerElement`);
         element.innerHTML = `
           <span class="label">${name ? name : "Other"}</span>
-          <span class="counts" value="${count}" style="background-color: var(--background); width: 25px">${count}</span>
-          <span class="profits" value="${profit}" style="background-color: ${color}; width: 50px">$${profit.toFixed(0)}</span>
+          <span class="counts" value="${count}" style="background-color: var(--background)">${count}</span>
+          <span class="profits" value="${profit}" style="background-color: ${color}">$${profit.toFixed(0)}</span>
         `;
         container.append(element);
 
@@ -965,20 +972,25 @@ async function updateMonthLists() {
       listContainerElement.setAttribute("class", `${name} filter listContainerElement`);
 
       let count = 0;
+      let profit = 0;
 
       entries.forEach((entry) => {
         if (name == "casino") {
           if (item == entry.children[1].innerHTML) {
             count++;
+            profit += entry.children[5].value
           }
         } else {
           if (item == entry.children[2].innerHTML) {
             count++;
+            profit += entry.children[5].value
           }
         }
       });
 
-      listContainerElement.innerHTML = `<span class="label">${item}</span><span class="profits">${count}</span>`;
+      const color = profit > 0 ? "var(--green)" : "var(--red)";
+
+      listContainerElement.innerHTML = `<span class="label">${item}</span><span class="counts">${count}</span><span class="profits" style="background-color: ${color}">$${profit}</span>`;
 
       if (currentFilterElement) {
         if (currentFilterElement.querySelector(".label").innerHTML == item)
@@ -995,24 +1007,26 @@ async function updateMonthLists() {
 
   isAscending = false;
   sortEntries(document.querySelector("#casinoList div"), "listedTotals");
+  sortEntries(document.querySelector("#campaignList div"), "listedTotals");
 
-  let elements = document.querySelectorAll("#table_list_totals .table.section.list .listedTotals div");
+  let elements = document.querySelectorAll("#table_list_totals .table.section.list .listedTotals .listContainerElement");
   elements.forEach((el) => {
-    el.onclick = function () {
+    el.querySelector(".label").onclick = function () {
       //resets list, shows every entry
       document.querySelectorAll(".entryContainer").forEach((entry) => {
         entry.style.display = "flex";
       });
 
-      if (this.classList.contains("selected")) {
-        this.classList.remove("selected");
+      if (this.parentElement.classList.contains("selected")) {
+        this.parentElement.classList.remove("selected");
         currentFilterElement = null;
       } else {
         document.querySelectorAll("#table_list_totals .table.section.list .listedTotals div").forEach((e) => {
           e.classList.remove("selected");
         });
-        this.classList.add("selected");
-        currentFilterElement = this;
+        this.parentElement.classList.add("selected");
+        currentFilterElement = this.parentElement;
+   
       }
       filterEntries(currentFilterElement);
       updateList();

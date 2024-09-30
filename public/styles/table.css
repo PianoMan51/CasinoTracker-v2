@@ -29,6 +29,14 @@
   flex-direction: row;
 }
 
+#statistics{
+  grid-area: statistics;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
 .table.section.list {
   width: 100%;
 }
@@ -184,7 +192,7 @@
     grid-template-areas:
       'doughnut acc list'
       'doughnut totals list'
-      'doughnut totals list'
+      'doughnut totals statistics'
   }
 
   .table.section.list {
@@ -196,6 +204,14 @@
 
   #table_list_totals {
     flex-direction: column;
+  }
+
+  #inputsContainer {
+    grid-area: totals;
+  }
+
+  #statistics{
+    height: 140px;
   }
 }
 
@@ -294,19 +310,22 @@
     font-size: 10px;
   }
 
+  .table.section.list {
+    height: auto;
+    min-height: auto;
+  }
+
   #table_list_totals {
     grid-template-columns: 1fr;
     gap: 12px;
   }
 
   #table_list_totals .listContainerElement .profits {
-    width: 15px;
-    text-align: center;
+    width: 28px;
   }
-
-  .table.section.list {
-    height: auto;
-    min-height: auto;
+  #table_list_totals .listContainerElement .counts {
+    width: 13px;
+    text-align: center;
   }
 
 }
