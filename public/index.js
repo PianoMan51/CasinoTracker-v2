@@ -562,8 +562,6 @@ async function updateList() {
     });
 
     updateMonthLists();
-
-    
   } catch (error) {
     console.error("Error updating list", error);
   }
@@ -634,20 +632,20 @@ async function updateDashboard() {
 
     if (data) {
       data.forEach((entry) => {
-        const profit = entry.win - entry.bet;
-        casinoTotalProfits[entry.casino] = (casinoTotalProfits[entry.casino] || 0) + profit;
-        campaignTotalProfits[entry.campaign] = (campaignTotalProfits[entry.campaign] || 0) + profit;
+        const outcome = entry.win - entry.bet;
+        casinoTotalProfits[entry.casino] = (casinoTotalProfits[entry.casino] || 0) + outcome;
+        campaignTotalProfits[entry.campaign] = (campaignTotalProfits[entry.campaign] || 0) + outcome;
 
         let [entry_day, entry_month] = entry.date.split("/").map(Number);
 
         entries.value++;
 
         if (entry.cashed_out) {
-          totalProfits.value += +profit;
-          totalLosses.value += profit < 0 ? profit : 0;
-          totalCurrentMonthProfit.value += entry_month == actualMonth.getMonth() + 1 ? +profit : 0;
+          totalProfits.value += +outcome;
+          totalLosses.value += outcome < 0 ? outcome : 0;
+          totalCurrentMonthProfit.value += entry_month == actualMonth.getMonth() + 1 ? +outcome : 0;
 
-          dashcard_totalProfits += +profit;
+          dashcard_totalProfits += +outcome;
         } else {
           pendings.value += +entry.bet;
         }
@@ -766,8 +764,8 @@ function updateMonthCharts(category) {
 
     monthAccOutcome.push((monthAccOutcome[index - 1] || 0) + (cashed_out ? outcome : 0));
 
-    if (win) {
-      outcome > 0 ? cashed_out && (wins += +outcome) : (losses += +outcome);
+    if (cashed_out) {
+      outcome > 0 ? (wins += +outcome) : (losses += +outcome);
     }
 
     outcome > 0 ? positives++ : "";
@@ -853,6 +851,7 @@ async function removeEntry(event) {
       // If the entry was removed successfully, update the UI and perform other actions
       entryContainer.remove();
       updateMonthCharts();
+      updateList();
       activeRemove = false;
       removeBtn.classList.remove("active");
 
@@ -937,8 +936,8 @@ async function updateMonthLists() {
   let campaignContainerList = document.querySelector("#monthCampaignTotals");
 
   let entries = document.querySelectorAll(".entryContainer");
-  const casinos = []
-  const campaigns = []
+  const casinos = [];
+  const campaigns = [];
 
   entries.forEach((entry) => {
     const casino = entry.children[1].innerHTML;
@@ -957,15 +956,15 @@ async function updateMonthLists() {
   createMonthContainers(casinos, "casino");
   createMonthContainers(campaigns, "campaign");
 
-  function createMonthContainers(list, name){
+  function createMonthContainers(list, name) {
     list.forEach((item) => {
       let listContainerElement = document.createElement("div");
       listContainerElement.setAttribute("class", `${name} filter listContainerElement`);
-  
+
       let count = 0;
-      
+
       entries.forEach((entry) => {
-        if(name == "casino"){
+        if (name == "casino") {
           if (item == entry.children[1].innerHTML) {
             count++;
           }
@@ -975,16 +974,17 @@ async function updateMonthLists() {
           }
         }
       });
-  
+
       listContainerElement.innerHTML = `<span class="label">${item}</span><span class="profits">${count}</span>`;
-  
-      if(currentFilterElement){
-        if (currentFilterElement.querySelector(".label").innerHTML == item) listContainerElement.classList.add("selected")
+
+      if (currentFilterElement) {
+        if (currentFilterElement.querySelector(".label").innerHTML == item)
+          listContainerElement.classList.add("selected");
       }
 
-      if(name == "casino"){
+      if (name == "casino") {
         casinoContainerList.append(listContainerElement);
-      } else{
+      } else {
         campaignContainerList.append(listContainerElement);
       }
     });
