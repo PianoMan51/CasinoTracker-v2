@@ -570,12 +570,21 @@ async function updateList() {
     filterEntries(currentFilterElement);
   }
 
-  let sum = 0;
+  let bet_sum = 0;
+  let win_sum = 0;
+ 
     let outcomes = currentFilterElement ? document.querySelectorAll(".entryContainer.filter") : document.querySelectorAll(".entryContainer")
     outcomes.forEach((entry)=>{
-      sum += Number(entry.getAttribute("data-outcome_x"))
+      bet_sum += Number(entry.children[3].value)
+      win_sum += Number(entry.children[4].value)
     })
-    document.querySelector(".statistics.outcome_x").innerHTML = (sum / outcomes.length).toFixed(2) + "x"
+
+    document.querySelector(".statistics.bet_total .value").innerHTML = "$" + bet_sum;
+    document.querySelector(".statistics.win_total .value").innerHTML = "$" + win_sum;
+    document.querySelector(".statistics.outcome_x .value").innerHTML = (win_sum / (bet_sum == 0 ? 1 : bet_sum)).toFixed(2) + "x";
+    document.querySelector(".statistics.count .value").innerHTML = outcomes.length;
+    document.querySelector(".statistics.bet_average .value").innerHTML = "$" + (bet_sum / outcomes.length).toFixed(0);
+    document.querySelector(".statistics.win_average .value").innerHTML = "$" + (win_sum / outcomes.length).toFixed(0);  
 
   updateMonthCharts();
 }

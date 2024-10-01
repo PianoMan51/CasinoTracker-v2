@@ -16,9 +16,14 @@
     <link rel="stylesheet" href="styles/totalLists.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 </head>
 
 <body>
@@ -142,7 +147,8 @@
 
                         <div class="selectContainer" id="casinoContainer">
                             <div class="selectedCasino"></div>
-                            <button class="reopen casino"><span class="material-symbols-outlined" style="transform: rotate(180deg); margin-top:2px">keyboard_arrow_up</span></button>
+                            <button class="reopen casino"><span class="material-symbols-outlined"
+                                    style="transform: rotate(180deg); margin-top:2px">keyboard_arrow_up</span></button>
                         </div>
 
                         <div class="casinos selects open">
@@ -180,7 +186,8 @@
 
                         <div class="selectContainer" id="campaignContainer">
                             <div class="selectedCampaign"></div>
-                            <button class="reopen campaign"><span class="material-symbols-outlined" style="transform: rotate(180deg)">keyboard_arrow_up</span></button>
+                            <button class="reopen campaign"><span class="material-symbols-outlined"
+                                    style="transform: rotate(180deg)">keyboard_arrow_up</span></button>
                         </div>
 
                         <div class="campaigns selects hidden">
@@ -207,9 +214,11 @@
                     </div>
                     <div class="table section" id="entry_list_graphs">
                         <div id="changeMonths">
-                            <button class="monthButtons prevMonth"><span class="material-symbols-outlined" style="margin-right: 2px;">chevron_left</span></button>
+                            <button class="monthButtons prevMonth"><span class="material-symbols-outlined"
+                                    style="margin-right: 2px;">chevron_left</span></button>
                             <span class="currentMonthSpan"></span>
-                            <button class="monthButtons nextMonth"><span class="material-symbols-outlined" style="margin-left: 2px;">chevron_right</span></button>
+                            <button class="monthButtons nextMonth"><span class="material-symbols-outlined"
+                                    style="margin-left: 2px;">chevron_right</span></button>
                         </div>
                         <div class="graphContainer">
                             <canvas id="month_doughnut_profits"></canvas>
@@ -221,9 +230,11 @@
                         <div id="quick_info">
                             <span class="currentMonthSpan">September</span>
                             <div class="buttons">
-                                <button class="monthButtons prevMonth"><span class="material-symbols-outlined" style="margin-right: 2px;">chevron_left</span></button>
+                                <button class="monthButtons prevMonth"><span class="material-symbols-outlined"
+                                        style="margin-right: 2px;">chevron_left</span></button>
                                 <button class="addEntry"><span class="material-symbols-outlined">add</span></button>
-                                <button class="monthButtons nextMonth"><span class="material-symbols-outlined" style="margin-left: 2px;">chevron_right</span></button>
+                                <button class="monthButtons nextMonth"><span class="material-symbols-outlined"
+                                        style="margin-left: 2px;">chevron_right</span></button>
                             </div>
                         </div>
                         <button id="toggleBarCategory" class="Casinos">Casinos</button>
@@ -255,7 +266,31 @@
                         </div>
                     </div>
                     <div class="table section" id="statistics">
-                        <div class="statistics outcome_x">1.53x</div>
+                        <div class="statistics bet_total">
+                            <div class="label">Total bet</div>
+                            <div class="value"></div>
+                        </div>
+                        <div class="statistics win_total">
+                            <div class="label">Total win</div>
+                            <div class="value"></div>
+                        </div>
+                        <div class="statistics outcome_x">
+                            <div class="label">ROI</div>
+                            <div class="value"></div>
+                        </div>
+                        <div class="statistics count">
+                            <div class="label">Count</div>
+                            <div class="value"></div>
+                        </div>
+                        <div class="statistics bet_average">
+                            <div class="label">Average bet</div>
+                            <div class="value"></div>
+                        </div>
+                        <div class="statistics win_average">
+                            <div class="label">Avereage win</div>
+                            <div class="value"></div>
+                        </div>
+
                         <div></div>
                     </div>
                 </div>

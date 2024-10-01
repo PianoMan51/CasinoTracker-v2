@@ -33,7 +33,12 @@
   grid-area: statistics;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 0px;
+}
+
+.statistics {
+  display: flex;
+  flex-direction: row;
   gap: 10px;
 }
 
@@ -208,10 +213,6 @@
 
   #inputsContainer {
     grid-area: totals;
-  }
-
-  #statistics{
-    height: 140px;
   }
 }
 
