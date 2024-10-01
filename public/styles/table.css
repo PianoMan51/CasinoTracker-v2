@@ -291,16 +291,7 @@
     border-radius: 50%;
   }
 
-  .listedTotals {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 5px;
-  }
 
-  .monthList .listedTotals {
-    flex: 0 1 50%;
-    box-sizing: border-box;
-  }
 
   .listContainer {
     width: 100%;
@@ -318,14 +309,6 @@
   #table_list_totals {
     grid-template-columns: 1fr;
     gap: 12px;
-  }
-
-  #table_list_totals .listContainerElement .profits {
-    width: 28px;
-  }
-  #table_list_totals .listContainerElement .counts {
-    width: 13px;
-    text-align: center;
   }
 
 }

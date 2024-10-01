@@ -1,0 +1,84 @@
+.listedTotals {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 5px;
+    overflow-y: scroll;
+    border-radius: 5px;
+}
+
+.listedTotals::-webkit-scrollbar {
+    display: none;
+}
+
+.listContainerElement {
+    display: flex;
+    gap: 5px;
+    height: 30px;
+    color: white;
+}
+
+.listContainerElement .label {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    background-color: var(--lightgray);
+    color: black;
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    font-weight: 500;
+    user-select: none;
+    transition: ease-in-out 0.15s;
+    cursor: pointer;
+    flex: 1;
+}
+
+.listedTotals .listContainerElement.selected .label {
+    background-color: var(--blue);
+    color: white;
+}
+
+.listContainerElement .label:hover {
+    background-color: var(--gray);
+}
+
+.listedTotals .listContainerElement .counts {
+    background-color: var(--background);
+    width: 20px;
+    text-align: center;
+}
+
+.listedTotals .listContainerElement .profits {
+    width: 50px;
+}
+
+.listContainerElement .profits,
+.listContainerElement .counts {
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    font-weight: 500;
+    user-select: none;
+    transition: ease-in-out 0.15s;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 360) {
+
+    .listedTotals {
+        font-size: 0.6em;
+    }
+
+    .listedTotals .listContainerElement span {
+        padding: 6px;
+    }
+
+    .listedTotals .listContainerElement {
+        height: 24px;
+    }
+
+    .listContainerElement .profits {
+        width: 28px;
+    }
+}

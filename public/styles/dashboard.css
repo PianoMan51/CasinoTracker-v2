@@ -147,10 +147,6 @@
     grid-template-columns: 1fr;
   }
 
-  #dashboard_list_totals .listContainerElement .counts{
-    width: 12px;
-  }
-
   .dashboard.section.list {
     height: 100%;
   }
