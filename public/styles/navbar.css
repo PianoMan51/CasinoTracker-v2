@@ -95,7 +95,10 @@
     #navbar .nav_buttons {
         flex-direction: row;
         margin: 10px;
-        z-index: 1;
+    }
+
+    #navbar .view_toggle{
+        flex-direction: row;
     }
 
     #navbar img,
@@ -106,9 +109,5 @@
     #navbar .sidebar_buttons.view_toggle {
         display: flex;
         justify-content: space-between;
-        width: 90%;
-        flex-direction: row-reverse;
-        position: absolute;
-        z-index: 0;
     }
 }

@@ -286,8 +286,6 @@
     border-radius: 50%;
   }
 
-
-
   .listContainer {
     width: 100%;
   }
@@ -299,11 +297,6 @@
   .table.section.list {
     height: auto;
     min-height: auto;
-  }
-
-  #table_list_totals {
-    grid-template-columns: 1fr;
-    gap: 12px;
   }
 
 }

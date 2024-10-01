@@ -149,7 +149,7 @@ outcomeX_toggle.onclick = () => {
   let index = toggle_washSessions ? 3 : 5 
 
   Array.from(entriesList.children).forEach((entry) => {
-    entry.children[index].innerHTML = outcome_x ? Number(entry.getAttribute("data-outcome_x")).toFixed(2) + "x" : entry.getAttribute("data-outcome_amount");
+    entry.children[index].innerHTML = outcome_x ? entry.getAttribute("data-outcome_x") + "x" : "$" + entry.getAttribute("data-outcome_amount");
   });
 };
 
@@ -203,10 +203,26 @@ editBtn.onclick = () => {
   });
 };
 
-washButton.onclick = ()=>{
+washButton.onclick = () => {
   toggle_washSessions = !toggle_washSessions;
-  toggle_washSessions ? updateWashSession() : updateList();
-}
+
+
+  let listHeaders = document.querySelector("#entry_list_container .listHeaders");
+
+  listHeaders.children[1].style.display = toggle_washSessions ? "none" : "flex";
+  listHeaders.children[2].style.display = toggle_washSessions ? "none" : "flex";
+  listHeaders.style.margin = toggle_washSessions ? "0 auto 0" : "";
+
+  if (toggle_washSessions) {
+    washButton.classList.add("active");
+    listHeaders.classList.add("wash");
+    updateWashSession();
+  } else {
+    washButton.classList.remove("active")
+    listHeaders.classList.remove("wash");
+    updateList();
+  }
+};
 
 document.querySelectorAll(".nav.actionButtons").forEach((button) => {
   button.addEventListener("click", function () {
@@ -330,8 +346,8 @@ function createEntryContainer(entry, key) {
 
   let vp = window.innerWidth;
 
-  let formatted_outcome = entry.win ? "$" + (vp > 360 ? profit.toFixed(2) : profit.toFixed(0)) : "$";
-  let formatted_outcomeX = entry.win / (entry.bet > 1 ? entry.bet : 1);
+  let formatted_outcome = entry.win ? (vp > 360 ? profit.toFixed(2) : profit.toFixed(0)) : "$";
+  let formatted_outcomeX = (entry.win / (entry.bet > 1 ? entry.bet : 1)).toFixed(2);
 
   entryContainer.setAttribute("data-outcome_amount", formatted_outcome);
   entryContainer.setAttribute("data-outcome_x", formatted_outcomeX);
@@ -342,7 +358,7 @@ function createEntryContainer(entry, key) {
     <span>${entry.campaign ? entry.campaign : "N/A"}</span>
     <span>$${vp > 360 ? bet.toFixed(2) : bet.toFixed(0)}</span>
     <span>${entry.win ? "$" + (vp > 360 ? win.toFixed(2) : win.toFixed(0)) : "$"}</span>
-    <span style="background-color: ${color}; color: white">${ outcome_x ? formatted_outcomeX.toFixed(2) + "x" : formatted_outcome}</span>
+    <span style="background-color: ${color}; color: white">${ outcome_x ? formatted_outcomeX + "x" : "$" + formatted_outcome}</span>
     <input class="checkBox ${entry.cashed_out ? "checked" : ""}" type="checkbox" ${entry.win ? "" : "disabled"}>
   `;
 
@@ -934,8 +950,10 @@ function updateWashSession() {
       win += entry.children[4].value;
     });
 
-    let formatted_outcome = "$" + (win - bet).toFixed(2);
-    let formatted_outcomeX = (win / bet) + "x";
+    let vp = window.innerWidth;
+
+    let formatted_outcome = (vp > 360 ? (win - bet).toFixed(2) : (win - bet).toFixed(0));
+    let formatted_outcomeX = (win / bet).toFixed(2);
 
     washSessionContainer.setAttribute("data-outcome_amount", formatted_outcome);
     washSessionContainer.setAttribute("data-outcome_x", formatted_outcomeX);
@@ -944,12 +962,14 @@ function updateWashSession() {
         <span>${date}</span>
         <span>$${bet}</span>
         <span>$${win}</span>
-        <span style="background-color: ${win - bet >= 0 ? "var(--green)" : "var(--red)"}; color: white; margin-left: auto">${outcome_x ? formatted_outcomeX : formatted_outcome}</span>`;
+        <span style="background-color: ${win - bet >= 0 ? "var(--green)" : "var(--red)"}; color: white">${
+      outcome_x ? formatted_outcomeX + "x" : "$" + formatted_outcome
+    }</span>`;
 
-        washSessionContainer.children[1].value = bet;
-        washSessionContainer.children[2].value = win;
-        washSessionContainer.children[3].value = win - bet;
-    
+    washSessionContainer.children[1].value = bet;
+    washSessionContainer.children[2].value = win;
+    washSessionContainer.children[3].value = win - bet;
+
     entriesList.appendChild(washSessionContainer);
   });
 
