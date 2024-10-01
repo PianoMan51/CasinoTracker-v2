@@ -263,18 +263,6 @@ document.querySelectorAll("#inputsContainer .campaigns.selects span").forEach((e
     campaignSelectsContainer.classList.remove("open");
 
     document.querySelector(".amountInputs").classList.remove("hidden");
-
-    bet_input.addEventListener("input", () => {
-      /* if (bet_input.value) {
-        document.getElementById("inputsContainerButton").style.color = "var(--green)";
-        document.getElementById("inputsContainerButton").style.border = "3px solid var(--green)";
-        document.getElementById("inputsContainerButton").style.transform = "rotate(45deg)";
-      } else {
-        document.getElementById("inputsContainerButton").style.color = "var(--red)";
-        document.getElementById("inputsContainerButton").style.border = "3px solid var(--red)";
-        document.getElementById("inputsContainerButton").style.transform = "rotate(90deg)";
-      } */
-    });
   });
 });
 
@@ -584,7 +572,8 @@ async function updateList() {
     document.querySelector(".statistics.outcome_x .value").innerHTML = (win_sum / (bet_sum == 0 ? 1 : bet_sum)).toFixed(2) + "x";
     document.querySelector(".statistics.count .value").innerHTML = outcomes.length;
     document.querySelector(".statistics.bet_average .value").innerHTML = "$" + (bet_sum / outcomes.length).toFixed(0);
-    document.querySelector(".statistics.win_average .value").innerHTML = "$" + (win_sum / outcomes.length).toFixed(0);  
+    document.querySelector(".statistics.win_average .value").innerHTML = "$" + (win_sum / outcomes.length).toFixed(0);
+    document.querySelector(".statistics.outcome_average .value").innerHTML = "$" + ((win_sum-bet_sum) / outcomes.length).toFixed(0);
 
   updateMonthCharts();
 }
