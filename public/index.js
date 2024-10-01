@@ -784,10 +784,10 @@ function updateMonthCharts(category) {
     monthAccOutcome.push((monthAccOutcome[index - 1] || 0) + (cashed_out ? outcome : 0));
 
     if (cashed_out) {
-      outcome > 0 ? (wins += +outcome) : (losses += +outcome);
+      outcome >= 0 ? (wins += +outcome) : (losses += +outcome);
     }
 
-    outcome > 0 ? positives++ : "";
+    outcome >= 0 ? positives++ : "";
     outcome < 0 ? negatives++ : "";
     !cashed_out && win ? (pendings += +outcome) : "";
     !cashed_out ? pendingsAmount++ : "";
