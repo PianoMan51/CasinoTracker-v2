@@ -19,9 +19,12 @@
   grid-area: acc;
 }
 
-#entry_list_graphs {
+#doughnut_chart {
   grid-area: doughnut;
-  gap: 10px;
+}
+
+#changeMonths{
+  grid-area: changemonths;
 }
 
 #table_list_totals {
@@ -70,19 +73,10 @@
   display: none;
 }
 
-.entriesListLoader {
-  box-sizing: border-box;
-  position: absolute;
-  top: 20%;
-  left: 50%;
-  transform: translate(50%) scale(2);
-  color: var(--gray);
-}
-
 #changeMonths {
-  width: 100%;
-  height: 80px;
+  height: 50px;
   display: flex;
+  flex-direction: row;
   justify-content: center;
   gap: 20px;
   align-items: center;
@@ -156,13 +150,13 @@
   cursor: not-allowed;
 }
 
-.graphContainer {
+#doughnut_chart .graphContainer {
   position: relative;
   user-select: none;
   display: flex;
 }
 
-.graphContainer div {
+#doughnut_chart .graphContainer div {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -192,12 +186,12 @@
 
 @media screen and (max-width: 1512px) {
   #table {
-    grid-template-columns: 250px 300px auto;
-    grid-template-rows: auto auto auto;
+    grid-template-columns: 300px 300px auto;
+    grid-template-rows: 300px auto auto;
     grid-template-areas:
       'doughnut acc list'
-      'doughnut totals list'
-      'doughnut totals statistics'
+      'changemonths totals list'
+      'fill totals statistics'
   }
 
   .table.section.list {
@@ -238,7 +232,7 @@
     gap: 5px;
   }
 
-  #entry_list_graphs {
+  #doughnut_chart {
     flex-direction: row;
   }
 

@@ -4,8 +4,6 @@
   border-radius: var(--sectionBorderRadius);
 }
 
-.wash.upper.section {}
-
 .wash.lower.section {
   overflow: scroll;
   padding-top: 6px;
@@ -83,66 +81,4 @@ th:hover {
 .wash-payout {
   background-color: var(--gray);
   user-select: none;
-}
-
-#wash_entriesList {
-  display: flex;
-  flex-direction: column;
-  overflow: scroll;
-  border-radius: var(--sectionBorderRadius);
-}
-
-#wash_entriesList::-webkit-scrollbar {
-  display: none;
-}
-
-.washSessionContainer {
-  display: flex;
-  align-items: center;
-  padding: 0 6px;
-  border-radius: var(--sectionBorderRadius);
-  gap: 5px;
-  font-size: 0.9em;
-  margin-bottom: 6px;
-}
-
-.washSessionContainer span {
-  border-radius: 6px;
-  font-family: "DM Mono", monospace;
-  user-select: none;
-  padding: 6px 10px;
-  min-width: 80px;
-}
-
-.washSessionCasinos {
-  display: flex;
-  gap: 5px;
-  flex: 1;
-  background-color: var(--lightgray);
-  border-radius: 6px;
-}
-
-.wash-bet,
-.wash-win,
-.wash-date {
-  background-color: var(--lightgray);
-}
-
-.wash-bet,
-.wash-win,
-.wash-percentage,
-.wash-profit {
-  width: 50px;
-  text-align: left;
-}
-
-.wash-percentage,
-.wash-profit {
-  color: white;
-}
-
-@media only screen and (max-width: 360px) {
-  .wash.upper.section table {
-    display: none;
-  }
 }

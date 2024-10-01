@@ -32,19 +32,16 @@ let currentPageContent = localStorage.getItem("currentPageContent") || "dashboar
 let removeBtn = document.querySelector("#removeEntry");
 let editBtn = document.querySelector("#editEntry");
 let openInputs = document.querySelector("#openInput");
+let washButton = document.getElementById("wash");
 let view_toggle = document.getElementById("view_toggle");
 let outcomeX_toggle = document.getElementById("outcome_x_toggle");
-let casinoSelectsContainer = inputsContainer.querySelector(".casinos.selects");
-let campaignSelectsContainer = inputsContainer.querySelector(".campaigns.selects");
-let reopenCasinoSelects = document.querySelector(".reopen.casino");
-let reopenCampaignSelects = document.querySelector(".reopen.campaign");
-let monthBarChartToggle = document.getElementById("toggleBarCategory");
-let actualMonth = new Date();
+let actualDate = new Date();
 let year = 2024;
 let currentFilterElement = null;
 let isAscending = true;
 let totalView = false;
 let outcome_x = false;
+let toggle_washSessions = false;
 let activeRemove = false;
 let activeEdit = false;
 let activeAdd = false;
@@ -133,7 +130,7 @@ document.querySelectorAll(".nav_buttons .nav").forEach((button) => {
 
 document.querySelector(".card.currentMonthProfit").onclick = () => {
   nav("table");
-  currentMonth = actualMonth.getMonth();
+  currentMonth = actualDate.getMonth();
   localStorage.setItem("currentMonth", currentMonth);
   updateList();
 };
@@ -149,8 +146,10 @@ outcomeX_toggle.onclick = () => {
   outcome_x = !outcome_x;
   outcomeX_toggle.classList.toggle("active");
 
-  document.querySelectorAll(".entryContainer").forEach((entry) => {
-    entry.children[5].innerHTML = outcome_x ? Number(entry.getAttribute("data-outcome_x")).toFixed(2) + "x" : entry.getAttribute("data-outcome_amount");
+  let index = toggle_washSessions ? 3 : 5 
+
+  Array.from(entriesList.children).forEach((entry) => {
+    entry.children[index].innerHTML = outcome_x ? Number(entry.getAttribute("data-outcome_x")).toFixed(2) + "x" : entry.getAttribute("data-outcome_amount");
   });
 };
 
@@ -180,6 +179,9 @@ openInputs.onclick = () => {
   if (activeAdd) {
     document.getElementById("table_list_totals").style.display = "none";
     inputsContainer.style.display = "flex";
+    document.querySelector("#entry_date .date_input.day").value = actualDate.getDate();
+    document.querySelector("#entry_date .date_input.month").value = actualDate.getMonth() + 1;
+
   } else {
     document.getElementById("table_list_totals").style.display = "flex";
     inputsContainer.style.display = "none";
@@ -201,6 +203,11 @@ editBtn.onclick = () => {
   });
 };
 
+washButton.onclick = ()=>{
+  toggle_washSessions = !toggle_washSessions;
+  toggle_washSessions ? updateWashSession() : updateList();
+}
+
 document.querySelectorAll(".nav.actionButtons").forEach((button) => {
   button.addEventListener("click", function () {
     if (button.classList.contains("active")) {
@@ -211,58 +218,6 @@ document.querySelectorAll(".nav.actionButtons").forEach((button) => {
       });
       button.classList.add("active");
     }
-  });
-});
-
-monthBarChartToggle.onclick = () => {
-  monthBarChartToggle.className = monthBarChartToggle.className == "Casinos" ? "Campaigns" : "Casinos";
-  monthBarChartToggle.innerHTML = monthBarChartToggle.className;
-  updateMonthCharts(monthBarChartToggle.className);
-};
-
-reopenCasinoSelects.onclick = () => casinoSelectsContainer.classList.toggle("open");
-reopenCampaignSelects.onclick = () => campaignSelectsContainer.classList.toggle("open");
-
-document.querySelectorAll("#inputsContainer .casinos.selects span").forEach((element) => {
-  element.addEventListener("click", () => {
-    // Remove active class from all spans and add it to the clicked span
-    document.querySelectorAll("#inputsContainer .casinos.selects span").forEach((el) => {
-      el.classList.remove("active");
-    });
-
-    element.classList.toggle("active");
-
-    document.getElementById("casinoContainer").classList.add("active");
-
-    document.querySelector(".selectedCasino").innerHTML = element.innerHTML;
-
-    document.querySelector(".selectedCasino").onclick = () => casinoSelectsContainer.classList.toggle("open");
-
-    campaignSelectsContainer.classList.remove("hidden");
-    campaignSelectsContainer.classList.add("open");
-    casinoSelectsContainer.classList.remove("open");
-  });
-});
-
-document.querySelectorAll("#inputsContainer .campaigns.selects span").forEach((element) => {
-  element.addEventListener("click", () => {
-    // Remove active class from all spans and add it to the clicked span
-    document.querySelectorAll("#inputsContainer .campaigns.selects span").forEach((el) => {
-      el.classList.remove("active");
-    });
-
-    element.classList.toggle("active");
-
-    document.getElementById("campaignContainer").classList.add("active");
-
-    document.querySelector(".selectedCampaign").innerHTML = element.innerHTML;
-
-    document.querySelector(".selectedCampaign").onclick = () => campaignSelectsContainer.classList.toggle("open");
-
-    campaignSelectsContainer.classList.add("hidden");
-    campaignSelectsContainer.classList.remove("open");
-
-    document.querySelector(".amountInputs").classList.remove("hidden");
   });
 });
 
@@ -285,22 +240,26 @@ document.getElementById("inputsContainerButton").onclick = () => {
 };
 
 function addEntry() {
-  let getDate = new Date();
-  let day = getDate.getDate() < 10 ? "0" + getDate.getDate() : getDate.getDate();
-  let month = getDate.getMonth() < 10 ? "0" + (getDate.getMonth() + 1) : getDate.getMonth() + 1; // Fixed month + 1
+  let day_input = document.querySelector(".date_input.day").value; 
+  let month_input = document.querySelector(".date_input.month").value;
+
+  let day = day_input < 10 ? "0" + day_input : day_input;
+  let month = month_input < 10 ? "0" + month_input : month_input;
+
+  console.log(day, month);
 
   // Construct the entry data object
   let entry = {
-    date: `${day}/${month}`,
-    casino: document.querySelector(".casinos.selects span.active").innerHTML,
-    campaign: document.querySelector(".campaigns.selects span.active").innerHTML,
+    date: day + "/" + month,
+    casino: document.querySelector(".select_casino").value,
+    campaign: document.querySelector(".select_campaign").value,
     bet: bet_input.value,
     win: win_input.value,
     cashed_out: false,
   };
 
   // Create a reference for the new entry using push() to generate a unique key
-  const entriesRef = ref(db, `Entries/${year}/${months[currentMonth]}`);
+  const entriesRef = ref(db, `Entries/${year}/${months[document.querySelector(".date_input.month").value - 1]}`);
   const newEntryRef = push(entriesRef);
 
   // Write the entry data to the new entry
@@ -325,26 +284,13 @@ function addEntry() {
 function resetInputs() {
   bet_input.value = "";
   win_input.value = "";
-  casinoSelectsContainer.classList.add("open");
-  campaignSelectsContainer.classList.add("hidden");
-  document.querySelector(".amountInputs").classList.add("hidden");
 
   document.getElementById("inputsContainer").classList.add("hidden");
-  document.getElementById("casinoContainer").classList.remove("active");
-  document.getElementById("campaignContainer").classList.remove("active");
   document.getElementById("openInput").classList.remove("active");
 
   document.getElementById("table_list_totals").style.display = "flex";
   inputsContainer.style.display = "none";
   activeAdd = false;
-
-  document.querySelectorAll("#inputsContainer .casinos.selects span").forEach((el) => {
-    el.classList.remove("active");
-  });
-
-  document.querySelectorAll("#inputsContainer .campaigns.selects span").forEach((el) => {
-    el.classList.remove("active");
-  });
 }
 
 async function fetchMonthEntries(year, month) {
@@ -396,7 +342,7 @@ function createEntryContainer(entry, key) {
     <span>${entry.campaign ? entry.campaign : "N/A"}</span>
     <span>$${vp > 360 ? bet.toFixed(2) : bet.toFixed(0)}</span>
     <span>${entry.win ? "$" + (vp > 360 ? win.toFixed(2) : win.toFixed(0)) : "$"}</span>
-    <span style="background-color: ${color}; color: white">${outcome_x ? formatted_outcomeX.toFixed(2) + "x" : formatted_outcome}</span>
+    <span style="background-color: ${color}; color: white">${ outcome_x ? formatted_outcomeX.toFixed(2) + "x" : formatted_outcome}</span>
     <input class="checkBox ${entry.cashed_out ? "checked" : ""}" type="checkbox" ${entry.win ? "" : "disabled"}>
   `;
 
@@ -435,9 +381,6 @@ async function updateList() {
 
   try {
     let entries = [];
-    let ASG_entries = [];
-    let washSession = [];
-    let lastDate = null;
 
     // Fetch data based on the view mode
     if (!totalView) {
@@ -453,101 +396,13 @@ async function updateList() {
       }
     }
 
-    const data = await fetchYearEntries(year);
-    data.forEach((entry) => {
-      if (entry.campaign == "Vask ASG") {
-        if (entry.date !== lastDate) {
-          if (washSession.length > 0) {
-            ASG_entries.push(washSession);
-          }
-          washSession = [entry];
-          lastDate = entry.date;
-        } else {
-          washSession.push(entry);
-        }
-      }
-    });
-
-    if (washSession.length > 0) {
-      ASG_entries.push(washSession);
-    }
-
-    document.getElementById("wash_entriesList").innerHTML = "";
-
-    ASG_entries.forEach((washSession) => {
-      let washSessionContainer = document.createElement("div");
-      washSessionContainer.setAttribute("class", "washSessionContainer");
-      let washSessionCasinos = document.createElement("div");
-      washSessionCasinos.setAttribute("class", "washSessionCasinos");
-      let bet = 0;
-      let win = 0;
-      let date;
-
-      washSession.forEach((entry) => {
-        let washCasino = document.createElement("span");
-        washCasino.innerHTML = entry.casino;
-        washSessionCasinos.appendChild(washCasino);
-        date = entry.date; // Ensure 'date' is correctly taken from 'entry'
-        bet += Number(entry.bet);
-        win += Number(entry.win);
-      });
-
-      let dateSpan = document.createElement("span");
-      dateSpan.setAttribute("class", "wash-date");
-      dateSpan.innerHTML = date;
-
-      let betSpan = document.createElement("span");
-      betSpan.setAttribute("class", "wash-bet");
-      betSpan.innerHTML = "$" + bet.toFixed(2);
-
-      let winSpan = document.createElement("span");
-      winSpan.setAttribute("class", "wash-win");
-      winSpan.innerHTML = "$" + win.toFixed(2);
-
-      let percentageSpan = document.createElement("span");
-      percentageSpan.setAttribute("class", "wash-percentage");
-      let percentage = ((win / bet - 1) * 100).toFixed(2);
-      let color = "";
-      percentageSpan.innerHTML = `${percentage}%`;
-      if (percentage > 100) {
-        color = "var(--darkgreen)";
-      } else if (percentage > 80) {
-        color = "var(--green)";
-      } else if (percentage > 70) {
-        color = "var(--yellow)";
-      } else if (percentage > 30) {
-        color = "var(--orange)";
-      } else {
-        color = "var(--red)";
-      }
-
-      percentageSpan.style.backgroundColor = color;
-
-      let profitSpan = document.createElement("span");
-      profitSpan.style.backgroundColor = win - bet >= 0 ? "var(--green)" : "var(--red)";
-      profitSpan.setAttribute("class", "wash-profit");
-      profitSpan.innerHTML = `$${(win - bet).toFixed(2)}`;
-
-      // Append the dynamically created elements
-      washSessionContainer.appendChild(dateSpan);
-      washSessionContainer.appendChild(washSessionCasinos);
-      washSessionContainer.appendChild(betSpan);
-      washSessionContainer.appendChild(winSpan);
-      washSessionContainer.appendChild(percentageSpan);
-      washSessionContainer.appendChild(profitSpan);
-
-      document.getElementById("wash_entriesList").appendChild(washSessionContainer);
-    });
-
-    // Clear the original content once the data is ready
     entriesList.innerHTML = "";
 
-    // Create and append entry containers for each entry
     entries.forEach((entry) => {
       let entryContainer = createEntryContainer(entry, entry.key); // Pass the key
       entriesList.append(entryContainer);
     });
-    
+
     updateMonthLists();
   } catch (error) {
     console.error("Error updating list", error);
@@ -558,24 +413,31 @@ async function updateList() {
     filterEntries(currentFilterElement);
   }
 
+  updateMonthCharts();
+  if(toggle_washSessions) updateWashSession()
+  updateStatistics()
+}
+
+function updateStatistics() { 
   let bet_sum = 0;
   let win_sum = 0;
- 
-    let outcomes = currentFilterElement ? document.querySelectorAll(".entryContainer.filter") : document.querySelectorAll(".entryContainer")
-    outcomes.forEach((entry)=>{
-      bet_sum += Number(entry.children[3].value)
-      win_sum += Number(entry.children[4].value)
-    })
 
-    document.querySelector(".statistics.bet_total .value").innerHTML = "$" + bet_sum;
-    document.querySelector(".statistics.win_total .value").innerHTML = "$" + win_sum;
-    document.querySelector(".statistics.outcome_x .value").innerHTML = (win_sum / (bet_sum == 0 ? 1 : bet_sum)).toFixed(2) + "x";
-    document.querySelector(".statistics.count .value").innerHTML = outcomes.length;
-    document.querySelector(".statistics.bet_average .value").innerHTML = "$" + (bet_sum / outcomes.length).toFixed(0);
-    document.querySelector(".statistics.win_average .value").innerHTML = "$" + (win_sum / outcomes.length).toFixed(0);
-    document.querySelector(".statistics.outcome_average .value").innerHTML = "$" + ((win_sum-bet_sum) / outcomes.length).toFixed(0);
+  let filteredChildren = Array.from(entriesList.children).filter((child) => child.classList.contains("filter"));
 
-  updateMonthCharts();
+  let outcomes = currentFilterElement ? filteredChildren : Array.from(entriesList.children);
+
+  outcomes.forEach((entry) => {
+    bet_sum += Number(entry.children[toggle_washSessions ? 1 : 3].value);
+    win_sum += Number(entry.children[toggle_washSessions ? 2 : 4].value) || 0;
+  });
+
+  document.querySelector(".statistics.bet_total .value").innerHTML = "$" + bet_sum;
+  document.querySelector(".statistics.win_total .value").innerHTML = "$" + win_sum;
+  document.querySelector(".statistics.outcome_x .value").innerHTML = (win_sum / (bet_sum == 0 ? 1 : bet_sum)).toFixed(2) + "x";
+  document.querySelector(".statistics.count .value").innerHTML = outcomes.length;
+  document.querySelector(".statistics.bet_average .value").innerHTML = "$" + (bet_sum / outcomes.length).toFixed(0);
+  document.querySelector(".statistics.win_average .value").innerHTML = "$" + (win_sum / outcomes.length).toFixed(0);
+  document.querySelector(".statistics.outcome_average .value").innerHTML = "$" + ((win_sum - bet_sum) / outcomes.length).toFixed(0);
 }
 
 function checkCash(checkBox, key) {
@@ -654,7 +516,7 @@ async function updateDashboard() {
         if (entry.cashed_out) {
           totalProfits.value += +outcome;
           totalLosses.value += outcome < 0 ? outcome : 0;
-          totalCurrentMonthProfit.value += entry_month == actualMonth.getMonth() + 1 ? +outcome : 0;
+          totalCurrentMonthProfit.value += entry_month == actualDate.getMonth() + 1 ? +outcome : 0;
 
           dashcard_totalProfits += +outcome;
         } else {
@@ -684,7 +546,10 @@ async function updateDashboard() {
         const color = profit > 0 ? "var(--green)" : "var(--red)";
         const count = entryCounts[name] || 0;
         const element = document.createElement("div");
-        element.setAttribute("class", `${containerId.substring(0, containerId.length - 6)} filter listContainerElement`);
+        element.setAttribute(
+          "class",
+          `${containerId.substring(0, containerId.length - 6)} filter listContainerElement`
+        );
         element.innerHTML = `
           <span class="label">${name ? name : "Other"}</span>
           <span class="counts" value="${count}" style="background-color: var(--background)">${count}</span>
@@ -714,12 +579,14 @@ async function updateDashboard() {
     dashBoardTotalBarchart.data.datasets[0].data = totalBarchartList;
     dashBoardTotalBarchart.data.labels = months;
     document.querySelector(".currentMonthProfit .value").textContent = "$" + totalCurrentMonthProfit.value.toFixed(0);
-    document.querySelector(".currentMonthProfit .value_span").textContent = months[actualMonth.getMonth()];
+    document.querySelector(".currentMonthProfit .value_span").textContent = months[actualDate.getMonth()];
     document.querySelector(".totalProfit .value").textContent = "$" + totalProfits.value.toFixed(0);
     document.querySelector(".totalLoss .value").textContent = "$" + totalLosses.value.toFixed(0);
-    document.querySelector(".totalWin .value").textContent = "$" + (totalLosses.value * -1 + totalProfits.value).toFixed(0);
+    document.querySelector(".totalWin .value").textContent =
+      "$" + (totalLosses.value * -1 + totalProfits.value).toFixed(0);
     document.querySelector(".totalPending .value").textContent = "$" + pendings.value.toFixed(0);
-    document.querySelector(".entryCount .value").textContent = entries.value + "/$" + (totalProfits.value / entries.value).toFixed(0);
+    document.querySelector(".entryCount .value").textContent =
+      entries.value + "/$" + (totalProfits.value / entries.value).toFixed(0);
 
     dashBoardTotalBarchart.update();
   } catch (error) {
@@ -742,10 +609,6 @@ function updateMonthCharts(category) {
   let monthAccOutcome = [];
   let monthBarData = {};
   let barColors = [];
-
-  if (category == undefined) {
-    category = monthBarChartToggle.className;
-  }
 
   let entries = currentFilterElement
     ? document.querySelectorAll(".entryContainer.filter")
@@ -800,7 +663,6 @@ function updateMonthCharts(category) {
 
   let sortedData = filteredData.sort((a, b) => b[1] - a[1]);
 
-  let sortedLabels = sortedData.map((entry) => entry[0]);
   let sortedChartData = sortedData.map((entry) => entry[1]);
 
   sortedChartData.forEach((val, index, arr) => {
@@ -811,13 +673,6 @@ function updateMonthCharts(category) {
       barColors.push("rgb(46, 204, 113)");
     }
   });
-
-  monthBarProfits.data.labels = sortedLabels;
-  monthBarProfits.data.datasets[0].data = sortedChartData;
-
-  document.querySelector(".monthBarChart").style.height = `${sortedLabels.length * 2.5}vh`;
-
-  monthBarProfits.data.datasets[0].backgroundColor = barColors;
 
   if (wins == 0 && losses == 0) {
     monthDoughnutProfit.data.datasets[0].data = [100];
@@ -835,7 +690,6 @@ function updateMonthCharts(category) {
   }
   monthDoughnutProfit.update();
   month_linechart.update();
-  monthBarProfits.update();
 }
 
 async function removeEntry(event) {
@@ -976,12 +830,12 @@ async function updateMonthLists() {
         if (name == "casino") {
           if (item == entry.children[1].innerHTML) {
             count++;
-            profit += entry.children[5].value
+            profit += entry.children[5].value;
           }
         } else {
           if (item == entry.children[2].innerHTML) {
             count++;
-            profit += entry.children[5].value
+            profit += entry.children[5].value;
           }
         }
       });
@@ -1024,20 +878,90 @@ async function updateMonthLists() {
         });
         this.parentElement.classList.add("selected");
         currentFilterElement = this.parentElement;
-   
       }
+
+      if (el.querySelector(".label").innerText == "Vask ASG") {
+        washButton.style.display = "flex";
+      } else {
+        washButton.style.display = "none";
+        toggle_washSessions = false;
+      }
+
+      toggle_washSessions ? washButton.classList.add("active") : washButton.classList.remove("active");
+
       filterEntries(currentFilterElement);
       updateList();
     };
   });
 }
 
+function updateWashSession() {
+  let lastDate = null;
+  let ASG_entries = [];
+  let washSession = [];
+
+  document.querySelectorAll(".entryContainer.filter").forEach((entry) => {
+    let currentDate = entry.children[0].innerText;
+
+    if (currentDate !== lastDate) {
+      if (washSession.length > 0) {
+        ASG_entries.push(washSession);
+      }
+      washSession = [entry];
+      lastDate = currentDate;
+    } else {
+      washSession.push(entry);
+    }
+  });
+
+  if (washSession.length > 0) {
+    ASG_entries.push(washSession);
+  }
+
+  entriesList.innerHTML = "";
+
+  ASG_entries.forEach((washSession) => {
+    let washSessionContainer = document.createElement("div");
+    washSessionContainer.setAttribute("class", "washSessionContainer filter");
+
+    let bet = 0;
+    let win = 0;
+    let date;
+
+    washSession.forEach((entry) => {
+      date = entry.children[0].innerText;
+      bet += entry.children[3].value;
+      win += entry.children[4].value;
+    });
+
+    let formatted_outcome = "$" + (win - bet).toFixed(2);
+    let formatted_outcomeX = (win / bet) + "x";
+
+    washSessionContainer.setAttribute("data-outcome_amount", formatted_outcome);
+    washSessionContainer.setAttribute("data-outcome_x", formatted_outcomeX);
+
+    washSessionContainer.innerHTML = `
+        <span>${date}</span>
+        <span>$${bet}</span>
+        <span>$${win}</span>
+        <span style="background-color: ${win - bet >= 0 ? "var(--green)" : "var(--red)"}; color: white; margin-left: auto">${outcome_x ? formatted_outcomeX : formatted_outcome}</span>`;
+
+        washSessionContainer.children[1].value = bet;
+        washSessionContainer.children[2].value = win;
+        washSessionContainer.children[3].value = win - bet;
+    
+    entriesList.appendChild(washSessionContainer);
+  });
+
+  updateStatistics();
+}
+
 function filterEntries(currentFilterElement) {
   let entries = document.querySelectorAll(".entryContainer");
-
   if (currentFilterElement) {
     entries.forEach((entry) => {
-      let filterCategory = currentFilterElement.classList[0] == "casino" ? entry.children[1].innerHTML : entry.children[2].innerHTML;
+      let filterCategory =
+        currentFilterElement.classList[0] == "casino" ? entry.children[1].innerHTML : entry.children[2].innerHTML;
       if (filterCategory == currentFilterElement.querySelector(".label").innerHTML) {
         entry.classList.toggle("filter");
       } else {
@@ -1221,73 +1145,6 @@ let monthDoughnutProfit = new Chart("month_doughnut_profits", {
       legend: {
         display: false,
       },
-    },
-  },
-});
-
-let monthBarProfits = new Chart("month_barchart", {
-  type: "bar",
-  data: {
-    labels: [],
-    datasets: [
-      {
-        data: [],
-        borderRadius: 5,
-        borderSkipped: false,
-        backgroundColor: [],
-      },
-    ],
-  },
-  options: {
-    indexAxis: "y",
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        display: false,
-        grid: {
-          display: false,
-        },
-      },
-      x: {
-        display: false,
-        border: {
-          display: false,
-        },
-        grid: {
-          display: false,
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        displayColors: false,
-        callbacks: {
-          label: function (tooltipItem) {
-            let value = tooltipItem.raw;
-            return "$" + value;
-          },
-        },
-      },
-    },
-    interaction: {
-      mode: "nearest", // Find the nearest point
-      axis: "y", // Based on x-axis
-      intersect: false, // Do not require the cursor to intersect with the point
-    },
-    onHover: (event, chartElement) => {
-      if (chartElement.length) {
-        // If a point is found
-        monthBarProfits.setActiveElements(chartElement); // Highlight the point
-        monthBarProfits.tooltip.setActiveElements(chartElement, event); // Trigger the tooltip
-        monthBarProfits.update();
-      } else {
-        monthBarProfits.setActiveElements([]); // Clear any active elements
-        monthBarProfits.tooltip.setActiveElements([], event); // Hide the tooltip
-        monthBarProfits.update();
-      }
     },
   },
 });
