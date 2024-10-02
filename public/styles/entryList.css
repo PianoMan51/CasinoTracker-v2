@@ -42,8 +42,7 @@
     background-color: var(--darkbackground);
 }
 
-.entryContainer,
-.washSessionContainer {
+.entryContainer {
     display: flex;
     gap: 10px;
     border-radius: var(--sectionBorderRadius);
@@ -51,18 +50,12 @@
     align-items: center;
 }
 
-.washSessionContainer {
-    margin: 0 auto 0;
-}
-
 .entryContainer:last-of-type,
-.entryContainer.filter:last-of-type,
-.washSessionContainer:last-of-type {
+.entryContainer.filter:last-of-type {
     margin-bottom: 0;
 }
 
-.entryContainer span,
-.washSessionContainer span {
+.entryContainer span {
     padding: 6px 10px;
     border-radius: 5px;
     font-family: "DM Mono", monospace;
@@ -71,14 +64,6 @@
     transform: scale(1);
     transition: 0.2s;
     background-color: var(--lightgray);
-}
-
-.washSessionContainer span {
-    width: 80px;
-}
-
-.washSessionContainer span:last-of-type {
-    width: 115px;
 }
 
 .entryContainer span:nth-child(1),
@@ -114,8 +99,7 @@
     width: 115px;
 }
 
-.entryContainer span:hover,
-.washSessionContainer span:hover {
+.entryContainer span:hover {
     transform: translateX(6px);
     transition: 0.2s;
     background-color: var(--gray);
@@ -180,9 +164,19 @@
         width: 85px;
     }
 
-    .listHeaders.wash{
+    .listHeaders.wash, .entryContainer.wash{
         margin: 0 auto 0;
     }
+
+    .entryContainer.wash span{
+        width: 80px;
+    }
+
+    .entryContainer.wash span:last-of-type{
+        width: 85px;
+    }
+
+
 }
 
 @media screen and (max-width: 360px) {
@@ -263,11 +257,6 @@
     .entryContainer span:hover {
         transform: translateX(0px);
         background-color: var(--lightgray);
-    }
-
-    .washSessionContainer{
-        width: 100%;
-        gap: 5px;
     }
 
     .listHeaders.wash{

@@ -94,7 +94,18 @@ view_toggle.addEventListener("click", function () {
 
 document.querySelectorAll(".listHeaders span").forEach((sort) => {
   sort.addEventListener("click", () => {
-    sortEntries(entriesList, sort.innerHTML);
+
+    let header = document.querySelector(".listHeaders");
+
+    // Filter out children that are not visible (display: none)
+    let visibleChildren = Array.from(header.children).filter(child => 
+      window.getComputedStyle(child).display !== 'none'
+    );
+    
+    // Find the index of the clicked 'sort' element among visible elements
+    let index = visibleChildren.indexOf(sort);
+
+    sortEntries(entriesList, sort.innerHTML, index);
     isAscending = !isAscending;
   });
 });
@@ -263,8 +274,6 @@ function addEntry() {
 
   let day = day_input < 10 ? "0" + day_input : day_input;
   let month = month_input < 10 ? "0" + month_input : month_input;
-
-  console.log(day, month);
 
   // Construct the entry data object
   let entry = {
@@ -615,97 +624,79 @@ async function updateDashboard() {
   }
 }
 
-function updateMonthCharts(category) {
-  let wins = 0;
-  let losses = 0;
-  let pendings = 0;
-  let positives = 0;
-  let negatives = 0;
-  let pendingsAmount = 0;
-  let monthTotalProfit = 0;
-  let monthBarCategory = [];
-  let monthAccOutcome = [];
-  let monthBarData = {};
-  let barColors = [];
+function updateMonthCharts() {
+  let stats = {
+    wins: 0,
+    losses: 0,
+    pendings: 0,
+    positives: 0,
+    negatives: 0,
+    pendingsAmount: 0,
+    monthTotalProfit: 0,
+    monthAccOutcome: [],
+  };
+
+  const updateOutcomes = (outcome, index, isCashedOut = true) => {
+    stats.monthAccOutcome.push(
+      (stats.monthAccOutcome[index - 1] || 0) + (isCashedOut ? outcome : 0)
+    );
+
+    if (isCashedOut) {
+      outcome >= 0 ? (stats.wins += +outcome) : (stats.losses += +outcome);
+      stats.monthTotalProfit += +outcome;
+    }
+
+    outcome >= 0 ? stats.positives++ : stats.negatives++;
+    if (!isCashedOut && outcome !== 0) {
+      stats.pendings += +outcome;
+      stats.pendingsAmount++;
+    }
+  };
+
+  const getOutcome = (betIndex, winIndex, entry) => {
+    let bet = entry.children[betIndex].value;
+    let win = entry.children[winIndex].value;
+    return win - bet;
+  };
 
   let entries = currentFilterElement
     ? document.querySelectorAll(".entryContainer.filter")
     : document.querySelectorAll(".entryContainer");
+
   entries.forEach((entry, index) => {
-    let casino = entry.children[1].innerHTML;
-    let campaign = entry.children[2].innerHTML;
-    let bet = entry.children[3].value;
-    let win = entry.children[4].value;
-    let outcome = win - bet;
-    let cashed_out = entry.children[6].classList.contains("checked");
+    let outcome, isCashedOut;
 
-    if (category == "Casinos") {
-      if (!monthBarCategory.includes(casino)) {
-        monthBarCategory.push(casino);
-        monthBarData[casino] = 0;
-      }
+    if (toggle_washSessions) {
+      outcome = getOutcome(1, 2, entry);
+      updateOutcomes(outcome, index);
     } else {
-      if (!monthBarCategory.includes(campaign)) {
-        monthBarCategory.push(campaign);
-        monthBarData[campaign] = 0;
-      }
-    }
-
-    monthAccOutcome.push((monthAccOutcome[index - 1] || 0) + (cashed_out ? outcome : 0));
-
-    if (cashed_out) {
-      outcome >= 0 ? (wins += +outcome) : (losses += +outcome);
-    }
-
-    outcome >= 0 ? positives++ : "";
-    outcome < 0 ? negatives++ : "";
-    !cashed_out && win ? (pendings += +outcome) : "";
-    !cashed_out ? pendingsAmount++ : "";
-
-    if (cashed_out) {
-      if (category == "Casinos") {
-        monthTotalProfit += +outcome;
-        monthBarData[casino] += +outcome;
-      } else {
-        monthTotalProfit += +outcome;
-        monthBarData[campaign] += +outcome;
-      }
+      outcome = getOutcome(3, 4, entry);
+      isCashedOut = entry.children[6].classList.contains("checked");
+      updateOutcomes(outcome, index, isCashedOut);
     }
   });
 
-  document.querySelector(".doughnut.profits").innerHTML = "$" + monthTotalProfit.toFixed(0);
-  document.querySelector(".doughnut.sub.ratio").innerHTML = `${positives}/${negatives}/${pendingsAmount}`;
+  // Update doughnut and line chart elements
+  document.querySelector(".doughnut.profits").innerHTML = "$" + stats.monthTotalProfit.toFixed(0);
+  document.querySelector(".doughnut.sub.ratio").innerHTML = `${stats.positives}/${stats.negatives}/${stats.pendingsAmount}`;
 
-  // Filter out categories where the data is 0
-  let filteredData = Object.entries(monthBarData).filter(([, value]) => value !== 0);
+  // Update chart data
+  if(stats.wins == 0 && stats.losses == 0){
+    monthDoughnutProfit.data.datasets[0].data = [100, 0, 0];
+    monthDoughnutProfit.data.datasets[0].backgroundColor = ["rgb(241, 196, 15)"];
 
-  let sortedData = filteredData.sort((a, b) => b[1] - a[1]);
-
-  let sortedChartData = sortedData.map((entry) => entry[1]);
-
-  sortedChartData.forEach((val, index, arr) => {
-    if (val < 0) {
-      arr[index] = val * -1;
-      barColors.push("rgb(231, 76, 60)");
-    } else {
-      barColors.push("rgb(46, 204, 113)");
-    }
-  });
-
-  if (wins == 0 && losses == 0) {
-    monthDoughnutProfit.data.datasets[0].data = [100];
-    monthDoughnutProfit.data.datasets[0].backgroundColor = ["rgb(243, 156, 18)"];
+    month_linechart.data.datasets[0].data = "";
+    month_linechart.data.labels = "";
   } else {
-    monthDoughnutProfit.data.datasets[0].data = [wins, losses, pendings];
-    monthDoughnutProfit.data.datasets[0].backgroundColor = [
-      "rgb(46, 204, 113)",
-      "rgb(231, 76, 60)",
-      "rgb(241, 196, 15)",
-    ];
-
-    month_linechart.data.datasets[0].data = monthAccOutcome;
-    month_linechart.data.labels = Array.from({ length: monthAccOutcome.length }, (_, i) => i + 1);
+    monthDoughnutProfit.data.datasets[0].data = [stats.wins, stats.losses, stats.pendings];
+    monthDoughnutProfit.data.datasets[0].backgroundColor = ["rgb(46, 204, 113)", "rgb(231, 76, 60)", "rgb(241, 196, 15)"];
+    
+    month_linechart.data.datasets[0].data = stats.monthAccOutcome;
+    month_linechart.data.labels = Array.from({ length: stats.monthAccOutcome.length }, (_, i) => i + 1);
   }
+  
+
+  // Update the charts
   monthDoughnutProfit.update();
   month_linechart.update();
 }
@@ -876,8 +867,8 @@ async function updateMonthLists() {
   }
 
   isAscending = false;
-  sortEntries(document.querySelector("#casinoList div"), "listedTotals");
-  sortEntries(document.querySelector("#campaignList div"), "listedTotals");
+  sortEntries(document.querySelector("#casinoList div"), "listedTotals", 2);
+  sortEntries(document.querySelector("#campaignList div"), "listedTotals", 2);
 
   let elements = document.querySelectorAll("#table_list_totals .table.section.list .listedTotals .listContainerElement");
   elements.forEach((el) => {
@@ -900,6 +891,7 @@ async function updateMonthLists() {
 
       if (el.querySelector(".label").innerText == "Vask ASG") {
         washButton.style.display = "flex";
+        if(toggle_washSessions) toggle_washSessions = false;
       } else {
         washButton.style.display = "none";
         toggle_washSessions = false;
@@ -925,61 +917,80 @@ function updateWashSession() {
   document.querySelectorAll(".entryContainer.filter").forEach((entry) => {
     let currentDate = entry.children[0].innerText;
 
+    // Group by date
     if (currentDate !== lastDate) {
       if (washSession.length > 0) {
         ASG_entries.push(washSession);
       }
-      washSession = [entry];
+      washSession = [entry]; // Start a new session for the current date
       lastDate = currentDate;
     } else {
-      washSession.push(entry);
+      washSession.push(entry); // Add entry to the current date's session
     }
   });
 
   if (washSession.length > 0) {
-    ASG_entries.push(washSession);
+    ASG_entries.push(washSession); // Add the last session
   }
 
   entriesList.innerHTML = "";
 
+  // Iterate over each washSession grouped by date
   ASG_entries.forEach((washSession) => {
-    let washSessionContainer = document.createElement("div");
-    washSessionContainer.setAttribute("class", "washSessionContainer filter");
+    let groupedByOutcome = {}; // Object to hold groups of entries by outcome
 
-    let bet = 0;
-    let win = 0;
-    let date;
-
+    // Group the entries of each session by outcome
     washSession.forEach((entry) => {
-      date = entry.children[0].innerText;
-      bet += entry.children[3].value;
-      win += entry.children[4].value;
+      let outcome = entry.children[5].innerText; // Get the outcome
+
+      // Initialize a group for this outcome if it doesn't exist
+      if (!groupedByOutcome[outcome]) {
+        groupedByOutcome[outcome] = [];
+      }
+
+      groupedByOutcome[outcome].push(entry); // Add the entry to the appropriate outcome group
     });
 
-    let vp = window.innerWidth;
+    // Now process each outcome group within the same date
+    Object.keys(groupedByOutcome).forEach((outcome) => {
+      let washSessionContainer = document.createElement("div");
+      washSessionContainer.setAttribute("class", "entryContainer wash filter");
 
-    let formatted_outcome = (vp > 360 ? (win - bet).toFixed(2) : (win - bet).toFixed(0));
-    let formatted_outcomeX = (win / bet).toFixed(2);
+      let bet = 0;
+      let win = 0;
+      let date;
 
-    washSessionContainer.setAttribute("data-outcome_amount", formatted_outcome);
-    washSessionContainer.setAttribute("data-outcome_x", formatted_outcomeX);
+      // Process each entry for this outcome group
+      groupedByOutcome[outcome].forEach((entry) => {
+        date = entry.children[0].innerText; // Get date from entry
+        bet += parseFloat(entry.children[3].value); // Sum up the bet values
+        win += parseFloat(entry.children[4].value); // Sum up the win values
+      });
 
-    washSessionContainer.innerHTML = `
-        <span>${date}</span>
-        <span>$${bet}</span>
-        <span>$${win}</span>
-        <span style="background-color: ${win - bet >= 0 ? "var(--green)" : "var(--red)"}; color: white">${
-      outcome_x ? formatted_outcomeX + "x" : "$" + formatted_outcome
-    }</span>`;
+      let vp = window.innerWidth;
 
-    washSessionContainer.children[1].value = bet;
-    washSessionContainer.children[2].value = win;
-    washSessionContainer.children[3].value = win - bet;
+      let formatted_outcome = (vp > 360 ? (win - bet).toFixed(2) : (win - bet).toFixed(0));
+      let formatted_outcomeX = (win / bet).toFixed(2);
 
-    entriesList.appendChild(washSessionContainer);
+      washSessionContainer.setAttribute("data-outcome_amount", formatted_outcome);
+      washSessionContainer.setAttribute("data-outcome_x", formatted_outcomeX);
+
+      washSessionContainer.innerHTML = `
+          <span>${date}</span>
+          <span>$${bet}</span>
+          <span>$${win}</span>
+          <span style="background-color: ${win - bet >= 0 ? "var(--green)" : "var(--red)"}; color: white">$${formatted_outcome}</span>`;
+
+      washSessionContainer.children[1].value = bet;
+      washSessionContainer.children[2].value = win;
+      washSessionContainer.children[3].value = win - bet;
+
+      entriesList.appendChild(washSessionContainer); // Add the group to the page
+    });
   });
 
   updateStatistics();
+  updateMonthCharts();
 }
 
 function filterEntries(currentFilterElement) {
@@ -997,7 +1008,7 @@ function filterEntries(currentFilterElement) {
   }
 }
 
-function sortEntries(entries, sort) {
+function sortEntries(entries, sort, index) {
   const entriesArray = Array.from(entries.children);
 
   const parseProfit = (profitString) => parseFloat(profitString.replace(/[^0-9.-]+/g, ""));
@@ -1023,13 +1034,13 @@ function sortEntries(entries, sort) {
   };
 
   const sortMapping = {
-    Date: getSortingFunction(0, parseDate),
-    Bet: getSortingFunction(3, parseProfit),
-    Win: getSortingFunction(4, parseProfit),
-    Outcome: getSortingFunction(5, parseProfit),
-    Casino: stringSort(1),
-    Campaign: stringSort(2),
-    listedTotals: getSortingFunction(1, parseProfit),
+    Date: getSortingFunction(index, parseDate),
+    Bet: getSortingFunction(index, parseProfit),
+    Win: getSortingFunction(index, parseProfit),
+    Outcome: getSortingFunction(index, parseProfit),
+    Casino: stringSort(index),
+    Campaign: stringSort(index),
+    listedTotals: getSortingFunction(index, parseProfit),
   };
 
   if (sort in sortMapping) {
