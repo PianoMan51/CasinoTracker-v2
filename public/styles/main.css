@@ -97,6 +97,10 @@ body::-webkit-scrollbar{
   #content {
     overflow: visible;
   }
+
+  .washSessionContainer.filter span:last-of-type{
+    width: 85px;
+  }
 }
 
 

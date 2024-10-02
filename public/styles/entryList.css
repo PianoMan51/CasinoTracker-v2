@@ -1,6 +1,7 @@
 .listHeaders {
     display: flex;
     gap: 10px;
+    margin: 0;
     height: 40px;
     align-items: center;
     border-radius: var(--sectionBorderRadius);
@@ -172,6 +173,16 @@
     transform: scale(1.05);
     transition: 0.2s;
     opacity: 0.5;
+}
+
+@media screen and (max-width: 1512px){
+    .listHeaders.wash span:last-of-type{
+        width: 85px;
+    }
+
+    .listHeaders.wash{
+        margin: 0 auto 0;
+    }
 }
 
 @media screen and (max-width: 360px) {

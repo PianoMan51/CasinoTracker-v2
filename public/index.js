@@ -206,20 +206,22 @@ editBtn.onclick = () => {
 washButton.onclick = () => {
   toggle_washSessions = !toggle_washSessions;
 
-
   let listHeaders = document.querySelector("#entry_list_container .listHeaders");
-
-  listHeaders.children[1].style.display = toggle_washSessions ? "none" : "flex";
-  listHeaders.children[2].style.display = toggle_washSessions ? "none" : "flex";
-  listHeaders.style.margin = toggle_washSessions ? "0 auto 0" : "";
 
   if (toggle_washSessions) {
     washButton.classList.add("active");
     listHeaders.classList.add("wash");
+
+    listHeaders.children[1].style.display = "none"
+    listHeaders.children[2].style.display = "none"
+
     updateWashSession();
   } else {
     washButton.classList.remove("active")
     listHeaders.classList.remove("wash");
+
+    listHeaders.children[1].style.display = "flex"
+    listHeaders.children[2].style.display = "flex"
     updateList();
   }
 };
@@ -880,7 +882,7 @@ async function updateMonthLists() {
   let elements = document.querySelectorAll("#table_list_totals .table.section.list .listedTotals .listContainerElement");
   elements.forEach((el) => {
     el.querySelector(".label").onclick = function () {
-      //resets list, shows every entry
+      
       document.querySelectorAll(".entryContainer").forEach((entry) => {
         entry.style.display = "flex";
       });
@@ -901,6 +903,10 @@ async function updateMonthLists() {
       } else {
         washButton.style.display = "none";
         toggle_washSessions = false;
+        
+        document.querySelector(".listHeaders").classList.remove("wash");
+        document.querySelector(".listHeaders").children[1].style.display = "flex"
+        document.querySelector(".listHeaders").children[2].style.display = "flex"
       }
 
       toggle_washSessions ? washButton.classList.add("active") : washButton.classList.remove("active");
