@@ -208,7 +208,6 @@
     .entryContainer {
         padding: 0;
         gap: 3px;
-        height: 15px;
     }
 
     .entryContainer .checkBox {
@@ -231,7 +230,7 @@
 
     .entryContainer span:nth-child(2),
     .listHeaders span:nth-child(2) {
-        min-width: 63px;
+        width: 63px;
         flex: none;
     }
 
@@ -259,23 +258,31 @@
         background-color: var(--lightgray);
     }
 
-    .listHeaders.wash{
+    .listHeaders.wash, 
+    .entryContainer.wash{
         width: 100%;
         gap: 5px;
     }
 
-    .listHeaders.wash span{
+    .listHeaders.wash span,
+    .entryContainer.wash span{
         font-size: 0.9em;
         padding: 6px 10px;
         border-radius: 5px;
-        width: 80px;
+        width: 50px;
+        flex: none;
+    }
+
+    .listHeaders.wash span:last-of-type, 
+    .entryContainer.wash span:last-of-type{
+        flex: 1;
     }
 
     .listHeaders.wash span::after{
-        right: 6%;
+        right: 12%;
     }
 
-    .listHeaders.wash span:last-of-type{
-        width: 115px;
+    .listHeaders.wash span:last-of-type::after{
+        right: 8%;
     }
 }
