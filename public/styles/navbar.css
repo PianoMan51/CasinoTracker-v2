@@ -75,21 +75,21 @@
     display: none;
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 360px) {
 
     #navbar {
         flex-direction: row;
         padding: 0;
         width: auto;
-        height: 40px;
+        min-height: 60px;
         gap: 30px;
         border-radius: 6px;
         justify-content: center;
     }
 
     .nav {
-        width: 25px;
-        height: 25px;
+        width: 35px;
+        height: 35px;
     }
 
     #navbar .nav_buttons {
@@ -97,7 +97,7 @@
         margin: 10px;
     }
 
-    #navbar .view_toggle{
+    #navbar .view_toggle {
         flex-direction: row;
     }
 

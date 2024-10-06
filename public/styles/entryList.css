@@ -250,7 +250,12 @@
     }
 
     .entryContainer span:nth-child(6) {
-        width: 25px;
+        min-width: 30px;
+        width: auto;
+    }
+
+    .listHeaders span:nth-child(6){
+        width: 48px;
     }
 
     .entryContainer span:hover {

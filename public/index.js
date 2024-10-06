@@ -454,8 +454,10 @@ function updateStatistics() {
   let outcomes = currentFilterElement ? filteredChildren : Array.from(entriesList.children);
 
   outcomes.forEach((entry) => {
-    bet_sum += Number(entry.children[toggle_washSessions ? 1 : 3].value);
-    win_sum += Number(entry.children[toggle_washSessions ? 2 : 4].value) || 0;
+    if(entry.children[4] || entry.children[3]){
+      bet_sum += Number(entry.children[toggle_washSessions ? 1 : 3].value);
+      win_sum += Number(entry.children[toggle_washSessions ? 2 : 4].value) || 0;
+    }
   });
 
   document.querySelector(".statistics.bet_total .value").innerHTML = "$" + bet_sum;
@@ -497,6 +499,7 @@ function checkCash(checkBox, key) {
       // If the data was written successfully, update the UI and perform other actions
       updateDashboard();
       updateMonthCharts();
+      updateStatistics();
     })
     .catch((error) => {
       console.error("Error updating entry: ", error);
@@ -659,12 +662,32 @@ function updateMonthCharts() {
     return win - bet;
   };
 
-  let entries = currentFilterElement
-    ? document.querySelectorAll(".entryContainer.filter")
-    : document.querySelectorAll(".entryContainer");
+  let entries = currentFilterElement ? document.querySelectorAll(".entryContainer.filter") : document.querySelectorAll(".entryContainer");
+
+  let intervals_1 = 0;
+  let intervals_2 = 0;
+  let intervals_3 = 0;
+  let intervals_4 = 0;
+  let intervals_5 = 0;
+  let intervals_6 = 0;
 
   entries.forEach((entry, index) => {
+    let outcome_x = parseFloat(entry.getAttribute("data-outcome_x"));
     let outcome, isCashedOut;
+
+    if (outcome_x < 1) {
+      intervals_1++;
+    } else if (outcome_x <= 1.5) {
+      intervals_2++;
+    } else if (outcome_x <= 2) {
+      intervals_3++;
+    } else if (outcome_x <= 5) {
+      intervals_4++;
+    } else if (outcome_x <= 10){
+      intervals_5++;
+    } else {
+      intervals_6++;
+    }
 
     if (toggle_washSessions) {
       outcome = getOutcome(1, 2, entry);
@@ -682,23 +705,26 @@ function updateMonthCharts() {
 
   // Update chart data
   if(stats.wins == 0 && stats.losses == 0){
-    monthDoughnutProfit.data.datasets[0].data = [100, 0, 0];
-    monthDoughnutProfit.data.datasets[0].backgroundColor = ["rgb(241, 196, 15)"];
+    month_doughnut.data.datasets[0].data = [100, 0, 0];
+    month_doughnut.data.datasets[0].backgroundColor = ["rgb(241, 196, 15)"];
 
     month_linechart.data.datasets[0].data = "";
     month_linechart.data.labels = "";
   } else {
-    monthDoughnutProfit.data.datasets[0].data = [stats.wins, stats.losses, stats.pendings];
-    monthDoughnutProfit.data.datasets[0].backgroundColor = ["rgb(46, 204, 113)", "rgb(231, 76, 60)", "rgb(241, 196, 15)"];
-    
+    month_doughnut.data.datasets[0].data = [stats.wins, stats.losses, stats.pendings];
+    month_doughnut.data.datasets[0].backgroundColor = ["rgb(46, 204, 113)", "rgb(231, 76, 60)", "rgb(241, 196, 15)"];
+
     month_linechart.data.datasets[0].data = stats.monthAccOutcome;
     month_linechart.data.labels = Array.from({ length: stats.monthAccOutcome.length }, (_, i) => i + 1);
+
+    month_interval.data.datasets[0].data = [intervals_1,intervals_2,intervals_3,intervals_4,intervals_5, intervals_6];
+    month_interval.data.labels = ["0x", "1x-1.5x", "1.5x-2x", "2x-5x", "5x-10x", ">10x"];
   }
   
-
   // Update the charts
-  monthDoughnutProfit.update();
+  month_doughnut.update();
   month_linechart.update();
+  month_interval.update();
 }
 
 async function removeEntry(event) {
@@ -836,17 +862,17 @@ async function updateMonthLists() {
       let profit = 0;
 
       entries.forEach((entry) => {
-        if (name == "casino") {
-          if (item == entry.children[1].innerHTML) {
-            count++;
-            profit += entry.children[5].value;
+          if (name == "casino") {
+            if (item == entry.children[1].innerHTML) {
+              count++;
+              profit += entry.children[5].value;
+            }
+          } else {
+            if (item == entry.children[2].innerHTML) {
+              count++;
+              profit += entry.children[5].value;
+            }
           }
-        } else {
-          if (item == entry.children[2].innerHTML) {
-            count++;
-            profit += entry.children[5].value;
-          }
-        }
       });
 
       const color = profit > 0 ? "var(--green)" : "var(--red)";
@@ -1146,10 +1172,27 @@ let dashBoardTotalBarchart = new Chart("dashboard_total_barchart", {
         event.native.target.style.cursor = "default";
       }
     },
+    interaction: {
+      mode: "nearest", // Find the nearest point
+      axis: "x", // Based on x-axis
+      intersect: false, // Do not require the cursor to intersect with the point
+    },
+    onHover: (event, chartElement) => {
+      if (chartElement.length) {
+        // If a point is found
+        dashBoardTotalBarchart.setActiveElements(chartElement); // Highlight the point
+        dashBoardTotalBarchart.tooltip.setActiveElements(chartElement, event); // Trigger the tooltip
+        dashBoardTotalBarchart.update();
+      } else {
+        dashBoardTotalBarchart.setActiveElements([]); // Clear any active elements
+        dashBoardTotalBarchart.tooltip.setActiveElements([], event); // Hide the tooltip
+        dashBoardTotalBarchart.update();
+      }
+    },
   },
 });
 
-let monthDoughnutProfit = new Chart("month_doughnut_profits", {
+let month_doughnut = new Chart("month_doughnut_profits", {
   type: "doughnut",
   data: {
     labels: ["Wins", "Losses", "Pendings"],
@@ -1273,8 +1316,80 @@ let month_linechart = new Chart("month_linechart", {
   },
 });
 
+let month_interval = new Chart("month_interval_bar_chart", {
+  type: "bar",
+  data: {
+    labels: [],
+    datasets: [
+      {
+        data: [],
+        borderRadius: 10,
+        borderSkipped: false,
+        backgroundColor: "rgb(46, 204, 113)",
+      },
+    ],
+  },
+  options: {
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        display: false,
+        grid: {
+          display: false,
+        },
+        border: {
+          display: false,
+        },
+      },
+      x: {
+        border: {
+          display: false,
+        },
+        grid: {
+          display: false,
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        enabled: true, // Show tooltips
+        displayColors: false, // Disable color indicators in tooltip
+        callbacks: {
+          title: () => null, // Disable the X-axis label in the tooltip
+          label: function (tooltipItem) {
+            let value = tooltipItem.raw;
+            return value; // Display value with a $ prefix
+          },
+        },
+      },
+    },
+    interaction: {
+      mode: "nearest", // Find the nearest point
+      axis: "x", // Based on x-axis
+      intersect: false, // Do not require the cursor to intersect with the point
+    },
+    onHover: (event, chartElement) => {
+      if (chartElement.length) {
+        // If a point is found
+        month_interval.setActiveElements(chartElement); // Highlight the point
+        month_interval.tooltip.setActiveElements(chartElement, event); // Trigger the tooltip
+        month_interval.update();
+      } else {
+        month_interval.setActiveElements([]); // Clear any active elements
+        month_interval.tooltip.setActiveElements([], event); // Hide the tooltip
+        month_interval.update();
+      }
+    },
+  },
+});
+
 window.addEventListener("resize", function () {
-  dashBoardTotalBarchart.update();
+  month_doughnut.update();
+  month_linechart.update();
+  month_interval.update();
 });
 
 updateDashboard();

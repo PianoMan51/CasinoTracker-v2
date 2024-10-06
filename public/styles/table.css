@@ -19,6 +19,10 @@
   grid-area: acc;
 }
 
+#interval_bar_chart{
+  grid-area: interval;
+}
+
 #doughnut_chart {
   grid-area: doughnut;
 }
@@ -188,11 +192,12 @@
 @media screen and (max-width: 1512px) {
   #table {
     grid-template-columns: 300px 300px auto;
-    grid-template-rows: 300px auto auto;
+    grid-template-rows: 300px 66px auto;
     grid-template-areas:
       'doughnut acc list'
       'changemonths totals list'
-      'fill totals statistics'
+      'interval totals list'
+      'interval totals statistics'
   }
 
   .table.section.list {
@@ -208,12 +213,6 @@
 
   #inputsContainer {
     grid-area: totals;
-  }
-}
-
-@media screen and (max-width: 1000px) {
-  #entry_list_container {
-    min-width: 775px;
   }
 }
 
