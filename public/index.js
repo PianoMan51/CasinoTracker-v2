@@ -24,6 +24,7 @@ const db = getDatabase(app);
 
 let bet_input = document.getElementById("bet_input");
 let win_input = document.getElementById("win_input");
+let addEntryButton = document.getElementById("inputsContainerButton")
 let entriesList = document.getElementById("entriesList");
 let inputsContainer = document.getElementById("inputsContainer");
 let currentMonthSpan = document.querySelectorAll(".currentMonthSpan");
@@ -192,7 +193,6 @@ openInputs.onclick = () => {
     inputsContainer.style.display = "flex";
     document.querySelector("#entry_date .date_input.day").value = actualDate.getDate();
     document.querySelector("#entry_date .date_input.month").value = actualDate.getMonth() + 1;
-
   } else {
     document.getElementById("table_list_totals").style.display = "flex";
     inputsContainer.style.display = "none";
@@ -260,11 +260,41 @@ function changeMonth(direction) {
   updateList();
 }
 
-document.getElementById("inputsContainerButton").onclick = () => {
-  if (bet_input.value) {
-    addEntry();
+bet_input.addEventListener("input", function () {
+  checkValidInput();
+});
+
+document.querySelectorAll("#entry_date").forEach((date_input) => {
+  date_input.addEventListener("input", function () {
+    checkValidInput();
+  });
+});
+
+document.querySelectorAll("#inputsContainer select").forEach((select) => {
+  select.addEventListener("change", function () {
+    checkValidInput();
+  });
+});
+
+function checkValidInput() {
+  const isValid = bet_input.value > 0 
+    && document.querySelector(".select_casino").value !== "" 
+    && document.querySelector(".select_campaign").value !== "";
+    
+  if (isValid) {
+    addEntryButton.classList.add("ready");
   } else {
-    resetInputs();
+    addEntryButton.classList.remove("ready");
+  }
+  
+  return isValid; // Return the validity status
+}
+
+addEntryButton.onclick = () => {
+  if (checkValidInput()) {
+    addEntry(); // Call addEntry if valid
+  } else {
+    resetInputs(); // Reset inputs if not valid
   }
 };
 
@@ -718,7 +748,7 @@ function updateMonthCharts() {
     month_linechart.data.labels = Array.from({ length: stats.monthAccOutcome.length }, (_, i) => i + 1);
 
     month_interval.data.datasets[0].data = [intervals_1,intervals_2,intervals_3,intervals_4,intervals_5, intervals_6];
-    month_interval.data.labels = ["0x", "1x-1.5x", "1.5x-2x", "2x-5x", "5x-10x", ">10x"];
+    month_interval.data.labels = ["0x-1x", "1x-1.5x", "1.5x-2x", "2x-5x", "5x-10x", ">10x"];
   }
   
   // Update the charts

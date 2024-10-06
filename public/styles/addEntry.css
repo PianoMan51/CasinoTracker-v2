@@ -5,16 +5,75 @@
     background-color: white;
 }
 
-#inputsContainer button{
+#inputsContainer button {
     cursor: pointer;
 }
 
-#entry_date{
-    display: grid;
-    grid-template-columns: auto auto auto;
+#entry_date {
+    display: flex;
+    justify-content: space-evenly;
+    background-color: var(--background);
+    height: 30px;
+    color: white;
+    align-items: center;
+    border-radius: 5px;
 }
 
-#entry_date .date_input{
-    width: 50%;
+#entry_date .date_input {
+    width: 20px;
     margin: 0 auto 0;
+    border: none;
+    background-color: transparent;
+    text-align: center;
+    color: white;
+}
+
+#inputsContainer select{
+    border: none;
+    background-color: var(--lightgray);
+    height: 30px;
+    border-radius: 5px;
+    text-align: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    transition: .2s;
+}
+
+#inputsContainer select:hover{
+    background-color: var(--gray);
+}
+
+#inputsContainer select:focus{
+    outline: none;
+}
+
+
+#inputsContainerButton {
+    border: none;
+    background-color: var(--red);
+    transform: rotate(45deg) scale(1);
+    color: white;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin: 0 auto 0;
+    margin-top: auto;
+    transition: .2s;
+}
+
+#inputsContainerButton:hover {
+    transform: scale(1.1) rotate(45deg);
+}
+
+#inputsContainerButton.ready {
+    transform: rotate(0deg);
+    background: var(--green);
+}
+
+#inputsContainerButton.ready:hover {
+    transform: scale(1.1) rotate(0deg);
 }
