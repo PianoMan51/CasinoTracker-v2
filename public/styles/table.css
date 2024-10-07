@@ -192,7 +192,7 @@
 @media screen and (max-width: 1512px) {
   #table {
     grid-template-columns: 300px 300px auto;
-    grid-template-rows: 300px 66px auto;
+    grid-template-rows: 300px 66px auto 187px;
     grid-template-areas:
       'doughnut acc list'
       'changemonths totals list'
