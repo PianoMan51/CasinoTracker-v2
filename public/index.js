@@ -594,7 +594,9 @@ async function updateDashboard() {
     const promises = months.map((month) => fetchMonthEntries("2024", month));
     const results = await Promise.all(promises);
 
+    let month_done = 0;
     results.forEach((data) => {
+      if (data.length>0) month_done++
       const dataCategory = updateProfits(data);
       totalBarchartList.push(dataCategory.toFixed(0));
     });
@@ -611,7 +613,7 @@ async function updateDashboard() {
           `${containerId.substring(0, containerId.length - 6)} filter listContainerElement`
         );
         element.innerHTML = `
-          <span class="label">${name ? name : "Other"}</span>
+          <span class="label">${name ? name : "N/A"}</span>
           <span class="counts" value="${count}" style="background-color: var(--background)">${count}</span>
           <span class="profits" value="${profit}" style="background-color: ${color}">$${profit.toFixed(0)}</span>
         `;
@@ -642,11 +644,11 @@ async function updateDashboard() {
     document.querySelector(".currentMonthProfit .value_span").textContent = months[actualDate.getMonth()];
     document.querySelector(".totalProfit .value").textContent = "$" + totalProfits.value.toFixed(0);
     document.querySelector(".totalLoss .value").textContent = "$" + totalLosses.value.toFixed(0);
-    document.querySelector(".totalWin .value").textContent =
-      "$" + (totalLosses.value * -1 + totalProfits.value).toFixed(0);
+    document.querySelector(".totalWin .value").textContent = "$" + (totalLosses.value * -1 + totalProfits.value).toFixed(0);
     document.querySelector(".totalPending .value").textContent = "$" + pendings.value.toFixed(0);
-    document.querySelector(".entryCount .value").textContent =
-      entries.value + "/$" + (totalProfits.value / entries.value).toFixed(0);
+    document.querySelector(".entryCount .value").textContent = entries.value;
+    document.querySelector(".averageMonthProfit .value").textContent = "$" + totalProfits.value / month_done;
+    document.querySelector(".averageEntryProfit .value").textContent = "$" + (totalProfits.value / entries.value).toFixed(0);
 
     dashBoardTotalBarchart.update();
   } catch (error) {
@@ -700,6 +702,7 @@ function updateMonthCharts() {
   let intervals_4 = 0;
   let intervals_5 = 0;
   let intervals_6 = 0;
+  let intervals_7 = 0;
 
   entries.forEach((entry, index) => {
     let outcome_x = parseFloat(entry.getAttribute("data-outcome_x"));
@@ -715,8 +718,10 @@ function updateMonthCharts() {
       intervals_4++;
     } else if (outcome_x <= 10){
       intervals_5++;
-    } else {
+    } else if (outcome_x <= 50){
       intervals_6++;
+    } else {
+      intervals_7++;
     }
 
     if (toggle_washSessions) {
@@ -731,7 +736,7 @@ function updateMonthCharts() {
 
   // Update doughnut and line chart elements
   document.querySelector(".doughnut.profits").innerHTML = "$" + stats.monthTotalProfit.toFixed(0);
-  document.querySelector(".doughnut.sub.ratio").innerHTML = `${stats.positives}/${stats.negatives}/${stats.pendingsAmount}`;
+  document.querySelector(".doughnut.sub.ratio").innerHTML = `${stats.positives}/${stats.negatives}${stats.pendingsAmount > 1 ? "/"+stats.pendingsAmount : ""}`;
 
   // Update chart data
   if(stats.wins == 0 && stats.losses == 0){
@@ -747,8 +752,8 @@ function updateMonthCharts() {
     month_linechart.data.datasets[0].data = stats.monthAccOutcome;
     month_linechart.data.labels = Array.from({ length: stats.monthAccOutcome.length }, (_, i) => i + 1);
 
-    month_interval.data.datasets[0].data = [intervals_1,intervals_2,intervals_3,intervals_4,intervals_5, intervals_6];
-    month_interval.data.labels = ["0x-1x", "1x-1.5x", "1.5x-2x", "2x-5x", "5x-10x", ">10x"];
+    month_interval.data.datasets[0].data = [intervals_1,intervals_2,intervals_3,intervals_4,intervals_5, intervals_6, intervals_7];
+    month_interval.data.labels = ["1x", "1.5x", "2x", "5x", "10x", "50x", ">50x"];
   }
   
   // Update the charts

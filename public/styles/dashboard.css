@@ -91,7 +91,11 @@
 
 @media screen and (max-width: 1512px) {
   #cards {
-    grid-template-columns: repeat(3, 2fr)
+    grid-template-columns: repeat(4, 2fr)
+  }
+
+  .card span{
+    font-size: 12px;
   }
 
   #dashboard {
@@ -113,6 +117,7 @@
   .dashboard.section.list {
     height: 50%;
   }
+  
 }
 
 @media screen and (max-width: 360px) {
