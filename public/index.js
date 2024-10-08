@@ -647,7 +647,7 @@ async function updateDashboard() {
     document.querySelector(".totalWin .value").textContent = "$" + (totalLosses.value * -1 + totalProfits.value).toFixed(0);
     document.querySelector(".totalPending .value").textContent = "$" + pendings.value.toFixed(0);
     document.querySelector(".entryCount .value").textContent = entries.value;
-    document.querySelector(".averageMonthProfit .value").textContent = "$" + totalProfits.value / month_done;
+    document.querySelector(".averageMonthProfit .value").textContent = "$" + (totalProfits.value / month_done).toFixed(0);
     document.querySelector(".averageEntryProfit .value").textContent = "$" + (totalProfits.value / entries.value).toFixed(0);
 
     dashBoardTotalBarchart.update();
