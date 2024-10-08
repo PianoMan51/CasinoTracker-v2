@@ -263,6 +263,10 @@
         background-color: var(--lightgray);
     }
 
+    .entryContainer.hovered span{
+        background-color: aqua !important;
+    }
+
     .listHeaders.wash, 
     .entryContainer.wash{
         width: 100%;

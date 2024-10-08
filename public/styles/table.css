@@ -207,6 +207,10 @@
 
   }
 
+  #entry_list_container{
+    min-width: 762px;
+  }
+
   #table_list_totals {
     flex-direction: column;
   }

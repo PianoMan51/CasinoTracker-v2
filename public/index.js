@@ -1191,15 +1191,11 @@ let dashBoardTotalBarchart = new Chart("dashboard_total_barchart", {
         document.querySelectorAll(".pageContent").forEach((page) => {
           page.style.display = "none";
         });
+
+        nav("table");
+
         document.querySelector(".pageContent.table").style.display = "flex";
         changeMonth();
-      }
-    },
-    onHover: (event, elements) => {
-      if (elements.length) {
-        event.native.target.style.cursor = "pointer";
-      } else {
-        event.native.target.style.cursor = "default";
       }
     },
     interaction: {
@@ -1209,11 +1205,12 @@ let dashBoardTotalBarchart = new Chart("dashboard_total_barchart", {
     },
     onHover: (event, chartElement) => {
       if (chartElement.length) {
-        // If a point is found
+        event.native.target.style.cursor = "pointer";
         dashBoardTotalBarchart.setActiveElements(chartElement); // Highlight the point
         dashBoardTotalBarchart.tooltip.setActiveElements(chartElement, event); // Trigger the tooltip
         dashBoardTotalBarchart.update();
       } else {
+        event.native.target.style.cursor = "default";
         dashBoardTotalBarchart.setActiveElements([]); // Clear any active elements
         dashBoardTotalBarchart.tooltip.setActiveElements([], event); // Hide the tooltip
         dashBoardTotalBarchart.update();
@@ -1258,6 +1255,78 @@ let month_doughnut = new Chart("month_doughnut_profits", {
     },
   },
 });
+
+let nearestPoint = null;
+
+const hoverEffect = (event, chartElement) => {
+  if (chartElement.length) {
+    let chart_index = chartElement[0].index;
+
+    // If the hovered element is different from the previous one
+    if (nearestPoint !== chart_index) {
+      // Clear the background of the previous item (nearestPoint)
+      if (nearestPoint !== null) {
+        entriesList.children[nearestPoint].querySelectorAll("span:not(:last-of-type)").forEach((span) => {
+          span.style.backgroundColor = "var(--lightgray)";
+          span.style.color = "black";
+        });
+      }
+
+      // Set the background of the currently hovered item (chart_index)
+      entriesList.children[chart_index].querySelectorAll("span:not(:last-of-type)").forEach((span) => {
+        span.style.backgroundColor = "var(--gray)";
+        span.style.color = "white";
+      });
+
+      // Scroll the hovered element to the center
+      entriesList.children[chart_index].scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "center",
+      });
+
+      nearestPoint = chart_index; // Update the nearestPoint index
+    }
+
+    // If a point is found, update the chart
+    month_linechart.setActiveElements(chartElement); // Highlight the point
+    month_linechart.tooltip.setActiveElements(chartElement, event); // Trigger the tooltip
+    month_linechart.update();
+  } else {
+    // Clear the background of the previous item (nearestPoint)
+    if (nearestPoint !== null) {
+      entriesList.children[nearestPoint].querySelectorAll("span:not(:last-of-type)").forEach((span) => {
+        span.style.backgroundColor = "var(--lightgray)";
+        span.style.color = "black";
+      });
+      nearestPoint = null; // Reset the nearestPoint index
+    }
+
+    // Clear any active elements in the chart
+    month_linechart.setActiveElements([]);
+    month_linechart.tooltip.setActiveElements([], event); // Hide the tooltip
+    month_linechart.update();
+  }
+};
+
+const handleMouseLeave = () => {
+  // Clear the background of the previous item (nearestPoint)
+  if (nearestPoint !== null) {
+    entriesList.children[nearestPoint].querySelectorAll("span:not(:last-of-type)").forEach((span) => {
+      span.style.backgroundColor = "var(--lightgray)";
+      span.style.color = "black";
+    });
+    nearestPoint = null; // Reset the nearestPoint index
+  }
+
+  // Clear any active elements in the chart
+  month_linechart.setActiveElements([]);
+  month_linechart.tooltip.setActiveElements([]); // Hide the tooltip
+  month_linechart.update();
+};
+
+// Add a 'mouseleave' event listener to the chart's container to clear the hover effects when the mouse leaves the chart area
+document.getElementById("month_linechart").addEventListener("mouseleave", handleMouseLeave);
 
 let month_linechart = new Chart("month_linechart", {
   type: "line",
@@ -1331,18 +1400,7 @@ let month_linechart = new Chart("month_linechart", {
       axis: "x", // Based on x-axis
       intersect: false, // Do not require the cursor to intersect with the point
     },
-    onHover: (event, chartElement) => {
-      if (chartElement.length) {
-        // If a point is found
-        month_linechart.setActiveElements(chartElement); // Highlight the point
-        month_linechart.tooltip.setActiveElements(chartElement, event); // Trigger the tooltip
-        month_linechart.update();
-      } else {
-        month_linechart.setActiveElements([]); // Clear any active elements
-        month_linechart.tooltip.setActiveElements([], event); // Hide the tooltip
-        month_linechart.update();
-      }
-    },
+    onHover: hoverEffect, // Attach the hover effect
   },
 });
 
@@ -1403,11 +1461,12 @@ let month_interval = new Chart("month_interval_bar_chart", {
     },
     onHover: (event, chartElement) => {
       if (chartElement.length) {
-        // If a point is found
+        event.native.target.style.cursor = "pointer";
         month_interval.setActiveElements(chartElement); // Highlight the point
         month_interval.tooltip.setActiveElements(chartElement, event); // Trigger the tooltip
         month_interval.update();
       } else {
+        event.native.target.style.cursor = "default";
         month_interval.setActiveElements([]); // Clear any active elements
         month_interval.tooltip.setActiveElements([], event); // Hide the tooltip
         month_interval.update();
