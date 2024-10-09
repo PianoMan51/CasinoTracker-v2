@@ -22,6 +22,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+let vp = window.innerWidth;
 let bet_input = document.getElementById("bet_input");
 let win_input = document.getElementById("win_input");
 let addEntryButton = document.getElementById("inputsContainerButton")
@@ -384,8 +385,6 @@ function createEntryContainer(entry, key) {
   let entryContainer = document.createElement("div");
   entryContainer.setAttribute("class", "entryContainer");
   entryContainer.setAttribute("data-key", key); // Set the unique key as a data attribute
-
-  let vp = window.innerWidth;
 
   let formatted_outcome = entry.win ? (vp > 360 ? profit.toFixed(2) : profit.toFixed(0)) : "$";
   let formatted_outcomeX = (entry.win / (entry.bet > 1 ? entry.bet : 1)).toFixed(2);
@@ -1058,10 +1057,14 @@ function filterEntries(currentFilterElement) {
   let entries = document.querySelectorAll(".entryContainer");
   if (currentFilterElement) {
     entries.forEach((entry) => {
-      let filterCategory =
-        currentFilterElement.classList[0] == "casino" ? entry.children[1].innerHTML : entry.children[2].innerHTML;
+      let filterCategory = currentFilterElement.classList[0] == "casino" ? entry.children[1].innerHTML : entry.children[2].innerHTML;
       if (filterCategory == currentFilterElement.querySelector(".label").innerHTML) {
         entry.classList.toggle("filter");
+        entriesList.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "center",
+        });
       } else {
         entry.style.display = "none";
       }
@@ -1283,12 +1286,14 @@ const hoverEffect = (event, chartElement) => {
         span.style.color = "white";
       });
 
-      // Scroll the hovered element to the center
-      entriesList.children[chart_index].scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "center",
-      });
+      if (vp > 360) {
+        // Scroll the hovered element to the center
+        entriesList.children[chart_index].scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "center",
+        });
+      }
 
       nearestPoint = chart_index; // Update the nearestPoint index
     }

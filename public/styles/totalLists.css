@@ -16,21 +16,24 @@
     gap: 5px;
     height: 29px;
     color: white;
+    align-items: center;
+    box-sizing: border-box;
 }
 
-.listContainerElement .label {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    background-color: var(--lightgray);
-    color: black;
-    padding: 6px 10px;
+.listContainerElement span{
+    padding: 3px 10px;
     border-radius: 5px;
     font-size: 0.9em;
     font-weight: 500;
     user-select: none;
     transition: ease-in-out 0.15s;
     cursor: pointer;
+}
+
+.listContainerElement .label {
+    display: flex;
+    background-color: var(--lightgray);
+    color: black;
     flex: 1;
 }
 
@@ -51,34 +54,4 @@
 
 .listedTotals .listContainerElement .profits {
     width: 50px;
-}
-
-.listContainerElement .profits,
-.listContainerElement .counts {
-    padding: 6px 10px;
-    border-radius: 5px;
-    font-size: 0.9em;
-    font-weight: 500;
-    user-select: none;
-    transition: ease-in-out 0.15s;
-    cursor: pointer;
-}
-
-@media screen and (max-width: 360) {
-
-    .listedTotals {
-        font-size: 0.6em;
-    }
-
-    .listedTotals .listContainerElement span {
-        padding: 6px;
-    }
-
-    .listedTotals .listContainerElement {
-        height: 24px;
-    }
-
-    .listContainerElement .profits {
-        width: 28px;
-    }
 }
