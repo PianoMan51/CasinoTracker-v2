@@ -18,6 +18,7 @@
 
 #line_chart {
   grid-area: acc;
+  cursor: pointer;
 }
 
 #interval_bar_chart{
@@ -220,6 +221,28 @@
     grid-area: totals;
   }
 }
+
+@media screen and (max-width: 1278px){
+  #table{
+    grid-template-areas: 
+    'doughnut acc interval'
+    'changemonths changemonths changemonths'
+    'statistics statistics statistics'
+    'totals totals totals'
+    'list list list';
+  }
+
+  #table_list_totals{
+    flex-direction: row;
+  }
+
+  .table.section.list{
+    width: 50%;
+    min-height: auto;
+  }
+}
+
+
 
 @media screen and (max-width: 360px) {
 

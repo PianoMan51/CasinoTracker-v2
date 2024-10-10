@@ -343,6 +343,9 @@ function resetInputs() {
   bet_input.value = "";
   win_input.value = "";
 
+  document.querySelector(".select_casino").selectedIndex = 0
+  document.querySelector(".select_campaign").selectedIndex = 0;
+
   document.getElementById("inputsContainer").classList.add("hidden");
   document.getElementById("openInput").classList.remove("active");
 
@@ -1266,11 +1269,11 @@ let month_doughnut = new Chart("month_doughnut_profits", {
 
 let nearestPoint = null;
 
-const hoverEffect = (event, chartElement) => {
+const clickEffect = (event, chartElement) => {
   if (chartElement.length) {
     let chart_index = chartElement[0].index;
 
-    // If the hovered element is different from the previous one
+    // If the clicked element is different from the previous one
     if (nearestPoint !== chart_index) {
       // Clear the background of the previous item (nearestPoint)
       if (nearestPoint !== null) {
@@ -1280,14 +1283,14 @@ const hoverEffect = (event, chartElement) => {
         });
       }
 
-      // Set the background of the currently hovered item (chart_index)
+      // Set the background of the currently clicked item (chart_index)
       entriesList.children[chart_index].querySelectorAll("span:not(:last-of-type)").forEach((span) => {
         span.style.backgroundColor = "var(--gray)";
         span.style.color = "white";
       });
 
       if (vp > 360) {
-        // Scroll the hovered element to the center
+        // Scroll the clicked element to the center
         entriesList.children[chart_index].scrollIntoView({
           behavior: "smooth",
           block: "center",
@@ -1298,9 +1301,9 @@ const hoverEffect = (event, chartElement) => {
       nearestPoint = chart_index; // Update the nearestPoint index
     }
 
-    // If a point is found, update the chart
-    month_linechart.setActiveElements(chartElement); // Highlight the point
-    month_linechart.tooltip.setActiveElements(chartElement, event); // Trigger the tooltip
+    // Highlight the point and trigger the tooltip on click
+    month_linechart.setActiveElements(chartElement); 
+    month_linechart.tooltip.setActiveElements(chartElement, event); 
     month_linechart.update();
   } else {
     // Clear the background of the previous item (nearestPoint)
@@ -1335,7 +1338,12 @@ const handleMouseLeave = () => {
   month_linechart.update();
 };
 
-// Add a 'mouseleave' event listener to the chart's container to clear the hover effects when the mouse leaves the chart area
+document.getElementById("month_linechart").addEventListener("click", (event) => {
+  // Use 'index' mode to get the nearest point on the X-axis
+  const chartElement = month_linechart.getElementsAtEventForMode(event, 'index', { intersect: false }, false);
+  clickEffect(event, chartElement);
+});
+
 document.getElementById("month_linechart").addEventListener("mouseleave", handleMouseLeave);
 
 let month_linechart = new Chart("month_linechart", {
@@ -1351,7 +1359,7 @@ let month_linechart = new Chart("month_linechart", {
         tension: 0.2, // Smooth curve for the line
         pointRadius: 0, // No dots on the line
         pointBackgroundColor: "rgb(46, 204, 113)",
-        pointHoverRadius: 4, // No hover effect on points
+        pointHoverRadius: 4, // Hover effect on points
         borderCapStyle: "round",
       },
     ],
@@ -1397,7 +1405,11 @@ let month_linechart = new Chart("month_linechart", {
         enabled: true, // Show tooltips
         displayColors: false, // Disable color indicators in tooltip
         callbacks: {
-          title: () => null, // Disable the X-axis label in the tooltip
+          title: function (tooltipItem) {
+            let index = tooltipItem[0].dataIndex;
+            // Access the innerText of the corresponding DOM element
+            return entriesList.children[index].children[0].innerText;
+          },
           label: function (tooltipItem) {
             let value = tooltipItem.raw;
             return "$" + value; // Display value with a $ prefix
@@ -1410,7 +1422,6 @@ let month_linechart = new Chart("month_linechart", {
       axis: "x", // Based on x-axis
       intersect: false, // Do not require the cursor to intersect with the point
     },
-    onHover: hoverEffect, // Attach the hover effect
   },
 });
 
@@ -1459,7 +1470,7 @@ let month_interval = new Chart("month_interval_bar_chart", {
           title: () => null, // Disable the X-axis label in the tooltip
           label: function (tooltipItem) {
             let value = tooltipItem.raw;
-            return value; // Display value with a $ prefix
+            return value;
           },
         },
       },
