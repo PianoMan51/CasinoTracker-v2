@@ -952,7 +952,7 @@ async function updateMonthLists() {
         currentFilterElement = this.parentElement;
       }
 
-      if (el.querySelector(".label").innerText == "Vask ASG") {
+      if (el.querySelector(".label").innerText == "Vask ASG" || el.querySelector(".label").innerText == "Vask") {
         washButton.style.display = "flex";
         if(toggle_washSessions) toggle_washSessions = false;
       } else {
