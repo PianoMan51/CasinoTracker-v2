@@ -242,8 +242,6 @@
   }
 }
 
-
-
 @media screen and (max-width: 360px) {
 
   #table {
@@ -314,6 +312,10 @@
     border-radius: 50%;
   }
 
+  #table_list_totals{
+    flex-direction: column;
+  }
+
   .listContainer {
     width: 100%;
   }
@@ -325,6 +327,7 @@
   .table.section.list {
     height: auto;
     min-height: auto;
+    width: auto;
   }
 
 }
