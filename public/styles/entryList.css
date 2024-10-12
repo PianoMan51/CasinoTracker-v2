@@ -1,6 +1,6 @@
 .listHeaders {
     display: flex;
-    gap: 10px;
+    gap: 5px;
     margin: 0;
     height: 40px;
     align-items: center;
@@ -44,7 +44,7 @@
 
 .entryContainer {
     display: flex;
-    gap: 10px;
+    gap: 5px;
     border-radius: var(--sectionBorderRadius);
     position: relative;
     align-items: center;

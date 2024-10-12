@@ -40,16 +40,42 @@
 
 #statistics{
   grid-area: statistics;
-  display: flex;
-  align-items: center;
-  gap: 0px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: 3px;
 }
 
 .statistics {
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 5px;
   user-select: none;
+  align-items: center;
+}
+
+.statistics div{
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  font-weight: 500;
+  user-select: none;
+  cursor: pointer;
+}
+
+.statistics .label{
+  background-color: var(--lightgray);
+  flex: 1;
+}
+
+.statistics .value{
+  background-color: var(--green);
+  color: white;
+  width: 60px;
+}
+
+.statistics.outcome_x .value, 
+.statistics.count .value{
+  background-color: var(--background);
 }
 
 .table.section.list {
@@ -70,7 +96,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   overflow-y: scroll;
   border-radius: 8px;
   border-radius: var(--sectionBorderRadius);
@@ -194,7 +220,7 @@
 @media screen and (max-width: 1512px) {
   #table {
     grid-template-columns: 300px 300px auto;
-    grid-template-rows: 300px 66px auto 187px;
+    grid-template-rows: 300px 66px auto 110px;
     grid-template-areas:
       'doughnut acc list'
       'changemonths totals list'
@@ -281,6 +307,23 @@
   #month_doughnut_profits {
     width: 162px !important;
     height: 162px !important;
+  }
+
+  #statistics{
+    display: grid;
+    row-gap: 4px;
+    column-gap: 4px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .statistics{
+    justify-content: space-between;
+    gap: 3px;
+    font-size: 0.6em;
+  }
+
+  .statistics .value{
+    width: 30px;
   }
 
   #quick_info {
