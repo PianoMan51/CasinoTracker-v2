@@ -193,7 +193,7 @@ openInputs.onclick = () => {
     document.getElementById("table_list_totals").style.display = "none";
     inputsContainer.style.display = "flex";
     document.querySelector("#entry_date .date_input.day").value = actualDate.getDate();
-    document.querySelector("#entry_date .date_input.month").value = actualDate.getMonth() + 1;
+    document.querySelector("#entry_date .date_input.month").value = currentMonth + 1;
   } else {
     document.getElementById("table_list_totals").style.display = "flex";
     inputsContainer.style.display = "none";
@@ -278,7 +278,7 @@ document.querySelectorAll("#inputsContainer select").forEach((select) => {
 });
 
 function checkValidInput() {
-  const isValid = bet_input.value > 0 
+  const isValid = bet_input.value >= 0 
     && document.querySelector(".select_casino").value !== "" 
     && document.querySelector(".select_campaign").value !== "";
     
