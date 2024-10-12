@@ -641,6 +641,10 @@ async function updateDashboard() {
     createTotalElement(sortedCampaignEntries, campaignEntryCounts, "campaignTotals");
 
     dashBoardTotalBarchart.data.datasets[0].data = totalBarchartList;
+    let total = totalBarchartList.reduce((acc, val) => acc + parseFloat(val), 0);
+    let average = total / totalBarchartList.filter(val => val > 0).length;
+
+    dashBoardTotalBarchart.options.plugins.averageLineAverage = average;
     dashBoardTotalBarchart.data.labels = months;
     document.querySelector(".currentMonthProfit .value").textContent = "$" + totalCurrentMonthProfit.value.toFixed(0);
     document.querySelector(".currentMonthProfit .value_span").textContent = months[actualDate.getMonth()];
@@ -1124,7 +1128,7 @@ let dashBoardTotalBarchart = new Chart("dashboard_total_barchart", {
     labels: [],
     datasets: [
       {
-        data: [],
+        data: [], // Add your data here
         borderRadius: 10,
         borderSkipped: false,
         backgroundColor: "rgb(46, 204, 113)",
@@ -1228,6 +1232,31 @@ let dashBoardTotalBarchart = new Chart("dashboard_total_barchart", {
       }
     },
   },
+  plugins: [{
+    id: 'averageLine',
+    beforeDraw: function(chart) {
+      let ctx = chart.ctx;
+      
+      // Retrieve the average value stored in the options
+      let average = chart.options.plugins.averageLineAverage;
+
+      if (average !== undefined) {
+        // Y-coordinate for the average value
+        let yScale = chart.scales['y'];
+        let yPos = yScale.getPixelForValue(average);
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([2, 2]); // Dashed line
+        ctx.moveTo(chart.chartArea.left, yPos);
+        ctx.lineTo(chart.chartArea.right, yPos);
+        ctx.strokeStyle = 'rgb(46, 204, 113)'; // Line color
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+  }],
 });
 
 let month_doughnut = new Chart("month_doughnut_profits", {
