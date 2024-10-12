@@ -62,7 +62,7 @@
     transform: scale(1.1);
 }
 
-#view_toggle.active {
+#total_toggle.active {
     background-color: var(--darkbackground);
     color: white;
 }
@@ -73,6 +73,10 @@
 
 #wash{
     display: none;
+}
+
+#wash.shown{
+    display: flex;
 }
 
 @media screen and (max-width: 360px) {
@@ -97,7 +101,7 @@
         margin: 10px;
     }
 
-    #navbar .view_toggle {
+    #navbar .total_toggle {
         flex-direction: row;
     }
 
@@ -106,7 +110,7 @@
         display: none !important;
     }
 
-    #navbar .sidebar_buttons.view_toggle {
+    #navbar .sidebar_buttons.total_toggle {
         display: flex;
         justify-content: space-between;
     }

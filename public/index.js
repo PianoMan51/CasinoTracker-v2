@@ -35,7 +35,7 @@ let removeBtn = document.querySelector("#removeEntry");
 let editBtn = document.querySelector("#editEntry");
 let openInputs = document.querySelector("#openInput");
 let washButton = document.getElementById("wash");
-let view_toggle = document.getElementById("view_toggle");
+let total_toggle = document.getElementById("total_toggle");
 let outcomeX_toggle = document.getElementById("outcome_x_toggle");
 let actualDate = new Date();
 let year = 2024;
@@ -83,9 +83,9 @@ async function getMisc(type) {
   }
 }
 
-view_toggle.addEventListener("click", function () {
+total_toggle.addEventListener("click", function () {
   totalView = !totalView;
-  view_toggle.classList.toggle("active");
+  total_toggle.classList.toggle("active");
 
   document.querySelectorAll("#quick_info .buttons button").forEach((button) => {
     button.disabled = totalView ? true : false;
@@ -151,7 +151,7 @@ document.querySelector(".card.currentMonthProfit").onclick = () => {
 document.querySelector(".card.totalProfit").onclick = () => {
   nav("table");
   totalView = true;
-  view_toggle.classList.add("active");
+  total_toggle.classList.add("active");
   updateList();
 };
 
@@ -623,7 +623,7 @@ async function updateDashboard() {
 
         element.addEventListener("click", function () {
           totalView = "true";
-          document.getElementById("view_toggle").classList.add("active");
+          document.getElementById("total_toggle").classList.add("active");
 
           currentFilterElement = element;
 
@@ -948,28 +948,32 @@ async function updateMonthLists() {
       if (this.parentElement.classList.contains("selected")) {
         this.parentElement.classList.remove("selected");
         currentFilterElement = null;
+        washButton.classList.remove("shown");
       } else {
         document.querySelectorAll("#table_list_totals .table.section.list .listedTotals div").forEach((e) => {
           e.classList.remove("selected");
         });
         this.parentElement.classList.add("selected");
         currentFilterElement = this.parentElement;
+  
+        // Show or hide washButton based on label
+        if (el.querySelector(".label").innerText == "Vask ASG" || el.querySelector(".label").innerText == "Vask") {
+          washButton.classList.add("shown");
+          if (toggle_washSessions) toggle_washSessions = false;
+        } else {
+          washButton.classList.remove("shown");
+          toggle_washSessions = false;
+  
+          document.querySelector(".listHeaders").classList.remove("wash");
+          document.querySelector(".listHeaders").children[1].style.display = "flex";
+          document.querySelector(".listHeaders").children[2].style.display = "flex";
+        }
       }
-
-      if (el.querySelector(".label").innerText == "Vask ASG" || el.querySelector(".label").innerText == "Vask") {
-        washButton.style.display = "flex";
-        if(toggle_washSessions) toggle_washSessions = false;
-      } else {
-        washButton.style.display = "none";
-        toggle_washSessions = false;
-        
-        document.querySelector(".listHeaders").classList.remove("wash");
-        document.querySelector(".listHeaders").children[1].style.display = "flex"
-        document.querySelector(".listHeaders").children[2].style.display = "flex"
-      }
-
+  
+      // Toggle washButton's 'active' state
       toggle_washSessions ? washButton.classList.add("active") : washButton.classList.remove("active");
-
+  
+      // Filter entries and update the list
       filterEntries(currentFilterElement);
       updateList();
     };
