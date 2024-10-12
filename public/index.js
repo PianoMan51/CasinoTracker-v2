@@ -977,6 +977,16 @@ async function updateMonthLists() {
       filterEntries(currentFilterElement);
       updateList();
     };
+
+    el.querySelector(".counts").onclick = function (){
+      isAscending = !isAscending;
+      sortEntries(document.querySelector(`#${el.classList[0]}List div`), "listedTotals", 1);
+    }
+
+    el.querySelector(".profits").onclick = function (){
+      isAscending = !isAscending;
+      sortEntries(document.querySelector(`#${el.classList[0]}List div`), "listedTotals", 2);
+    }
   });
 }
 
