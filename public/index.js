@@ -843,7 +843,7 @@ function editEntry(event) {
       };
 
       // Reference the specific entry using its unique key
-      const entryRef = ref(db, `Entries/${year}/${months[currentMonth]}/${key}`);
+      const entryRef = ref(db, `Entries/${year}/${months[content.date.substring(3) - 1]}/${key}`);
 
       set(entryRef, content)
         .then(() => {
