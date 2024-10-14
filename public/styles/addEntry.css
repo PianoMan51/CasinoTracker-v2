@@ -48,7 +48,6 @@
     outline: none;
 }
 
-
 #inputsContainerButton {
     border: none;
     background-color: var(--red);
@@ -76,4 +75,27 @@
 
 #inputsContainerButton.ready:hover {
     transform: scale(1.1) rotate(0deg);
+}
+
+.toggle_provision{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    position: relative;
+}
+
+.toggle_provision input[type="radio"]{
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+#provision_cut {
+    display: none;
+    position: absolute;
+    bottom: -40px;
+}
+
+#provision:checked ~ #provision_cut {
+    display: block;
 }

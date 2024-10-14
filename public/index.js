@@ -25,6 +25,7 @@ const db = getDatabase(app);
 let vp = window.innerWidth;
 let bet_input = document.getElementById("bet_input");
 let win_input = document.getElementById("win_input");
+let provision_cut = document.getElementById("provision_cut");
 let addEntryButton = document.getElementById("inputsContainerButton")
 let entriesList = document.getElementById("entriesList");
 let inputsContainer = document.getElementById("inputsContainer");
@@ -162,7 +163,8 @@ outcomeX_toggle.onclick = () => {
   let index = toggle_washSessions ? 3 : 5 
 
   Array.from(entriesList.children).forEach((entry) => {
-    entry.children[index].innerHTML = outcome_x ? entry.getAttribute("data-outcome_x") + "x" : "$" + entry.getAttribute("data-outcome_amount");
+    entry.children[index].innerHTML = outcome_x ? entry.getAttribute("data-outcome_x") + "x" : 
+    (entry.classList.contains("provision") ? "$" + entry.getAttribute("data-provision") :"$" + entry.getAttribute("data-outcome_amount"));
   });
 };
 
@@ -306,6 +308,9 @@ function addEntry() {
   let day = day_input < 10 ? "0" + day_input : day_input;
   let month = month_input < 10 ? "0" + month_input : month_input;
 
+  let provision_radio = document.getElementById("provision");
+  let provision_cut = document.getElementById("provision_cut");
+
   // Construct the entry data object
   let entry = {
     date: day + "/" + month,
@@ -314,6 +319,7 @@ function addEntry() {
     bet: bet_input.value,
     win: win_input.value,
     cashed_out: false,
+    provision: provision_radio.checked ? provision_cut.value : 0,
   };
 
   // Create a reference for the new entry using push() to generate a unique key
@@ -333,6 +339,8 @@ function addEntry() {
       openInputs.classList.toggle("active");
       updateMonthCharts();
       resetInputs();
+
+      console.log(entry)
     })
     .catch((error) => {
       console.error("Error writing new entry: ", error);
@@ -342,6 +350,7 @@ function addEntry() {
 function resetInputs() {
   bet_input.value = "";
   win_input.value = "";
+  provision_cut.value = "";
 
   document.querySelector(".select_casino").selectedIndex = 0
   document.querySelector(".select_campaign").selectedIndex = 0;
@@ -352,6 +361,9 @@ function resetInputs() {
   document.getElementById("table_list_totals").style.display = "flex";
   inputsContainer.style.display = "none";
   activeAdd = false;
+
+  document.querySelector(".toggle_provision #own").checked = true;
+  document.querySelector(".toggle_provision #provision").checked = false;
 }
 
 async function fetchMonthEntries(year, month) {
@@ -381,33 +393,54 @@ function createEntryContainer(entry, key) {
   let bet = parseInt(entry.bet);
   let win = parseInt(entry.win);
   let profit = parseInt(entry.win - entry.bet);
+  let provision = parseInt(entry.provision)
 
-  let color = entry.cashed_out ? (profit >= 0 ? "var(--green)" : "var(--red)") : "var(--yellow)";
+  let color = entry.cashed_out ? (profit >= 0 ? (entry.provision > 0 ? "var(--blue)" : "var(--green)") : "var(--red)") : "var(--yellow)";
 
   // Create the entry container and set its class
   let entryContainer = document.createElement("div");
   entryContainer.setAttribute("class", "entryContainer");
   entryContainer.setAttribute("data-key", key); // Set the unique key as a data attribute
 
+  if (provision > 0) entryContainer.classList.add("provision");
+
   let formatted_outcome = entry.win ? (vp > 360 ? profit.toFixed(2) : profit.toFixed(0)) : "$";
   let formatted_outcomeX = (entry.win / (entry.bet > 1 ? entry.bet : 1)).toFixed(2);
 
   entryContainer.setAttribute("data-outcome_amount", formatted_outcome);
   entryContainer.setAttribute("data-outcome_x", formatted_outcomeX);
+  if (provision > 0) entryContainer.setAttribute("data-provision", provision);
 
-  entryContainer.innerHTML = `
+  if (!provision) {
+    entryContainer.innerHTML = `
     <span>${entry.date}</span>
     <span>${entry.casino}</span>
     <span>${entry.campaign ? entry.campaign : "N/A"}</span>
     <span>$${vp > 360 ? bet.toFixed(2) : bet.toFixed(0)}</span>
     <span>${entry.win ? "$" + (vp > 360 ? win.toFixed(2) : win.toFixed(0)) : "$"}</span>
-    <span style="background-color: ${color}; color: white">${ outcome_x ? formatted_outcomeX + "x" : "$" + formatted_outcome}</span>
+    <span style="background-color: ${color}; color: white">${outcome_x ? formatted_outcomeX + "x" : "$" + formatted_outcome}</span>
     <input class="checkBox ${entry.cashed_out ? "checked" : ""}" type="checkbox" ${entry.win ? "" : "disabled"}>
   `;
 
+  entryContainer.children[5].value = profit;
+
+  } else {
+    entryContainer.innerHTML = `
+    <span>${entry.date}</span>
+    <span>${entry.casino}</span>
+    <span>${entry.campaign}</span>
+    <span>$${vp > 360 ? bet.toFixed(2) : bet.toFixed(0)}</span>
+    <span>${entry.win ? "$" + (vp > 360 ? win.toFixed(2) : win.toFixed(0)) : "$"}</span>
+    <span style="background-color: ${color}; color: white">$${provision.toFixed(0)}</span>
+    <input class="checkBox ${entry.cashed_out ? "checked" : ""}" type="checkbox" ${entry.win ? "" : "disabled"}>
+  `;
+
+  entryContainer.children[5].value = provision;
+  }
+
   entryContainer.children[3].value = bet;
   entryContainer.children[4].value = win;
-  entryContainer.children[5].value = profit;
+  
   entryContainer.children[6].checked = entry.cashed_out;
 
   // Set up the checkBox click event listener
@@ -506,12 +539,19 @@ function checkCash(checkBox, key) {
   entryContainer.classList.toggle("pending");
   checkBox.classList.toggle("checked");
   let profit = entryContainer.children[5].value;
+  let color;
 
-  entryContainer.children[5].style.backgroundColor = checkBox.classList.contains("checked")
-    ? profit >= 0
-      ? "var(--green"
-      : "var(--red)"
-    : "var(--yellow)";
+  if(checkBox.classList.contains("checked")){
+    if(profit >= 0){
+      color = entryContainer.classList.contains("provision") ? "var(--blue)" : "var(--green)";
+    } else {
+      color = "var(--red)";
+    }
+  } else {
+    color = "var(--yellow)";
+  }
+
+  entryContainer.children[5].style.backgroundColor = color;
 
   let content = {
     date: entryContainer.children[0].innerHTML,
@@ -520,6 +560,7 @@ function checkCash(checkBox, key) {
     bet: entryContainer.children[3].value,
     win: entryContainer.children[4].value,
     cashed_out: checkBox.classList.contains("checked") ? true : false,
+    provision: entryContainer.classList.contains("provision") ? entryContainer.children[5].value : 0,
   };
 
   // Reference the specific entry using its unique key
@@ -734,7 +775,7 @@ function updateMonthCharts() {
       outcome = getOutcome(1, 2, entry);
       updateOutcomes(outcome, index);
     } else {
-      outcome = getOutcome(3, 4, entry);
+      outcome = entry.classList.contains("provision") ? parseInt(entry.getAttribute("data-provision")) : getOutcome(3, 4, entry);
       isCashedOut = entry.children[6].classList.contains("checked");
       updateOutcomes(outcome, index, isCashedOut);
     }
@@ -840,6 +881,7 @@ function editEntry(event) {
         bet: container.children[3].innerHTML,
         win: container.children[4].innerHTML,
         cashed_out: container.querySelector(".checkBox").classList.contains("checked") ? true : false,
+        provision: parseInt(container.getAttribute("data-provision")),
       };
 
       // Reference the specific entry using its unique key
