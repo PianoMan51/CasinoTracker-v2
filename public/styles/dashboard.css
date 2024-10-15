@@ -100,10 +100,10 @@
 
   #dashboard {
     height: calc(100% - 184px);
-    grid-template-columns: 70% auto;
+    grid-template-columns: 500px auto auto;
     grid-template-rows: 1fr;
     grid-template-areas:
-      'graph list';
+      'graph months list';
   }
 
   #dashboard_list_totals {

@@ -316,11 +316,12 @@ function addEntry() {
     date: day + "/" + month,
     casino: document.querySelector(".select_casino").value,
     campaign: document.querySelector(".select_campaign").value,
-    bet: bet_input.value,
-    win: win_input.value,
-    cashed_out: false,
-    provision: provision_radio.checked ? provision_cut.value : 0,
+    bet: parseInt(bet_input.value),
+    win: parseInt(win_input.value),
+    cashed_out: false
   };
+
+  if(provision_radio.checked) entry.provision = parseInt(provision_cut.value);
 
   // Create a reference for the new entry using push() to generate a unique key
   const entriesRef = ref(db, `Entries/${year}/${months[document.querySelector(".date_input.month").value - 1]}`);
@@ -395,25 +396,25 @@ function createEntryContainer(entry, key) {
   let profit = parseInt(entry.win - entry.bet);
   let provision = parseInt(entry.provision)
 
-  let color = entry.cashed_out ? (profit >= 0 ? (entry.provision > 0 ? "var(--blue)" : "var(--green)") : "var(--red)") : "var(--yellow)";
+  let color = entry.cashed_out ? (profit >= 0 ? (entry.provision ? "var(--blue)" : "var(--green)") : "var(--red)") : "var(--yellow)";
 
   // Create the entry container and set its class
   let entryContainer = document.createElement("div");
-  entryContainer.setAttribute("class", "entryContainer");
+  entryContainer.setAttribute("class", "entryContainer pending");
   entryContainer.setAttribute("data-key", key); // Set the unique key as a data attribute
 
-  if (provision > 0) entryContainer.classList.add("provision");
+  if (provision >= 0) entryContainer.classList.add("provision");
 
   let formatted_outcome = entry.win ? (vp > 360 ? profit.toFixed(2) : profit.toFixed(0)) : "$";
   let formatted_outcomeX = (entry.win / (entry.bet > 1 ? entry.bet : 1)).toFixed(2);
 
   entryContainer.setAttribute("data-outcome_amount", formatted_outcome);
   entryContainer.setAttribute("data-outcome_x", formatted_outcomeX);
-  if (provision > 0) entryContainer.setAttribute("data-provision", provision);
-
-  if (!provision) {
+  if (provision >= 0) entryContainer.setAttribute("data-provision", provision);
+  
+  if (!Number.isInteger(provision)) {
     entryContainer.innerHTML = `
-    <span>${entry.date}</span>
+    <span>${entry.date}</span>  
     <span>${entry.casino}</span>
     <span>${entry.campaign ? entry.campaign : "N/A"}</span>
     <span>$${vp > 360 ? bet.toFixed(2) : bet.toFixed(0)}</span>
@@ -560,8 +561,10 @@ function checkCash(checkBox, key) {
     bet: entryContainer.children[3].value,
     win: entryContainer.children[4].value,
     cashed_out: checkBox.classList.contains("checked") ? true : false,
-    provision: entryContainer.classList.contains("provision") ? entryContainer.children[5].value : 0,
   };
+
+  if(entryContainer.classList.contains("provision")) content.provision = entryContainer.getAttribute("data-provision");
+
 
   // Reference the specific entry using its unique key
   const entryRef = ref(db, `Entries/${year}/${months[currentMonth]}/${key}`);
