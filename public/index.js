@@ -316,21 +316,12 @@ function addEntry() {
     date: day + "/" + month,
     casino: document.querySelector(".select_casino").value,
     campaign: document.querySelector(".select_campaign").value,
-<<<<<<< HEAD
     bet: bet_input.value,
     win: win_input.value,
     cashed_out: false,
   };
 
   if(provision_radio.checked) entry.provision = provision_cut.value;
-=======
-    bet: parseInt(bet_input.value),
-    win: parseInt(win_input.value),
-    cashed_out: false
-  };
-
-  if(provision_radio.checked) entry.provision = parseInt(provision_cut.value);
->>>>>>> d8c16442832fc53335a8c0902c1f0c50a244691d
 
   // Create a reference for the new entry using push() to generate a unique key
   const entriesRef = ref(db, `Entries/${year}/${months[document.querySelector(".date_input.month").value - 1]}`);
@@ -403,12 +394,7 @@ function createEntryContainer(entry, key) {
   let win = parseInt(entry.win);
   let profit = parseInt(entry.win - entry.bet);
   let provision = parseInt(entry.provision)
-<<<<<<< HEAD
   let color = entry.cashed_out ? (profit >= 0 ? (entry.provision >= 0 ? "var(--blue)" : "var(--green)") : "var(--red)") : "var(--yellow)";
-=======
-
-  let color = entry.cashed_out ? (profit >= 0 ? (entry.provision ? "var(--blue)" : "var(--green)") : "var(--red)") : "var(--yellow)";
->>>>>>> d8c16442832fc53335a8c0902c1f0c50a244691d
 
   // Create the entry container and set its class
   let entryContainer = document.createElement("div");
@@ -424,26 +410,8 @@ function createEntryContainer(entry, key) {
   entryContainer.setAttribute("data-outcome_amount", formatted_outcome);
   entryContainer.setAttribute("data-outcome_x", formatted_outcomeX);
   if (provision >= 0) entryContainer.setAttribute("data-provision", provision);
-<<<<<<< HEAD
 
   if (provision >= 0) {
-=======
-  
-  if (!Number.isInteger(provision)) {
-    entryContainer.innerHTML = `
-    <span>${entry.date}</span>  
-    <span>${entry.casino}</span>
-    <span>${entry.campaign ? entry.campaign : "N/A"}</span>
-    <span>$${vp > 360 ? bet.toFixed(2) : bet.toFixed(0)}</span>
-    <span>${entry.win ? "$" + (vp > 360 ? win.toFixed(2) : win.toFixed(0)) : "$"}</span>
-    <span style="background-color: ${color}; color: white">${outcome_x ? formatted_outcomeX + "x" : "$" + formatted_outcome}</span>
-    <input class="checkBox ${entry.cashed_out ? "checked" : ""}" type="checkbox" ${entry.win ? "" : "disabled"}>
-  `;
-
-  entryContainer.children[5].value = profit;
-
-  } else {
->>>>>>> d8c16442832fc53335a8c0902c1f0c50a244691d
     entryContainer.innerHTML = `
     <span>${entry.date}</span>
     <span>${entry.casino}</span>
@@ -596,12 +564,7 @@ function checkCash(checkBox, key) {
     cashed_out: checkBox.classList.contains("checked") ? true : false,
   };
 
-<<<<<<< HEAD
   if(entryContainer.classList.contains("provision")) content.provision = entryContainer.children[5].value;
-=======
-  if(entryContainer.classList.contains("provision")) content.provision = entryContainer.getAttribute("data-provision");
-
->>>>>>> d8c16442832fc53335a8c0902c1f0c50a244691d
 
   // Reference the specific entry using its unique key
   const entryRef = ref(db, `Entries/${year}/${months[currentMonth]}/${key}`);
