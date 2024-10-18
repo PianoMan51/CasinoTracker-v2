@@ -398,7 +398,7 @@ function createEntryContainer(entry, key) {
 
   // Create the entry container and set its class
   let entryContainer = document.createElement("div");
-  entryContainer.setAttribute("class", "entryContainer pending");
+  entryContainer.setAttribute("class", "entryContainer");
   entryContainer.setAttribute("data-key", key); // Set the unique key as a data attribute
   if(!entry.cashed_out) entryContainer.classList.add("pending")
 
@@ -715,25 +715,25 @@ function updateMonthCharts() {
     pendings: 0,
     positives: 0,
     negatives: 0,
-    pendingsAmount: 0,
+    provision: 0,
     monthTotalProfit: 0,
     monthAccOutcome: [],
   };
 
-  const updateOutcomes = (outcome, index, isCashedOut = true) => {
+  const updateOutcomes = (outcome, provision, index, isCashedOut = true) => {
     stats.monthAccOutcome.push(
       (stats.monthAccOutcome[index - 1] || 0) + (isCashedOut ? outcome : 0)
     );
 
     if (isCashedOut) {
       outcome >= 0 ? (stats.wins += +outcome) : (stats.losses += +outcome);
-      stats.monthTotalProfit += +outcome;
+      if(!provision) stats.monthTotalProfit += +outcome;
+      if(provision) stats.provision += provision;
     }
 
     outcome >= 0 ? stats.positives++ : stats.negatives++;
     if (!isCashedOut && outcome !== 0) {
       stats.pendings += +outcome;
-      stats.pendingsAmount++;
     }
   };
 
@@ -755,7 +755,7 @@ function updateMonthCharts() {
 
   entries.forEach((entry, index) => {
     let outcome_x = parseFloat(entry.getAttribute("data-outcome_x"));
-    let outcome, isCashedOut;
+    let outcome, isCashedOut, provision;
 
     if (outcome_x < 1) {
       intervals_1++;
@@ -777,15 +777,20 @@ function updateMonthCharts() {
       outcome = getOutcome(1, 2, entry);
       updateOutcomes(outcome, index);
     } else {
-      outcome = entry.classList.contains("provision") ? parseInt(entry.getAttribute("data-provision")) : getOutcome(3, 4, entry);
+      if(entry.classList.contains("provision")){
+        provision = parseInt(entry.getAttribute("data-outcome_amount"));
+      } else {
+        outcome = getOutcome(3, 4, entry);
+      }
+
       isCashedOut = entry.children[6].classList.contains("checked");
-      updateOutcomes(outcome, index, isCashedOut);
+      updateOutcomes(outcome, provision, index, isCashedOut);
     }
   });
 
   // Update doughnut and line chart elements
   document.querySelector(".doughnut.profits").innerHTML = "$" + stats.monthTotalProfit.toFixed(0);
-  document.querySelector(".doughnut.sub.ratio").innerHTML = `${stats.positives}/${stats.negatives}${stats.pendingsAmount > 1 ? "/"+stats.pendingsAmount : ""}`;
+  document.querySelector(".doughnut.sub.ratio").innerHTML = `${stats.positives}/${stats.negatives}`;
 
   // Update chart data
   if(stats.wins == 0 && stats.losses == 0){
@@ -795,8 +800,8 @@ function updateMonthCharts() {
     month_linechart.data.datasets[0].data = "";
     month_linechart.data.labels = "";
   } else {
-    month_doughnut.data.datasets[0].data = [stats.wins, stats.losses, stats.pendings];
-    month_doughnut.data.datasets[0].backgroundColor = ["rgb(46, 204, 113)", "rgb(231, 76, 60)", "rgb(241, 196, 15)"];
+    month_doughnut.data.datasets[0].data = [stats.wins, stats.losses, stats.pendings, stats.provision];
+    month_doughnut.data.datasets[0].backgroundColor = ["rgb(46, 204, 113)", "rgb(231, 76, 60)", "rgb(241, 196, 15)", "rgb(52, 152, 219)"];
 
     month_linechart.data.datasets[0].data = stats.monthAccOutcome;
     month_linechart.data.labels = Array.from({ length: stats.monthAccOutcome.length }, (_, i) => i + 1);
@@ -929,11 +934,17 @@ async function updateMonthLists() {
   entries.forEach((entry) => {
     const casino = entry.children[1].innerHTML;
     const campaign = entry.children[2].innerHTML;
-    if (!casinos.includes(casino)) {
-      casinos.push(casino);
-    }
-    if (!campaigns.includes(campaign)) {
-      campaigns.push(campaign);
+    if (!entry.classList.contains("provision")) {
+      if (!casinos.includes(casino)) {
+        casinos.push(casino);
+      }
+      if (!campaigns.includes(campaign)) {
+        campaigns.push(campaign);
+      }
+    } else {
+      if (!campaigns.includes("Provision")) {
+        campaigns.push("Provision");
+      }
     }
   });
 
@@ -943,29 +954,34 @@ async function updateMonthLists() {
   createMonthContainers(casinos, "casino");
   createMonthContainers(campaigns, "campaign");
 
-  function createMonthContainers(list, name) {
+  function createMonthContainers(list, type) {
     list.forEach((item) => {
       let listContainerElement = document.createElement("div");
-      listContainerElement.setAttribute("class", `${name} filter listContainerElement`);
+      listContainerElement.setAttribute("class", `${type} filter listContainerElement`);
 
       let count = 0;
       let profit = 0;
 
       entries.forEach((entry) => {
-          if (name == "casino") {
-            if (item == entry.children[1].innerHTML) {
-              count++;
-              profit += entry.children[5].value;
-            }
-          } else {
-            if (item == entry.children[2].innerHTML) {
-              count++;
-              profit += entry.children[5].value;
-            }
+        if (type == "casino") {
+          if (item == entry.children[1].innerHTML) {
+            count++;
+            profit += entry.children[5].value;
           }
+        } else {
+          if (item == "Provision") {
+            if (entry.classList.contains("provision")) {
+              count++;
+              profit += Number(entry.getAttribute("data-outcome_amount"));
+            }
+          } else if (item == entry.children[2].innerHTML) {
+            count++;
+            profit += entry.children[5].value;
+          }
+        }
       });
 
-      const color = profit > 0 ? "var(--green)" : "var(--red)";
+      const color = item == "Provision" ? "var(--blue)" : profit > 0 ? "var(--green)" : "var(--red)";
 
       listContainerElement.innerHTML = `<span class="label">${item}</span><span class="counts">${count}</span><span class="profits" style="background-color: ${color}">$${profit}</span>`;
 
@@ -974,7 +990,7 @@ async function updateMonthLists() {
           listContainerElement.classList.add("selected");
       }
 
-      if (name == "casino") {
+      if (type == "casino") {
         casinoContainerList.append(listContainerElement);
       } else {
         campaignContainerList.append(listContainerElement);
@@ -1004,7 +1020,7 @@ async function updateMonthLists() {
         });
         this.parentElement.classList.add("selected");
         currentFilterElement = this.parentElement;
-  
+
         // Show or hide washButton based on label
         if (el.querySelector(".label").innerText == "Vask ASG" || el.querySelector(".label").innerText == "Vask") {
           washButton.classList.add("shown");
@@ -1012,7 +1028,7 @@ async function updateMonthLists() {
         } else {
           washButton.classList.remove("shown");
           toggle_washSessions = false;
-  
+
           document.querySelector(".listHeaders").classList.remove("wash");
           document.querySelector(".listHeaders").children[1].style.display = "flex";
           document.querySelector(".listHeaders").children[2].style.display = "flex";
@@ -1089,9 +1105,15 @@ function updateWashSession() {
       let bet = 0;
       let win = 0;
       let date;
+      let hasProvision = false;
 
       // Process each entry for this outcome group
       groupedByOutcome[outcome].forEach((entry) => {
+        // Check if the entry has the 'provision' class
+        if (entry.classList.contains("provision")) {
+          hasProvision = true;
+        }
+
         date = entry.children[0].innerText; // Get date from entry
         bet += parseFloat(entry.children[3].value); // Sum up the bet values
         win += parseFloat(entry.children[4].value); // Sum up the win values
@@ -1099,17 +1121,22 @@ function updateWashSession() {
 
       let vp = window.innerWidth;
 
-      let formatted_outcome = (vp > 360 ? (win - bet).toFixed(2) : (win - bet).toFixed(0));
+      let formatted_outcome = vp > 360 ? (win - bet).toFixed(2) : (win - bet).toFixed(0);
       let formatted_outcomeX = (win / bet).toFixed(2);
 
       washSessionContainer.setAttribute("data-outcome_amount", formatted_outcome);
       washSessionContainer.setAttribute("data-outcome_x", formatted_outcomeX);
 
-      washSessionContainer.innerHTML = `
+      // If any of the entries had the 'provision' class, add it to the container
+      if (hasProvision) {
+        washSessionContainer.classList.add("provision");
+      }
+
+      washSessionContainer.innerHTML = `  
           <span>${date}</span>
           <span>$${bet}</span>
           <span>$${win}</span>
-          <span style="background-color: ${win - bet >= 0 ? "var(--green)" : "var(--red)"}; color: white">$${formatted_outcome}</span>`;
+          <span style="background-color: ${hasProvision ? "var(--blue)" : win - bet >= 0 ? "var(--green)" : "var(--red)"}; color: white">$${formatted_outcome}</span>`;
 
       washSessionContainer.children[1].value = bet;
       washSessionContainer.children[2].value = win;
@@ -1127,8 +1154,14 @@ function filterEntries(currentFilterElement) {
   let entries = document.querySelectorAll(".entryContainer");
   if (currentFilterElement) {
     entries.forEach((entry) => {
-      let filterCategory = currentFilterElement.classList[0] == "casino" ? entry.children[1].innerHTML : entry.children[2].innerHTML;
-      if (filterCategory == currentFilterElement.querySelector(".label").innerHTML) {
+      let filterCategory = currentFilterElement.classList[0] == "casino" ? entry.children[1].innerHTML : (entry.children[2].innerHTML);
+      if(currentFilterElement.querySelector(".label").innerHTML == "Provision"){
+        if(entry.classList.contains("provision")){
+          entry.classList.toggle("filter");
+        } else {
+          entry.style.display = "none";
+        }
+      } else if (filterCategory == currentFilterElement.querySelector(".label").innerHTML) {
         entry.classList.toggle("filter");
         entriesList.scrollIntoView({
           behavior: "smooth",
