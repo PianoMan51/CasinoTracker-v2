@@ -227,14 +227,15 @@
                         <div class="toggle_provision">
                             <input type="radio" id="own" name="ownership" checked>
                             <label for="own">Own</label>
-                        
+
                             <input type="radio" id="provision" name="ownership">
                             <label for="provision">Provision</label>
 
                             <input type="number" id="provision_cut" placeholder="Cut">
                         </div>
-                    
-                        <button id="inputsContainerButton" class="actionButtons"><span class="material-symbols-outlined">add</span></button>
+
+                        <button id="inputsContainerButton" class="actionButtons"><span
+                                class="material-symbols-outlined">add</span></button>
                     </div>
                     <div class="table section" id="doughnut_chart">
                         <div class="graphContainer">
@@ -322,6 +323,46 @@
             </div>
             <div class="pageContent calculate">
                 <div class="wash upper section">
+                    <ul class="casinos">
+                        <li value="888 Casino"><label>888 Casino</label><input type="checkbox"></li>
+                        <li value="Bet 25"><label>Bet 25</label><input type="checkbox"></li>
+                        <li value="Bet 365"><label>Bet 365</label><input type="checkbox"></li>
+                        <li value="Bwin"><label>Bwin</label><input type="checkbox"></li>
+                        <li value="Casino 999"><label>Casino 999</label><input type="checkbox"></li>
+                        <li value="Casino Go"><label>Casino Go</label><input type="checkbox"></li>
+                        <li value="Casino House"><label>Casino House</label><input type="checkbox"></li>
+                        <li value="CasinoLuck"><label>CasinoLuck</label><input type="checkbox"></li>
+                        <li value="Come On"><label>Come On</label><input type="checkbox"></li>
+                        <li value="Danske Spil"><label>Danske Spil</label><input type="checkbox"></li>
+                        <li value="Dansk777"><label>Dansk777</label><input type="checkbox"></li>
+                        <li value="Ekspekt"><label>Ekspekt</label><input type="checkbox"></li>
+                        <li value="MagicRed"><label>MagicRed</label><input type="checkbox"></li>
+                        <li value="Get Lucky"><label>Get Lucky</label><input type="checkbox"></li>
+                        <li value="HeySpin"><label>HeySpin</label><input type="checkbox"></li>
+                        <li value="Kapow"><label>Kapow</label><input type="checkbox"></li>
+                        <li value="Karamba"><label>Karamba</label><input type="checkbox"></li>
+                        <li value="Leo Vegas"><label>Leo Vegas</label><input type="checkbox"></li>
+                        <li value="Mr Green"><label>Mr Green</label><input type="checkbox"></li>
+                        <li value="Mr Play"><label>Mr Play</label><input type="checkbox"></li>
+                        <li value="Next Casino"><label>Next Casino</label><input type="checkbox"></li>
+                        <li value="Pip DK"><label>Pip DK</label><input type="checkbox"></li>
+                        <li value="PlayOjo"><label>PlayOjo</label><input type="checkbox"></li>
+                        <li value="Royal"><label>Royal</label><input type="checkbox"></li>
+                        <li value="Spilleboden"><label>Spilleboden</label><input type="checkbox"></li>
+                        <li value="Spillehallen"><label>Spillehallen</label><input type="checkbox"></li>
+                        <li value="Spilnu DK"><label>Spilnu DK</label><input type="checkbox"></li>
+                        <li value="Tivoli Casino"><label>Tivoli Casino</label><input type="checkbox"></li>
+                        <li value="Unibet"><label>Unibet</label><input type="checkbox"></li>
+                        <li value="Vinder Casino"><label>Vinder Casino</label><input type="checkbox"></li>
+                    </ul>
+
+                    <ul class="campaigns">
+                        <li value="Vask ASG"><label>Vask ASG</label><input type="checkbox"></li>
+                        <li value="Vask"><label>Vask</label><input type="checkbox"></li>
+                        <li value="Oprettelse"><label>Oprettelse</label><input type="checkbox"></li>
+                    </ul>
+
+
                     <table>
                         <tr>
                             <th colspan="2">Casino Vask</th>
@@ -333,9 +374,10 @@
                         </tr>
                         <tr>
                             <td>Total Gevinst</td>
-                            <td><input id="wash-totalWin" oninput="updateWash()"></td>
-                            <td><input class="wash-player" oninput="updateWash()"></td>
-                            <td><input class="wash-bet-input" oninput="updateWash()"></td>
+                            <td class="action"><input id="wash-totalWin" oninput="updateWash()"></td>
+                            <td class="action"><input class="wash-player" oninput="updateWash()" value="PianoMan51">
+                            </td>
+                            <td class="action"><input class="wash-bet-input" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
                             <td class="wash-payout"></td>
@@ -343,27 +385,17 @@
                         <tr>
                             <td>Indbetalt</td>
                             <td id="wash-totalbet"></td>
-                            <td><input class="wash-player" oninput="updateWash()"></td>
-                            <td><input class="wash-bet-input" oninput="updateWash()"></td>
+                            <td class="action"><input class="wash-player" oninput="updateWash()"></td>
+                            <td class="action"><input class="wash-bet-input" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
                             <td class="wash-payout"></td>
                         </tr>
                         <tr>
                             <td>Forsikring</td>
-                            <td id="wash-green"></td>
-                            <td><input class="wash-player" oninput="updateWash()"></td>
-                            <td><input class="wash-bet-input" oninput="updateWash()"></td>
-                            <td class="wash-green"></td>
-                            <td class="wash-profit"></td>
-                            <td class="wash-payout"></td>
-                        </tr>
-                        <tr>
-                            <td>Antal runder</td>
-                            <td><input id="wash-numberOfRounds" oninput="updateWash()" type="number" min="0">
-                            </td>
-                            <td><input class="wash-player" oninput="updateWash()"></td>
-                            <td><input class="wash-bet-input" oninput="updateWash()"></td>
+                            <td class="action"><input id="wash-green" oninput="updateWash()"></td>
+                            <td class="action"><input class="wash-player" oninput="updateWash()"></td>
+                            <td class="action"><input class="wash-bet-input" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
                             <td class="wash-payout"></td>
@@ -371,8 +403,8 @@
                         <tr>
                             <td>Brutto Profit</td>
                             <td id="wash-grossProfit"></td>
-                            <td><input class="wash-player" oninput="updateWash()"></td>
-                            <td><input class="wash-bet-input" oninput="updateWash()"></td>
+                            <td class="action"><input class="wash-player" oninput="updateWash()"></td>
+                            <td class="action"><input class="wash-bet-input" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
                             <td class="wash-payout"></td>
@@ -380,8 +412,8 @@
                         <tr>
                             <td>Netto Profit</td>
                             <td id="wash-netProfit"></td>
-                            <td><input class="wash-player" oninput="updateWash()"></td>
-                            <td><input class="wash-bet-input" oninput="updateWash()"></td>
+                            <td class="action"><input class="wash-player" oninput="updateWash()"></td>
+                            <td class="action"><input class="wash-bet-input" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
                             <td class="wash-payout"></td>
@@ -389,8 +421,8 @@
                         <tr>
                             <td>% af bonus</td>
                             <td id="wash-percentageBonus"></td>
-                            <td><input class="wash-player" oninput="updateWash()"></td>
-                            <td><input class="wash-bet-input" oninput="updateWash()"></td>
+                            <td class="action"><input class="wash-player" oninput="updateWash()"></td>
+                            <td class="action"><input class="wash-bet-input" oninput="updateWash()"></td>
                             <td class="wash-green"></td>
                             <td class="wash-profit"></td>
                             <td class="wash-payout"></td>

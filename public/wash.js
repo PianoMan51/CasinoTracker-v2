@@ -8,7 +8,6 @@ let green = document.getElementById("wash-green");
 let totalBet = document.getElementById("wash-totalbet");
 let grossProfit = document.getElementById("wash-grossProfit");
 let netProfit = document.getElementById("wash-netProfit");
-let roundsAmount = document.getElementById("wash-numberOfRounds");
 
 function updateWash() {
   let totalBetAmount = 0;
@@ -17,10 +16,9 @@ function updateWash() {
     totalBetAmount += bet.value ? Number(bet.value) : "";
   });
 
-  green.innerHTML = Math.ceil(totalBetAmount * 2 / 30) * roundsAmount.value;
   totalBet.innerHTML = totalBetAmount;
   grossProfit.innerHTML = totalWin.value - totalBetAmount;
-  netProfit.innerHTML = grossProfit.innerHTML - green.innerHTML;
+  netProfit.innerHTML = grossProfit.innerHTML - green.value;
 
   washProfits.forEach((profit, index) => {
     washBets[index].value ? (profit.innerHTML = ((washBets[index].value / totalBetAmount) * netProfit.innerHTML).toFixed(0)) : "";
@@ -37,14 +35,14 @@ function updateWash() {
 function toggleGreen() {
   document.querySelectorAll(".wash-green").forEach((cell) => {
     cell.addEventListener("click", () => {
-      if (green.innerHTML) {
+      if (green.value) {
         document.querySelectorAll(".wash-green").forEach((other) => {
           other.classList.remove("active");
           other.innerHTML = "";
         });
 
         cell.classList.toggle("active");
-        cell.innerHTML = green.innerHTML;
+        cell.innerHTML = green.value;
         updateWash();
       }
     });

@@ -1,8 +1,25 @@
 .wash.section {
   background-color: white;
   width: 100%;
+  height: 40%;
   border-radius: var(--sectionBorderRadius);
 }
+
+.wash.upper.section{
+  display: flex;
+  flex-direction: row;
+}
+
+.wash.upper.section ul{
+  list-style-type: none;
+  height: 80%;
+  overflow: scroll;
+}
+
+.wash.upper.section ul::-webkit-scrollbar{
+  display: none;
+}
+
 
 .wash.lower.section {
   overflow: scroll;
@@ -53,11 +70,19 @@ tr :first-child {
   user-select: none;
 }
 
+tr:first-of-type{
+  user-select: none;
+}
+
 td {
   border-radius: 5px;
   background-color: var(--lightgray);
   transform: scale(1);
   transition: 0.15s;
+}
+
+table:hover td.action{
+  background-color: rgb(216, 220, 221)
 }
 
 td:hover,
@@ -80,6 +105,6 @@ th:hover {
 }
 
 .wash-payout {
-  background-color: var(--gray);
+  background-color: var(--darkgray);
   user-select: none;
 }
