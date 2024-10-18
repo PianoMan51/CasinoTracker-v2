@@ -17,6 +17,7 @@ table {
   box-sizing: border-box;
   border-spacing: 4px;
   padding: 4px;
+  margin: 0 auto 0;
 }
 
 table input {

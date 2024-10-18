@@ -1,4 +1,4 @@
-let washBets = document.querySelectorAll(".wash-bet");
+let washBets = document.querySelectorAll(".wash-bet-input");
 let washProfits = document.querySelectorAll(".wash-profit");
 let washWins = document.querySelectorAll(".wash-payout");
 let washGreens = document.querySelectorAll(".wash-green");
@@ -17,29 +17,21 @@ function updateWash() {
     totalBetAmount += bet.value ? Number(bet.value) : "";
   });
 
-  green.innerHTML = Math.ceil(totalBetAmount / 30) * roundsAmount.value;
+  green.innerHTML = Math.ceil(totalBetAmount * 2 / 30) * roundsAmount.value;
   totalBet.innerHTML = totalBetAmount;
   grossProfit.innerHTML = totalWin.value - totalBetAmount;
   netProfit.innerHTML = grossProfit.innerHTML - green.innerHTML;
 
   washProfits.forEach((profit, index) => {
-    washBets[index].value
-      ? (profit.innerHTML = ((washBets[index].value / totalBetAmount) * netProfit.innerHTML).toFixed(0))
-      : "";
+    washBets[index].value ? (profit.innerHTML = ((washBets[index].value / totalBetAmount) * netProfit.innerHTML).toFixed(0)) : "";
   });
 
   washWins.forEach((win, index) => {
-    washBets[index].value
-      ? (win.innerHTML =
-          Number(washBets[index].value) + Number(washGreens[index].innerHTML) + Number(washProfits[index].innerHTML))
-      : "";
+    washBets[index].value ? (win.innerHTML = Number(washBets[index].value) + Number(washGreens[index].innerHTML) + Number(washProfits[index].innerHTML)) : "";
   });
 
-  document.getElementById("wash-percentageBonus").innerHTML = totalWin.value
-    ? ((document.querySelector(".wash-profit").innerHTML / document.querySelector(".wash-bet").value) * 100).toFixed(
-        0
-      ) + "%"
-    : "";
+  document.getElementById("wash-percentageBonus").innerHTML = 
+  totalWin.value ? ((document.querySelector(".wash-profit").innerHTML / document.querySelector(".wash-bet-input").value) * 100).toFixed(0) + "%": "";
 }
 
 function toggleGreen() {
