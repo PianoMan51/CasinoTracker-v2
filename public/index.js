@@ -319,8 +319,9 @@ function addEntry() {
     bet: bet_input.value,
     win: win_input.value,
     cashed_out: false,
-    provision: provision_radio.checked ? provision_cut.value : 0,
   };
+
+  if(provision_radio.checked) entry.provision = provision_cut.value;
 
   // Create a reference for the new entry using push() to generate a unique key
   const entriesRef = ref(db, `Entries/${year}/${months[document.querySelector(".date_input.month").value - 1]}`);
@@ -340,7 +341,6 @@ function addEntry() {
       updateMonthCharts();
       resetInputs();
 
-      console.log(entry)
     })
     .catch((error) => {
       console.error("Error writing new entry: ", error);
@@ -394,37 +394,24 @@ function createEntryContainer(entry, key) {
   let win = parseInt(entry.win);
   let profit = parseInt(entry.win - entry.bet);
   let provision = parseInt(entry.provision)
-
-  let color = entry.cashed_out ? (profit >= 0 ? (entry.provision > 0 ? "var(--blue)" : "var(--green)") : "var(--red)") : "var(--yellow)";
+  let color = entry.cashed_out ? (profit >= 0 ? (entry.provision >= 0 ? "var(--blue)" : "var(--green)") : "var(--red)") : "var(--yellow)";
 
   // Create the entry container and set its class
   let entryContainer = document.createElement("div");
   entryContainer.setAttribute("class", "entryContainer");
   entryContainer.setAttribute("data-key", key); // Set the unique key as a data attribute
+  if(!entry.cashed_out) entryContainer.classList.add("pending")
 
-  if (provision > 0) entryContainer.classList.add("provision");
+  if (provision >= 0) entryContainer.classList.add("provision");
 
   let formatted_outcome = entry.win ? (vp > 360 ? profit.toFixed(2) : profit.toFixed(0)) : "$";
   let formatted_outcomeX = (entry.win / (entry.bet > 1 ? entry.bet : 1)).toFixed(2);
 
   entryContainer.setAttribute("data-outcome_amount", formatted_outcome);
   entryContainer.setAttribute("data-outcome_x", formatted_outcomeX);
-  if (provision > 0) entryContainer.setAttribute("data-provision", provision);
+  if (provision >= 0) entryContainer.setAttribute("data-provision", provision);
 
-  if (!provision) {
-    entryContainer.innerHTML = `
-    <span>${entry.date}</span>
-    <span>${entry.casino}</span>
-    <span>${entry.campaign ? entry.campaign : "N/A"}</span>
-    <span>$${vp > 360 ? bet.toFixed(2) : bet.toFixed(0)}</span>
-    <span>${entry.win ? "$" + (vp > 360 ? win.toFixed(2) : win.toFixed(0)) : "$"}</span>
-    <span style="background-color: ${color}; color: white">${outcome_x ? formatted_outcomeX + "x" : "$" + formatted_outcome}</span>
-    <input class="checkBox ${entry.cashed_out ? "checked" : ""}" type="checkbox" ${entry.win ? "" : "disabled"}>
-  `;
-
-  entryContainer.children[5].value = profit;
-
-  } else {
+  if (provision >= 0) {
     entryContainer.innerHTML = `
     <span>${entry.date}</span>
     <span>${entry.casino}</span>
@@ -435,7 +422,21 @@ function createEntryContainer(entry, key) {
     <input class="checkBox ${entry.cashed_out ? "checked" : ""}" type="checkbox" ${entry.win ? "" : "disabled"}>
   `;
 
-  entryContainer.children[5].value = provision;
+    entryContainer.children[5].value = provision;
+  } else {
+    entryContainer.innerHTML = `
+    <span>${entry.date}</span>
+    <span>${entry.casino}</span>
+    <span>${entry.campaign ? entry.campaign : "N/A"}</span>
+    <span>$${vp > 360 ? bet.toFixed(2) : bet.toFixed(0)}</span>
+    <span>${entry.win ? "$" + (vp > 360 ? win.toFixed(2) : win.toFixed(0)) : "$"}</span>
+    <span style="background-color: ${color}; color: white">${
+      outcome_x ? formatted_outcomeX + "x" : "$" + formatted_outcome
+    }</span>
+    <input class="checkBox ${entry.cashed_out ? "checked" : ""}" type="checkbox" ${entry.win ? "" : "disabled"}>
+  `;
+
+    entryContainer.children[5].value = profit;
   }
 
   entryContainer.children[3].value = bet;
@@ -519,10 +520,11 @@ function updateStatistics() {
   let outcomes = currentFilterElement ? filteredChildren : Array.from(entriesList.children);
 
   outcomes.forEach((entry) => {
-    if(entry.children[4] || entry.children[3]){
-      bet_sum += Number(entry.children[toggle_washSessions ? 1 : 3].value);
-      win_sum += Number(entry.children[toggle_washSessions ? 2 : 4].value) || 0;
-    }
+    if(!entry.classList.contains("pending")){
+      if(entry.children[4] || entry.children[3]){
+        bet_sum += Number(entry.children[toggle_washSessions ? 1 : 3].value);
+        win_sum += Number(entry.children[toggle_washSessions ? 2 : 4].value) || 0;
+      }}
   });
 
   document.querySelector(".statistics.bet_total .value").innerHTML = "$" + bet_sum;
@@ -560,8 +562,9 @@ function checkCash(checkBox, key) {
     bet: entryContainer.children[3].value,
     win: entryContainer.children[4].value,
     cashed_out: checkBox.classList.contains("checked") ? true : false,
-    provision: entryContainer.classList.contains("provision") ? entryContainer.children[5].value : 0,
   };
+
+  if(entryContainer.classList.contains("provision")) content.provision = entryContainer.children[5].value;
 
   // Reference the specific entry using its unique key
   const entryRef = ref(db, `Entries/${year}/${months[currentMonth]}/${key}`);
@@ -859,7 +862,9 @@ function editEntry(event) {
 
     container.classList.add("selected");
 
-    let spans = container.querySelectorAll("span:not(:last-of-type)");
+    let spans;
+
+    spans = container.classList.contains("provision") ? container.querySelectorAll("span") : container.querySelectorAll("span:not(:last-of-type)");
 
     container.children[3].innerHTML = container.children[3].value;
 
@@ -868,6 +873,8 @@ function editEntry(event) {
     } else {
       container.children[4].innerHTML = container.children[4].value;
     }
+
+    container.children[5].innerHTML = container.children[5].value;
 
     spans.forEach((span) => {
       span.contentEditable = true;
@@ -881,8 +888,9 @@ function editEntry(event) {
         bet: container.children[3].innerHTML,
         win: container.children[4].innerHTML,
         cashed_out: container.querySelector(".checkBox").classList.contains("checked") ? true : false,
-        provision: parseInt(container.getAttribute("data-provision")),
       };
+
+      if(container.classList.contains("provision")) content.provision = container.children[5].innerHTML
 
       // Reference the specific entry using its unique key
       const entryRef = ref(db, `Entries/${year}/${months[content.date.substring(3) - 1]}/${key}`);
@@ -1040,15 +1048,17 @@ function updateWashSession() {
   document.querySelectorAll(".entryContainer.filter").forEach((entry) => {
     let currentDate = entry.children[0].innerText;
 
-    // Group by date
-    if (currentDate !== lastDate) {
-      if (washSession.length > 0) {
-        ASG_entries.push(washSession);
+    if (!entry.classList.contains("pending")) {
+      // Group by date
+      if (currentDate !== lastDate) {
+        if (washSession.length > 0) {
+          ASG_entries.push(washSession);
+        }
+        washSession = [entry]; // Start a new session for the current date
+        lastDate = currentDate;
+      } else {
+        washSession.push(entry); // Add entry to the current date's session
       }
-      washSession = [entry]; // Start a new session for the current date
-      lastDate = currentDate;
-    } else {
-      washSession.push(entry); // Add entry to the current date's session
     }
   });
 
