@@ -802,7 +802,6 @@ function updateMonthCharts() {
     month_doughnut.data.datasets[0].backgroundColor = ["rgb(46, 204, 113)", "rgb(231, 76, 60)", "rgb(241, 196, 15)", "rgb(52, 152, 219)"];
 
     month_linechart.data.datasets[0].data = stats.monthAccOutcome;
-    console.log("monthAccOutcome:", stats.monthAccOutcome)
     month_linechart.data.labels = Array.from({ length: stats.monthAccOutcome.length }, (_, i) => i + 1);
 
     month_interval.data.datasets[0].data = [intervals_1,intervals_2,intervals_3,intervals_4,intervals_5, intervals_6, intervals_7];
