@@ -520,11 +520,10 @@ function updateStatistics() {
   let outcomes = currentFilterElement ? filteredChildren : Array.from(entriesList.children);
 
   outcomes.forEach((entry) => {
-    if(!entry.classList.contains("pending")){
-      if(entry.children[4] || entry.children[3]){
-        bet_sum += Number(entry.children[toggle_washSessions ? 1 : 3].value);
-        win_sum += Number(entry.children[toggle_washSessions ? 2 : 4].value) || 0;
-      }}
+    if (entry.children[4] || entry.children[3]) {
+      bet_sum += Number(entry.children[toggle_washSessions ? 1 : 3].value);
+      win_sum += Number(entry.children[toggle_washSessions ? 2 : 4].value) || 0;
+    }
   });
 
   document.querySelector(".statistics.bet_total .value").innerHTML = "$" + bet_sum;
@@ -1048,17 +1047,15 @@ function updateWashSession() {
   document.querySelectorAll(".entryContainer.filter").forEach((entry) => {
     let currentDate = entry.children[0].innerText;
 
-    if (!entry.classList.contains("pending")) {
-      // Group by date
-      if (currentDate !== lastDate) {
-        if (washSession.length > 0) {
-          ASG_entries.push(washSession);
-        }
-        washSession = [entry]; // Start a new session for the current date
-        lastDate = currentDate;
-      } else {
-        washSession.push(entry); // Add entry to the current date's session
+    // Group by date
+    if (currentDate !== lastDate) {
+      if (washSession.length > 0) {
+        ASG_entries.push(washSession);
       }
+      washSession = [entry]; // Start a new session for the current date
+      lastDate = currentDate;
+    } else {
+      washSession.push(entry); // Add entry to the current date's session
     }
   });
 
