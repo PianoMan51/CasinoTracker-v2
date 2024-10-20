@@ -601,6 +601,105 @@ async function updateDashboard() {
   const casinoEntryCounts = Object.fromEntries(casinos.map((casino) => [casino, 0]));
   const campaignEntryCounts = Object.fromEntries(campaigns.map((campaign) => [campaign, 0]));
 
+  const createMonthlyDailyOutcome = (data, index) => {
+    let container = document.getElementById("dashboard_month_graphs");
+    let dailyOutcomes = {};
+
+    data.forEach((entry) => {
+      let [entry_day, entry_month] = entry.date.split("/").map(Number);
+      const outcome = entry.win - entry.bet;
+      dailyOutcomes[entry_day] = (dailyOutcomes[entry_day] || 0) + outcome;
+    });
+
+    let canvas = document.createElement("canvas");
+
+    // Prepare labels for days of the month (1 to 31)
+    let labels = Array.from({ length: 31 }, (_, i) => i + 1);
+
+    let dailyData = new Array(31).fill(0);
+
+    // Populate dailyData based on dailyOutcomes
+    Object.entries(dailyOutcomes).forEach(([day, outcome]) => {
+      dailyData[day - 1] = outcome; // Subtract 1 to align with the 0-indexed array
+    });
+
+    // Create the Chart.js bar chart with styling
+    new Chart(canvas, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            data: dailyData,
+            borderColor: "rgb(52, 152, 219)", // Set bar color
+            borderWidth: 4, // Line thickness
+            fill: false, // No fill under the line
+            tension: 0.2, // Smooth curve for the line
+            pointRadius: 0, // No dots on the line
+            borderCapStyle: "round",
+          },
+        ],
+      },
+      options: {
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false, // Hide legend
+          },
+        },
+        scales: {
+          x: {
+            display: false, // Hide x-axis
+          },
+          y: {
+            display: false, // Hide y-axis
+            max: 2500,
+          },
+        },
+        grid: {
+          display: false, // Hide grid
+        },
+        elements: {
+          bar: {
+            borderRadius: 4, // Optional: rounded corners for bars
+          },
+        },
+        plugins: {
+          legend: {
+            display: false, // Hides the legend for a clean look
+          },
+          tooltip: {
+            enabled: true, // Show tooltips
+            displayColors: false, // Disable color indicators in tooltip
+            callbacks: {
+              title: function(tooltipItem) {
+                let day = tooltipItem[0].dataIndex + 1;
+                return  day + "/" + Number(index + 1);
+              },
+              label: function (tooltipItem) {
+                let value = tooltipItem.raw;
+                return "$" + value; // Display value with a $ prefix
+              },
+            },
+          },
+        },
+        interaction: {
+          mode: "nearest", // Find the nearest point
+          axis: "x", // Based on x-axis
+          intersect: false, // Do not require the cursor to intersect with the point
+        },
+      },
+    });
+
+    // Create the monthContainer div
+    let monthContainer = document.createElement("div");
+    monthContainer.setAttribute("class", "monthlyDailyContainer");
+
+    // Append canvas to monthContainer and monthContainer to the main container
+    monthContainer.appendChild(canvas);
+    container.appendChild(monthContainer);
+  };
+
   const updateProfits = (data) => {
     let dashcard_totalProfits = 0;
     let barData = 0;
@@ -608,11 +707,13 @@ async function updateDashboard() {
     if (data) {
       data.forEach((entry) => {
         const outcome = entry.win - entry.bet;
-        casinoTotalProfits[entry.casino] = (casinoTotalProfits[entry.casino] || 0) + outcome;
-        campaignTotalProfits[entry.campaign] = (campaignTotalProfits[entry.campaign] || 0) + outcome;
+        if(entry.provision == null) casinoTotalProfits[entry.casino] = (casinoTotalProfits[entry.casino] || 0) + outcome;
+        if(entry.provision == null) campaignTotalProfits[entry.campaign] = (campaignTotalProfits[entry.campaign] || 0) + outcome;
+        if(entry.provision >= 0) campaignTotalProfits["Provision"] = (campaignTotalProfits["Provision"] || 0) + outcome;
 
-        casinoEntryCounts[entry.casino] = (casinoEntryCounts[entry.casino] || 0) + 1;
-        campaignEntryCounts[entry.campaign] = (campaignEntryCounts[entry.campaign] || 0) + 1;
+        if(entry.provision == null) casinoEntryCounts[entry.casino] = (casinoEntryCounts[entry.casino] || 0) + 1;
+        if(entry.provision == null) campaignEntryCounts[entry.campaign] = (campaignEntryCounts[entry.campaign] || 0) + 1;
+        if(entry.provision >= 0) campaignEntryCounts["Provision"] = (campaignEntryCounts["Provision"] || 0) + 1;
 
         let [entry_day, entry_month] = entry.date.split("/").map(Number);
 
@@ -623,7 +724,7 @@ async function updateDashboard() {
           totalLosses.value += outcome < 0 ? outcome : 0;
           totalCurrentMonthProfit.value += entry_month == actualDate.getMonth() + 1 ? +outcome : 0;
 
-          dashcard_totalProfits += +outcome;
+          dashcard_totalProfits += entry.provision == null ? +outcome : 0
         } else {
           pendings.value += +entry.bet;
         }
@@ -640,10 +741,11 @@ async function updateDashboard() {
     const results = await Promise.all(promises);
 
     let month_done = 0;
-    results.forEach((data) => {
-      if (data.length>0) month_done++
+    results.forEach((data, index) => {
+      if (data.length > 0) month_done++
       const dataCategory = updateProfits(data);
       totalBarchartList.push(dataCategory.toFixed(0));
+      createMonthlyDailyOutcome(data, index);
     });
 
     const createTotalElement = (entries, entryCounts, containerId) => {
@@ -653,14 +755,11 @@ async function updateDashboard() {
         const color = profit > 0 ? "var(--green)" : "var(--red)";
         const count = entryCounts[name] || 0;
         const element = document.createElement("div");
-        element.setAttribute(
-          "class",
-          `${containerId.substring(0, containerId.length - 6)} filter listContainerElement`
-        );
+        element.setAttribute("class",`${containerId.substring(0, containerId.length - 6)} filter listContainerElement`);
         element.innerHTML = `
           <span class="label">${name ? name : "N/A"}</span>
           <span class="counts" value="${count}" style="background-color: var(--background)">${count}</span>
-          <span class="profits" value="${profit}" style="background-color: ${color}">$${profit.toFixed(0)}</span>
+          <span class="profits" value="${profit}" style="background-color: ${name == "Provision" ? "var(--blue)" : color}">$${profit.toFixed(0)}</span>
         `;
         container.append(element);
 
