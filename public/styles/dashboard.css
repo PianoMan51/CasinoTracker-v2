@@ -102,6 +102,21 @@
   border-radius: var(--sectionBorderRadius);
   background-color: white;
   height: 100px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.monthlyDailyContainer span{
+  user-select: none;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  letter-spacing: 2px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%);
 }
 
 .monthlyDailyContainer:not(:last-child){

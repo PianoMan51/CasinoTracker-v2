@@ -611,28 +611,35 @@ async function updateDashboard() {
       dailyOutcomes[entry_day] = (dailyOutcomes[entry_day] || 0) + outcome;
     });
 
-    let canvas = document.createElement("canvas");
-
     // Prepare labels for days of the month (1 to 31)
     let labels = Array.from({ length: 31 }, (_, i) => i + 1);
 
     let dailyData = new Array(31).fill(0);
+    let dailyColor = new Array(31).fill("");
 
     // Populate dailyData based on dailyOutcomes
     Object.entries(dailyOutcomes).forEach(([day, outcome]) => {
-      dailyData[day - 1] = outcome; // Subtract 1 to align with the 0-indexed array
+      dailyData[day - 1] = outcome < 0 ? (outcome * -1) + 100 : outcome + 100; // Subtract 1 to align with the 0-indexed array
+      dailyColor[day - 1] = outcome < 0 ? "rgb(231, 76, 60)" : "rgb(46, 204, 113)";
     });
+
+    // Create the monthContainer div
+    let monthContainer = document.createElement("div");
+    let canvas = document.createElement("canvas");
+    let monthspan = document.createElement("span");
+    monthContainer.setAttribute("class", "monthlyDailyContainer");
+    monthspan.innerHTML = months[index];
 
     // Create the Chart.js bar chart with styling
     new Chart(canvas, {
-      type: "line",
+      type: "bar",
       data: {
         labels: labels,
         datasets: [
           {
             data: dailyData,
-            borderColor: "rgb(52, 152, 219)", // Set bar color
-            borderWidth: 4, // Line thickness
+            borderColor: dailyColor,
+            backgroundColor: dailyColor,  
             fill: false, // No fill under the line
             tension: 0.2, // Smooth curve for the line
             pointRadius: 0, // No dots on the line
@@ -653,11 +660,15 @@ async function updateDashboard() {
           },
           y: {
             display: false, // Hide y-axis
-            max: 2500,
+            max: 3000,
+            grid: {
+              drawBorder: false, // Hide axis border
+              drawOnChartArea: true, // Display grid lines
+              color: function(context) {
+                return context.tick.value === 0 ? 'rgba(0, 0, 0, 1)' : 'transparent'; // Line at 0, transparent elsewhere
+              },
+            },
           },
-        },
-        grid: {
-          display: false, // Hide grid
         },
         elements: {
           bar: {
@@ -666,7 +677,7 @@ async function updateDashboard() {
         },
         plugins: {
           legend: {
-            display: false, // Hides the legend for a clean look
+            display: false, // Hide legend
           },
           tooltip: {
             enabled: true, // Show tooltips
@@ -674,9 +685,9 @@ async function updateDashboard() {
             callbacks: {
               title: function(tooltipItem) {
                 let day = tooltipItem[0].dataIndex + 1;
-                return  day + "/" + Number(index + 1);
+                return day + "/" + Number(index + 1);
               },
-              label: function (tooltipItem) {
+              label: function(tooltipItem) {
                 let value = tooltipItem.raw;
                 return "$" + value; // Display value with a $ prefix
               },
@@ -691,11 +702,8 @@ async function updateDashboard() {
       },
     });
 
-    // Create the monthContainer div
-    let monthContainer = document.createElement("div");
-    monthContainer.setAttribute("class", "monthlyDailyContainer");
-
     // Append canvas to monthContainer and monthContainer to the main container
+    monthContainer.appendChild(monthspan);
     monthContainer.appendChild(canvas);
     container.appendChild(monthContainer);
   };
@@ -1321,7 +1329,7 @@ let dashBoardTotalBarchart = new Chart("dashboard_total_barchart", {
     labels: [],
     datasets: [
       {
-        data: [], // Add your data here
+        data: [],
         borderRadius: 10,
         borderSkipped: false,
         backgroundColor: "rgb(46, 204, 113)",
