@@ -507,8 +507,8 @@ async function updateList() {
   }
 
   updateMonthCharts();
-  if(toggle_washSessions) updateWashSession()
-  updateStatistics()
+  if (toggle_washSessions) updateWashSession();
+  updateStatistics();
 }
 
 function updateStatistics() { 
@@ -828,7 +828,7 @@ function updateMonthCharts() {
   };
 
   const updateOutcomes = (outcome, provision, index, isCashedOut = true) => {
-    stats.monthAccOutcome.push((stats.monthAccOutcome[index - 1] || 0) + (isCashedOut ? (outcome ? outcome : 0) : 0));
+    stats.monthAccOutcome.push((stats.monthAccOutcome[index - 1] || 0) + outcome);
 
     if (isCashedOut) {
       outcome >= 0 ? (stats.wins += +outcome) : (stats.losses += +outcome);
@@ -880,10 +880,11 @@ function updateMonthCharts() {
 
     if (toggle_washSessions) {
       outcome = getOutcome(1, 2, entry);
-      updateOutcomes(outcome, index);
+      updateOutcomes(outcome, 0, index, true);
     } else {
-      if(entry.classList.contains("provision")){
+      if (entry.classList.contains("provision")) {
         provision = parseInt(entry.getAttribute("data-outcome_amount"));
+        outcome = 0;
       } else {
         outcome = getOutcome(3, 4, entry);
       }
@@ -1259,9 +1260,10 @@ function filterEntries(currentFilterElement) {
   let entries = document.querySelectorAll(".entryContainer");
   if (currentFilterElement) {
     entries.forEach((entry) => {
-      let filterCategory = currentFilterElement.classList[0] == "casino" ? entry.children[1].innerHTML : (entry.children[2].innerHTML);
-      if(currentFilterElement.querySelector(".label").innerHTML == "Provision"){
-        if(entry.classList.contains("provision")){
+      let filterCategory =
+        currentFilterElement.classList[0] == "casino" ? entry.children[1].innerHTML : entry.children[2].innerHTML;
+      if (currentFilterElement.querySelector(".label").innerHTML == "Provision") {
+        if (entry.classList.contains("provision")) {
           entry.classList.toggle("filter");
         } else {
           entry.style.display = "none";
