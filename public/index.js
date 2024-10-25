@@ -771,7 +771,7 @@ async function updateDashboard() {
         `;
         container.append(element);
 
-        element.addEventListener("click", function () {
+        /* element.querySelector(".label").addEventListener("click", function () {
           totalView = "true";
           document.getElementById("total_toggle").classList.add("active");
 
@@ -780,7 +780,17 @@ async function updateDashboard() {
           nav("table");
 
           updateList();
-        });
+        }); */
+
+        element.querySelector(".counts").onclick = function (){
+          isAscending = !isAscending;
+          sortEntries(document.querySelector(`#${element.classList[0]}Totals`), "listedTotals", 1);
+        }
+    
+        element.querySelector(".profits").onclick = function (){
+          isAscending = !isAscending;
+          sortEntries(document.querySelector(`#${element.classList[0]}Totals`), "listedTotals", 2);
+        }
       });
     };
 
