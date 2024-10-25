@@ -1,6 +1,7 @@
 #dashboard {
-  grid-template-columns: 70% auto;
-  grid-template-rows: 50% 50%;
+  height: calc(100% - 184px);
+  grid-template-columns: 40% 40% auto;
+  grid-template-rows: 1fr;
 }
 
 #dashboard_list_totals {
@@ -9,7 +10,7 @@
 
 #cards {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   width: 100%;
 }
